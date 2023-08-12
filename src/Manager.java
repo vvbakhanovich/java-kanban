@@ -1,5 +1,4 @@
 import tasks.Epic;
-import tasks.Status;
 import tasks.Subtask;
 import tasks.Task;
 
@@ -23,41 +22,33 @@ public class Manager {
     public void addTask(Task task) {
         int id = generateId();
         task.setTaskId(id);
+        taskList.put(id, task);
+    }
 
-        if (task.getClass() == Task.class) {
-            taskList.put(id, task);
-        } else if (task.getClass() == Epic.class) {
-            Epic epic = (Epic) task;
-            ArrayList<Subtask> subtasks = epic.getSubtaskList();
-
-            int statusDone = 0;
-            int statusNew = 0;
-
-            for (Subtask subtask : subtasks) {
-                switch (subtask.getStatus()) {
-                    case NEW:
-                        statusNew++;
-                        break;
-                    case DONE:
-                        statusDone++;
-                        break;
-                }
-
-                if (statusDone == subtasks.size()) {
-                    epic.setStatus(Status.DONE);
-                } else if (statusNew == subtasks.size()) {
-                    epic.setStatus(Status.NEW);
-                } else {
-                    epic.setStatus(Status.IN_PROGRESS);
-                }
-            }
-
-            epicList.put(id, epic);
-        } else {
-            subtaskList.put(id, (Subtask) task);
+    public void addEpic(Epic epic) {
+        if (epic == null) {
+            return;
         }
 
+        int id = generateId();
+        epic.setTaskId(id);
+        epicList.put(id, epic);
     }
+
+    public void addSubtask(Subtask subtask) {
+        if (subtask == null) {
+            return;
+        }
+
+        int id = generateId();
+        subtask.setTaskId(id);
+        subtaskList.put(id, subtask);
+
+        Epic epic = subtask.getEpic();
+        epic.getSubtaskList().add(subtask);
+        subtask.checkEpicStatus();
+    }
+
 
 
     public int generateId() {
@@ -75,6 +66,11 @@ public class Manager {
     public ArrayList<Subtask> getSubtaskList() {
         return  new ArrayList<>(subtaskList.values());
     }
+
+    public ArrayList<Subtask> getEpicSubtaskList(Epic epic) {
+        return  new ArrayList<>(epic.getSubtaskList());
+    }
+
 
 
 //    public <T extends Task> ArrayList<T> getEpicList() {

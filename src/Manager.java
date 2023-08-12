@@ -93,6 +93,55 @@ public class Manager {
         return task;
     }
 
+    public Epic getEpicById(int id) {
+        Epic epic = epicList.getOrDefault(id, null);
+
+        if (epic == null) {
+            System.out.println("Задачи с таким идентификатором не существует");
+        }
+        return epic;
+    }
+
+    public Subtask getSubtaskById(int id) {
+        Subtask subtask = subtaskList.getOrDefault(id, null);
+
+        if (subtask == null) {
+            System.out.println("Задачи с таким идентификатором не существует");
+        }
+        return subtask;
+    }
+
+    public void updateTask(int taskId, Task task) {
+        Task currentTask = taskList.getOrDefault(taskId, null);
+        if (currentTask == null) {
+            System.out.println("Задачи с таким идентификатором не существует");
+            return;
+        }
+        taskList.put(taskId, task);
+    }
+
+    public void updateEpic(int epicId, Epic epic) {
+        Epic currentEpic = epicList.getOrDefault(epicId, null);
+        if (currentEpic == null) {
+            System.out.println("Задачи с таким идентификатором не существует");
+            return;
+        }
+        epicList.put(epicId, epic);
+    }
+
+    public void updateSubtask(int subtaskId, Subtask subtask) {
+        Subtask currentSubtask = subtaskList.getOrDefault(subtaskId, null);
+        if (currentSubtask == null) {
+            System.out.println("Задачи с таким идентификатором не существует");
+            return;
+        }
+        Epic epic = subtask.getEpic();
+        int index = epic.getSubtaskList().indexOf(currentSubtask);
+        subtaskList.put(subtaskId, subtask);
+        epic.getSubtaskList().set(index, subtask);
+        subtask.checkEpicStatus();
+    }
+
     public int generateId() {
         return taskId++;
     }

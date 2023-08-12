@@ -3,7 +3,7 @@ package tasks;
 import java.util.ArrayList;
 
 public class Epic extends Task{
-    ArrayList<Subtask> subtaskList;
+    private ArrayList<Subtask> subtaskList;
 
 
 
@@ -14,10 +14,6 @@ public class Epic extends Task{
 
     public ArrayList<Subtask> getSubtaskList() {
         return subtaskList;
-    }
-
-    public void setSubtaskList(ArrayList<Subtask> subtaskList) {
-        this.subtaskList = subtaskList;
     }
 
     @Override

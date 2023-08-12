@@ -19,24 +19,47 @@ public class Manager {
         taskId = 0;
     }
 
-    public void addTask(Task task) {
-        int id = generateId();
-        task.setTaskId(id);
-        taskList.put(id, task);
-    }
-
-    public void addEpic(Epic epic) {
-        if (epic == null) {
+    public void addTaskOrEpic(Task task) {
+        if (task == null) {
+            System.out.println("Отсутствует задача");
             return;
         }
-
-        int id = generateId();
-        epic.setTaskId(id);
-        epicList.put(id, epic);
+        if (task.getClass() == Task.class) {
+            int id = generateId();
+            task.setTaskId(id);
+            taskList.put(id, task);
+        } else if (task.getClass() == Epic.class) {
+            Epic epic = (Epic) task;
+            int id = generateId();
+            epic.setTaskId(id);
+            epicList.put(id, epic);
+        }
     }
+
+//    public void addTask(Task task) {
+//        if (task == null) {
+//            System.out.println("Отсутствует задача");
+//            return;
+//        }
+//        int id = generateId();
+//        task.setTaskId(id);
+//        taskList.put(id, task);
+//    }
+//
+//    public void addEpic(Epic epic) {
+//        if (epic == null) {
+//            System.out.println("Отсутствует задача");
+//            return;
+//        }
+//
+//        int id = generateId();
+//        epic.setTaskId(id);
+//        epicList.put(id, epic);
+//    }
 
     public void addSubtask(Subtask subtask) {
         if (subtask == null) {
+            System.out.println("Отсутствует задача");
             return;
         }
 
@@ -49,7 +72,26 @@ public class Manager {
         subtask.checkEpicStatus();
     }
 
+    public void removeTasks() {
+        taskList.clear();
+    }
 
+    public void removeEpics() {
+        epicList.clear();
+    }
+
+    public void removeSubtasks() {
+        subtaskList.clear();
+    }
+
+    public Task getTaskById(int id) {
+        Task task = taskList.getOrDefault(id, null);
+
+        if (task == null) {
+            System.out.println("Задачи с таким идентификатором не существует");
+        }
+        return task;
+    }
 
     public int generateId() {
         return taskId++;

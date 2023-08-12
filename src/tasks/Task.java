@@ -16,9 +16,39 @@ public class Task {
         this.status = status;
     }
 
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public int getTaskId() {
+        return taskId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     public void setTaskId(int taskId) {
         this.taskId = taskId;
     }
+
+
 
     @Override
     public boolean equals(Object o) {

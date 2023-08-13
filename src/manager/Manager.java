@@ -1,3 +1,5 @@
+package manager;
+
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
@@ -36,26 +38,26 @@ public class Manager {
         }
     }
 
-//    public void addTask(Task task) {
-//        if (task == null) {
-//            System.out.println("Отсутствует задача");
-//            return;
-//        }
-//        int id = generateId();
-//        task.setTaskId(id);
-//        taskList.put(id, task);
-//    }
-//
-//    public void addEpic(Epic epic) {
-//        if (epic == null) {
-//            System.out.println("Отсутствует задача");
-//            return;
-//        }
-//
-//        int id = generateId();
-//        epic.setTaskId(id);
-//        epicList.put(id, epic);
-//    }
+/*    public void addTask(Task task) {
+        if (task == null) {
+            System.out.println("Отсутствует задача");
+            return;
+        }
+        int id = generateId();
+        task.setTaskId(id);
+        taskList.put(id, task);
+    }
+
+    public void addEpic(Epic epic) {
+        if (epic == null) {
+            System.out.println("Отсутствует задача");
+            return;
+        }
+
+        int id = generateId();
+        epic.setTaskId(id);
+        epicList.put(id, epic);
+    }*/
 
     public void addSubtask(Subtask subtask) {
         if (subtask == null) {
@@ -72,15 +74,15 @@ public class Manager {
         subtask.checkEpicStatus();
     }
 
-    public void removeTasks() {
+    public void removeAllTasks() {
         taskList.clear();
     }
 
-    public void removeEpics() {
+    public void removeAllEpics() {
         epicList.clear();
     }
 
-    public void removeSubtasks() {
+    public void removeAllSubtasks() {
         subtaskList.clear();
     }
 

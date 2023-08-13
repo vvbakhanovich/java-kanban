@@ -86,6 +86,36 @@ public class Manager {
         subtaskList.clear();
     }
 
+    public void removeTaskById(int taskId) {
+        Task task = taskList.getOrDefault(taskId, null);
+        if (task == null) {
+            System.out.println("Такой задачи не существует");
+            return;
+        }
+        taskList.remove(taskId);
+    }
+
+    public void removeEpicById(int epicId) {
+        Epic epic = epicList.getOrDefault(epicId, null);
+        if (epic == null) {
+            System.out.println("Такой задачи не существует");
+            return;
+        }
+        epicList.remove(epicId);
+    }
+
+    public void removeSubtaskById(int subtaskId) {
+        Subtask subtask = subtaskList.getOrDefault(subtaskId, null);
+        if (subtask == null) {
+            System.out.println("Такой задачи не существует");
+            return;
+        }
+        Epic epic = subtask.getEpic();
+        subtaskList.remove(subtaskId);
+        epic.getSubtaskList().remove(subtask);
+        subtask.checkEpicStatus();
+    }
+
     public Task getTaskById(int id) {
         Task task = taskList.getOrDefault(id, null);
 
@@ -163,12 +193,4 @@ public class Manager {
     public ArrayList<Subtask> getEpicSubtaskList(Epic epic) {
         return  new ArrayList<>(epic.getSubtaskList());
     }
-
-
-
-//    public <T extends Task> ArrayList<T> getEpicList() {
-//        return (ArrayList<T>) new ArrayList<>(epicList.values());
-//    }
-
-
 }

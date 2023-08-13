@@ -26,15 +26,15 @@ public class Manager {
             System.out.println("Отсутствует задача");
             return;
         }
-        if (task.getClass() == Task.class) {
-            int id = generateId();
-            task.setTaskId(id);
-            taskList.put(id, task);
-        } else if (task.getClass() == Epic.class) {
+        if (task instanceof Epic) {
             Epic epic = (Epic) task;
             int id = generateId();
             epic.setTaskId(id);
             epicList.put(id, epic);
+        } else {
+            int id = generateId();
+            task.setTaskId(id);
+            taskList.put(id, task);
         }
     }
 

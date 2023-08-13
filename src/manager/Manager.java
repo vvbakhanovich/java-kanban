@@ -22,10 +22,10 @@ public class Manager {
     }
 
     public void addTaskOrEpic(Task task) {
-        if (task == null) {
-            System.out.println("Отсутствует задача");
-            return;
-        }
+//        if (task == null) {
+//            System.out.println("Отсутствует задача");
+//            return;
+//        }
         if (task instanceof Epic) {
             Epic epic = (Epic) task;
             int id = generateId();
@@ -60,10 +60,10 @@ public class Manager {
     }*/
 
     public void addSubtask(Subtask subtask) {
-        if (subtask == null) {
-            System.out.println("Отсутствует задача");
-            return;
-        }
+//        if (subtask == null) {
+//            System.out.println("Отсутствует задача");
+//            return;
+//        }
 
         int id = generateId();
         subtask.setTaskId(id);
@@ -88,8 +88,7 @@ public class Manager {
 
     public void removeTaskById(int taskId) {
         Task task = taskList.getOrDefault(taskId, null);
-        if (task == null) {
-            System.out.println("Такой задачи не существует");
+        if (isNullTask(task)) {
             return;
         }
         taskList.remove(taskId);
@@ -97,8 +96,7 @@ public class Manager {
 
     public void removeEpicById(int epicId) {
         Epic epic = epicList.getOrDefault(epicId, null);
-        if (epic == null) {
-            System.out.println("Такой задачи не существует");
+        if (isNullTask(epic)) {
             return;
         }
         epicList.remove(epicId);
@@ -106,8 +104,7 @@ public class Manager {
 
     public void removeSubtaskById(int subtaskId) {
         Subtask subtask = subtaskList.getOrDefault(subtaskId, null);
-        if (subtask == null) {
-            System.out.println("Такой задачи не существует");
+        if (isNullTask(subtask)) {
             return;
         }
         Epic epic = subtask.getEpic();
@@ -118,35 +115,25 @@ public class Manager {
 
     public Task getTaskById(int id) {
         Task task = taskList.getOrDefault(id, null);
-
-        if (task == null) {
-            System.out.println("Задачи с таким идентификатором не существует");
-        }
+        isNullTask(task);
         return task;
     }
 
     public Epic getEpicById(int id) {
         Epic epic = epicList.getOrDefault(id, null);
-
-        if (epic == null) {
-            System.out.println("Задачи с таким идентификатором не существует");
-        }
+        isNullTask(epic);
         return epic;
     }
 
     public Subtask getSubtaskById(int id) {
         Subtask subtask = subtaskList.getOrDefault(id, null);
-
-        if (subtask == null) {
-            System.out.println("Задачи с таким идентификатором не существует");
-        }
+        isNullTask(subtask);
         return subtask;
     }
 
     public void updateTask(int taskId, Task task) {
         Task currentTask = taskList.getOrDefault(taskId, null);
-        if (currentTask == null) {
-            System.out.println("Задачи с таким идентификатором не существует");
+        if (isNullTask(task)) {
             return;
         }
         taskList.put(taskId, task);
@@ -154,8 +141,7 @@ public class Manager {
 
     public void updateEpic(int epicId, Epic epic) {
         Epic currentEpic = epicList.getOrDefault(epicId, null);
-        if (currentEpic == null) {
-            System.out.println("Задачи с таким идентификатором не существует");
+        if (isNullTask(epic)) {
             return;
         }
         epicList.put(epicId, epic);
@@ -163,8 +149,7 @@ public class Manager {
 
     public void updateSubtask(int subtaskId, Subtask subtask) {
         Subtask currentSubtask = subtaskList.getOrDefault(subtaskId, null);
-        if (currentSubtask == null) {
-            System.out.println("Задачи с таким идентификатором не существует");
+        if (isNullTask(subtask)) {
             return;
         }
         Epic epic = subtask.getEpic();
@@ -174,23 +159,31 @@ public class Manager {
         subtask.checkEpicStatus();
     }
 
-    public int generateId() {
+    private int generateId() {
         return taskId++;
     }
 
+    private boolean isNullTask(Task task) {
+        if (task == null) {
+            System.out.println("Задачи с таким идентификатором не существует");
+            return true;
+        }
+        return false;
+    }
+
     public ArrayList<Task> getTaskList() {
-        return  new ArrayList<>(taskList.values());
+        return new ArrayList<>(taskList.values());
     }
 
     public ArrayList<Epic> getEpicList() {
-        return  new ArrayList<>(epicList.values());
+        return new ArrayList<>(epicList.values());
     }
 
     public ArrayList<Subtask> getSubtaskList() {
-        return  new ArrayList<>(subtaskList.values());
+        return new ArrayList<>(subtaskList.values());
     }
 
     public ArrayList<Subtask> getEpicSubtaskList(Epic epic) {
-        return  new ArrayList<>(epic.getSubtaskList());
+        return new ArrayList<>(epic.getSubtaskList());
     }
 }

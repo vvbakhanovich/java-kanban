@@ -44,4 +44,14 @@ public class Subtask extends Task{
         }
     }
 
+    @Override
+    public String toString() {
+        return "Subtask{" +
+                "epicID=" + epic.getTaskId() +
+                ", taskName='" + taskName + '\'' +
+                ", taskId=" + taskId +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                '}';
+    }
 }

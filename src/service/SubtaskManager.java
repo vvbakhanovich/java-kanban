@@ -39,4 +39,16 @@ public class SubtaskManager extends BasicManager<Subtask> {
         epic.getSubtaskList().remove(subtask);
         subtask.checkEpicStatus();
     }
+
+    // при удалении всех подзадач статус эпика переходит в NEW
+    // хотел уточнить нужна ли здесь эта обработка или при удалении подзадач статус эпика меняться не должен
+    @Override
+    public void removeAllTasks() {
+        for (Subtask subtask : taskList.values()) {
+            Epic epic = subtask.getEpic();
+            epic.getSubtaskList().remove(subtask);
+            subtask.checkEpicStatus();
+        }
+        taskList.clear();
+    }
 }

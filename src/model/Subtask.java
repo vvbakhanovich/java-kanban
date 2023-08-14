@@ -20,6 +20,7 @@ public class Subtask extends Task{
         ArrayList<Subtask> subtasks = epic.getSubtaskList();
         if (subtasks.isEmpty()) {
             epic.setStatus(Status.NEW);
+            return;
         }
 
         int statusDone = 0;

@@ -21,14 +21,21 @@ public class Manager {
         taskId = 0;
     }
 
-    public void addTaskOrEpic(Task task) {
+    public void addAnyTask(Task task) {
+        int id = generateId();
         if (task instanceof Epic) {
             Epic epic = (Epic) task;
-            int id = generateId();
             epic.setTaskId(id);
             epicList.put(id, epic);
+        } else if (task instanceof Subtask) {
+            Subtask subtask = (Subtask) task;
+            subtask.setTaskId(id);
+            subtaskList.put(id, subtask);
+
+            Epic epic = subtask.getEpic();
+            epic.getSubtaskList().add(subtask);
+            subtask.checkEpicStatus();
         } else {
-            int id = generateId();
             task.setTaskId(id);
             taskList.put(id, task);
         }
@@ -53,7 +60,7 @@ public class Manager {
         int id = generateId();
         epic.setTaskId(id);
         epicList.put(id, epic);
-    }*/
+    }
 
     public void addSubtask(Subtask subtask) {
         int id = generateId();
@@ -63,7 +70,7 @@ public class Manager {
         Epic epic = subtask.getEpic();
         epic.getSubtaskList().add(subtask);
         subtask.checkEpicStatus();
-    }
+    }*/
 
     public void removeAllTasks() {
         taskList.clear();
@@ -104,27 +111,55 @@ public class Manager {
         subtask.checkEpicStatus();
     }
 
-    public Task getTaskById(int id) {
-        Task task = taskList.getOrDefault(id, null);
+    public Task getTaskById(int taskId) {
+        Task task = taskList.getOrDefault(taskId, null);
         isNullTask(task);
         return task;
     }
 
-    public Epic getEpicById(int id) {
-        Epic epic = epicList.getOrDefault(id, null);
+    public Epic getEpicById(int epicId) {
+        Epic epic = epicList.getOrDefault(epicId, null);
         isNullTask(epic);
         return epic;
     }
 
-    public Subtask getSubtaskById(int id) {
-        Subtask subtask = subtaskList.getOrDefault(id, null);
+    public Subtask getSubtaskById(int subtaskId) {
+        Subtask subtask = subtaskList.getOrDefault(subtaskId, null);
         isNullTask(subtask);
         return subtask;
     }
 
+    public void updateAnyTask(int id, Task task) {
+        if (task instanceof Epic) {
+            Epic currentEpic = epicList.getOrDefault(id, null);
+            if (isNullTask(currentEpic)) {
+                return;
+            }
+            epicList.put(id, (Epic) task);
+        } else if (task instanceof Subtask) {
+            Subtask currentSubtask = subtaskList.getOrDefault(id, null);
+            if (isNullTask(currentSubtask)) {
+                return;
+            }
+
+            Subtask subtask = (Subtask) task;
+            Epic epic = subtask.getEpic();
+            int index = epic.getSubtaskList().indexOf(currentSubtask);
+            subtaskList.put(id, subtask);
+            epic.getSubtaskList().set(index, subtask);
+            subtask.checkEpicStatus();
+        } else {
+            Task currentTask = taskList.getOrDefault(taskId, null);
+            if (isNullTask(currentTask)) {
+                return;
+            }
+            taskList.put(taskId, task);
+        }
+    }
+
     public void updateTask(int taskId, Task task) {
         Task currentTask = taskList.getOrDefault(taskId, null);
-        if (isNullTask(task)) {
+        if (isNullTask(currentTask)) {
             return;
         }
         taskList.put(taskId, task);
@@ -132,7 +167,7 @@ public class Manager {
 
     public void updateEpic(int epicId, Epic epic) {
         Epic currentEpic = epicList.getOrDefault(epicId, null);
-        if (isNullTask(epic)) {
+        if (isNullTask(currentEpic)) {
             return;
         }
         epicList.put(epicId, epic);
@@ -140,7 +175,7 @@ public class Manager {
 
     public void updateSubtask(int subtaskId, Subtask subtask) {
         Subtask currentSubtask = subtaskList.getOrDefault(subtaskId, null);
-        if (isNullTask(subtask)) {
+        if (isNullTask(currentSubtask)) {
             return;
         }
         Epic epic = subtask.getEpic();

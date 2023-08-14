@@ -1,8 +1,8 @@
-package tasks;
+package model;
 
 import java.util.Objects;
 
-public class Task {
+public class Task{
     protected String taskName;
     protected int taskId;
     protected String description;

@@ -1,8 +1,8 @@
-package manager;
+package service;
 
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
+import model.Epic;
+import model.Subtask;
+import model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,10 +22,6 @@ public class Manager {
     }
 
     public void addTaskOrEpic(Task task) {
-//        if (task == null) {
-//            System.out.println("Отсутствует задача");
-//            return;
-//        }
         if (task instanceof Epic) {
             Epic epic = (Epic) task;
             int id = generateId();
@@ -60,11 +56,6 @@ public class Manager {
     }*/
 
     public void addSubtask(Subtask subtask) {
-//        if (subtask == null) {
-//            System.out.println("Отсутствует задача");
-//            return;
-//        }
-
         int id = generateId();
         subtask.setTaskId(id);
         subtaskList.put(id, subtask);

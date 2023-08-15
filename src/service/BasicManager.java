@@ -4,9 +4,10 @@ import model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+// абстрактный класс, прототип для всех задач
 public abstract class BasicManager<T extends Task> {
 
+    // поле идентификатор, присваиваемый при добавлении задачи
     protected static int taskId = 0;
     HashMap<Integer, T> taskList;
 

@@ -4,6 +4,8 @@ import model.Epic;
 import model.Subtask;
 
 public class SubtaskManager extends BasicManager<Subtask> {
+
+    //
     @Override
     public void addTask(Subtask subtask) {
         int id = generateId();
@@ -41,7 +43,6 @@ public class SubtaskManager extends BasicManager<Subtask> {
     }
 
     // при удалении всех подзадач статус эпика переходит в NEW
-    // хотел уточнить нужна ли здесь эта обработка или при удалении подзадач статус эпика меняться не должен
     @Override
     public void removeAllTasks() {
         for (Subtask subtask : taskList.values()) {

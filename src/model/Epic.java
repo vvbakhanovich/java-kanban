@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Epic extends Task{
 
+    // у каждого эпика есть свой список подзадач
     private final ArrayList<Subtask> subtaskList;
 
     public Epic(String taskName, String description, Status status) {

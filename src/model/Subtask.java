@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Subtask extends Task{
 
+    // у каждой подзадачи есть ссылка на эпик, к которому она относится
     private final Epic epic;
 
     public Subtask(String taskName, String description, Status status, Epic epic) {
@@ -15,6 +16,7 @@ public class Subtask extends Task{
         return epic;
     }
 
+    // метод для обновления статуса эпика при операциях с подзадачами
     public void checkEpicStatus() {
 
         ArrayList<Subtask> subtasks = epic.getSubtaskList();

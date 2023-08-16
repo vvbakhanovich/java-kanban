@@ -1,7 +1,5 @@
 package model;
 
-import java.util.ArrayList;
-
 public class Subtask extends Task{
 
     // у каждой подзадачи есть ссылка на эпик, к которому она относится

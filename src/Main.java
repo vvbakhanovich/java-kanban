@@ -9,14 +9,13 @@ public class Main {
     public static void main(String[] args) {
         Manager manager = new Manager();
 
-
         Task task1 = new Task("Задача 1", "Описание задачи 1", Status.NEW);
         manager.getTaskManager().addTask(task1);
         Task task2 = new Task("Задача 2", "Описание задачи 2", Status.NEW);
         manager.getTaskManager().addTask(task2);
 
 
-        Epic epic1 = new Epic("Эпик 1", "Описание эпика 1", Status.NEW);
+        Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
         manager.getEpicManager().addTask(epic1);
 
         Subtask subtask1 = new Subtask("Подазадача 1", "Описание подзадачи 1", Status.NEW, epic1);
@@ -25,7 +24,7 @@ public class Main {
         manager.getSubtaskManager().addTask(subtask2);
 
 
-        Epic epic2 = new Epic("Эпик 2", "Описание эпика 2", Status.NEW);
+        Epic epic2 = new Epic("Эпик 2", "Описание эпика 2");
         manager.getEpicManager().addTask(epic2);
 
         Subtask subtask3 = new Subtask("Подзадача 3", "Описание подзадачи 3", Status.NEW, epic2);
@@ -85,7 +84,7 @@ public class Main {
         System.out.println("Первый эпик после удаления подзадачи");
         System.out.println(manager.getEpicManager().getTaskById(epic1.getTaskId()));
         // удаление всех подзадач
-        manager.getSubtaskManager().removeAllTasks();
+        manager.removeAllSubtasks();
         System.out.println("Список всех эпиков после удаления подзадач:");
         System.out.println(manager.getEpicManager().getTaskList());
 

@@ -13,8 +13,8 @@ public class SubtaskManager extends BasicManager<Subtask> {
         taskList.put(id, subtask);
 
         Epic epic = subtask.getEpic();
-        epic.getSubtaskList().add(subtask);
-        subtask.checkEpicStatus();
+        epic.addEpicSubtask(subtask);
+        epic.checkEpicStatus();
     }
 
     @Override
@@ -24,10 +24,10 @@ public class SubtaskManager extends BasicManager<Subtask> {
             return;
         }
         Epic epic = subtask.getEpic();
-        int index = epic.getSubtaskList().indexOf(currentSubtask);
+        int index = epic.getEpicSubtaskId(currentSubtask);
         taskList.put(taskId, subtask);
-        epic.getSubtaskList().set(index, subtask);
-        subtask.checkEpicStatus();
+        epic.updateEpicSubtask(index, subtask);
+        epic.checkEpicStatus();
     }
 
     @Override
@@ -38,18 +38,8 @@ public class SubtaskManager extends BasicManager<Subtask> {
         }
         Epic epic = subtask.getEpic();
         taskList.remove(taskId);
-        epic.getSubtaskList().remove(subtask);
-        subtask.checkEpicStatus();
+        epic.removeEpicSubtask(subtask);
+        epic.checkEpicStatus();
     }
 
-    // при удалении всех подзадач статус эпика переходит в NEW
-    @Override
-    public void removeAllTasks() {
-        for (Subtask subtask : taskList.values()) {
-            Epic epic = subtask.getEpic();
-            epic.getSubtaskList().remove(subtask);
-            subtask.checkEpicStatus();
-        }
-        taskList.clear();
-    }
 }

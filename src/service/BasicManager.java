@@ -4,6 +4,8 @@ import model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
+
 // абстрактный класс, прототип для всех задач
 public abstract class BasicManager<T extends Task> {
 
@@ -21,7 +23,9 @@ public abstract class BasicManager<T extends Task> {
         taskList.put(id, task);
     }
 
-    public void removeAllTasks() {
+    // изменил модификатор на protected, так как метод будет вызываться в общем менеджере,
+    // но не должен быть виден вне пакета
+    protected void removeAllTasks() {
         taskList.clear();
     }
 
@@ -34,9 +38,7 @@ public abstract class BasicManager<T extends Task> {
     }
 
     public T getTaskById(int taskId) {
-        T task = taskList.getOrDefault(taskId, null);
-        isNullTask(task);
-        return task;
+        return taskList.getOrDefault(taskId, null);
     }
 
     public void updateTask(int taskId, T task) {
@@ -58,11 +60,7 @@ public abstract class BasicManager<T extends Task> {
     }
 
     protected boolean isNullTask(T task) {
-        if (task == null) {
-            System.out.println("Задачи с таким идентификатором не существует");
-            return true;
-        }
-        return false;
+        return Objects.isNull(task);
     }
 
 }

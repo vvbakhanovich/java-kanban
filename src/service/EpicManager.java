@@ -12,4 +12,14 @@ public class EpicManager extends BasicManager<Epic> {
         return new ArrayList<>(epic.getSubtaskList());
     }
 
+    @Override
+    public void removeTaskById(int taskId) {
+        Epic epic = taskList.getOrDefault(taskId, null);
+        if (isNullTask(epic)) {
+            return;
+        }
+        // очистка списка подзадач удаляемого эпика
+        epic.removeAllEpicSubtasks();
+        taskList.remove(taskId);
+    }
 }

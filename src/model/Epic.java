@@ -7,9 +7,14 @@ public class Epic extends Task {
     // у каждого эпика есть свой список подзадач
     private final ArrayList<Subtask> subtaskList;
 
-    public Epic(String taskName, String description) {
+    // при создании эпика назначется статус NEW
+    private Epic(String taskName, String description) {
         super(taskName, description, Status.NEW);
         subtaskList = new ArrayList<>();
+    }
+
+    public static Epic create(String taskName, String description) {
+        return new Epic(taskName, description);
     }
 
     // возвращает копию списка подзадач

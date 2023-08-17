@@ -9,25 +9,25 @@ public class Main {
     public static void main(String[] args) {
         Manager manager = new Manager();
 
-        Task task1 = new Task("Задача 1", "Описание задачи 1", Status.NEW);
+        Task task1 = Task.create("Задача 1", "Описание задачи 1", Status.NEW);
         manager.getTaskManager().addTask(task1);
-        Task task2 = new Task("Задача 2", "Описание задачи 2", Status.NEW);
+        Task task2 = Task.create("Задача 2", "Описание задачи 2", Status.NEW);
         manager.getTaskManager().addTask(task2);
 
 
-        Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
+        Epic epic1 = Epic.create("Эпик 1", "Описание эпика 1");
         manager.getEpicManager().addTask(epic1);
 
-        Subtask subtask1 = new Subtask("Подазадача 1", "Описание подзадачи 1", Status.NEW, epic1);
-        Subtask subtask2 = new Subtask("Подзадача 2", "Описание подзадачи 2", Status.NEW, epic1);
+        Subtask subtask1 = Subtask.create("Подазадача 1", "Описание подзадачи 1", Status.NEW, epic1);
+        Subtask subtask2 = Subtask.create("Подзадача 2", "Описание подзадачи 2", Status.NEW, epic1);
         manager.getSubtaskManager().addTask(subtask1);
         manager.getSubtaskManager().addTask(subtask2);
 
 
-        Epic epic2 = new Epic("Эпик 2", "Описание эпика 2");
+        Epic epic2 = Epic.create("Эпик 2", "Описание эпика 2");
         manager.getEpicManager().addTask(epic2);
 
-        Subtask subtask3 = new Subtask("Подзадача 3", "Описание подзадачи 3", Status.NEW, epic2);
+        Subtask subtask3 = Subtask.create("Подзадача 3", "Описание подзадачи 3", Status.NEW, epic2);
         manager.getSubtaskManager().addTask(subtask3);
 
         System.out.println("Список всех задач:");

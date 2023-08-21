@@ -41,7 +41,8 @@ public abstract class BasicManager<T extends Task> {
         return taskList.getOrDefault(taskId, null);
     }
 
-    public void updateTask(int taskId, T task) {
+    public void updateTask(T task) {
+        int taskId = task.getTaskId();
         T currentTask = taskList.getOrDefault(taskId, null);
         if (isNullTask(currentTask)) {
             return;

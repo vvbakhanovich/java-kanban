@@ -18,7 +18,8 @@ public class SubtaskManager extends BasicManager<Subtask> {
     }
 
     @Override
-    public void updateTask(int taskId, Subtask subtask) {
+    public void updateTask(Subtask subtask) {
+        int taskId = subtask.getTaskId();
         Subtask currentSubtask = taskList.getOrDefault(taskId, null);
         if (isNullTask(currentSubtask)) {
             return;

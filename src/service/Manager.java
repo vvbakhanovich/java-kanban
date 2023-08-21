@@ -1,61 +1,158 @@
 package service;
 
 import model.Epic;
+import model.Subtask;
+import model.Task;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class Manager {
-    private final TaskManager taskManager;
-    private final EpicManager epicManager;
-    private final SubtaskManager subtaskManager;
+
+    private int taskId;
+    private final HashMap<Integer, Task> taskList;
+    private final HashMap<Integer, Subtask> subtaskList;
+    private final HashMap<Integer, Epic> epicList;
 
     public Manager() {
-        taskManager = new TaskManager();
-        epicManager = new EpicManager();
-        subtaskManager = new SubtaskManager();
+        taskList = new HashMap<>();
+        subtaskList = new HashMap<>();
+        epicList = new HashMap<>();
+        taskId = 0;
     }
 
-    public TaskManager getTaskManager() {
-        return taskManager;
+    public ArrayList<Task> getTaskList() {
+        return new ArrayList<>(taskList.values());
     }
 
-    public EpicManager getEpicManager() {
-        return epicManager;
+    public ArrayList<Epic> getEpicList() {
+        return new ArrayList<>(epicList.values());
     }
 
-    public SubtaskManager getSubtaskManager() {
-        return subtaskManager;
+    public ArrayList<Subtask> getSubtaskList() {
+        return new ArrayList<>(subtaskList.values());
     }
 
-    /*
-     при удалении всех эпиков удаляются и все подзадачи, поскольку они связаны между собой.
-     было бы логично вынести этот метод в класс, у которого есть доступ к менеджерам всех типов задач
-     Из минусов, как мне кажется, то, что данная функциональность по сути должна быть внутри
-     своих менеджеров. А в этом случае надо изначально создавать общий менеджер с тремя хэшмапами. Но мне такой вариант
-     не понравился, поскольку будет много дублирования кода, так как методы для менеджеров эпиков
-     и обычных задач в большинстве идентичны. Либо делать длинные методы, в который будет передаваться объект
-     родительсокого класса в качестве параметра, внутри определять, через instanceof, к какому классу
-     относится этот объект, что негативно влияет на объем и читаемость кода.
-     Наставник в чате предложил хранить в эпиках не список подазадач, а список id, но такой вариант хорошо работает,
-     когда в проекте один общий менеджер. Либо выносить эти методы в этот класс, как вариант. Но эпику, помимо id, надо
-     знать и статус подзадач, поэтому мой вариант мне показался более удобным.
-     */
+    public ArrayList<Subtask> getEpicSubtaskList(Epic epic) {
+        return new ArrayList<>(epic.getSubtaskList());
+    }
+
     public void removeAllTasks() {
-        taskManager.removeAllTasks();
+        taskList.clear();
     }
 
     public void removeAllEpics() {
-        epicManager.removeAllTasks();
-        subtaskManager.removeAllTasks();
+        epicList.clear();
+        subtaskList.clear();
     }
 
     public void removeAllSubtasks() {
-        subtaskManager.removeAllTasks();
+        subtaskList.clear();
 
-//        в отличие от реализации в менежере подазадач, в данном варианте проходимся по всем эпикам,
-//        а не всем подзадачам
-        for (Epic epic : epicManager.getTaskList()) {
+        for (Epic epic : epicList.values()) {
             epic.removeAllEpicSubtasks();
             epic.checkEpicStatus();
         }
+    }
+
+    public Task getTaskById(int taskId) {
+        return taskList.getOrDefault(taskId, null);
+    }
+
+    public Epic getEpicById(int epicId) {
+        return epicList.getOrDefault(epicId, null);
+    }
+
+    public Subtask getSubtaskById(int subtaskId) {
+        return subtaskList.getOrDefault(subtaskId, null);
+    }
+
+    public void addTask(Task task) {
+        int id = generateId();
+
+        if (task instanceof Epic) {
+            Epic epic = (Epic) task;
+            epic.setTaskId(id);
+            epicList.put(id, epic);
+        } else if (task instanceof Subtask){
+            Subtask subtask = (Subtask) task;
+            subtask.setTaskId(id);
+            subtaskList.put(id, subtask);
+            Epic epic = subtask.getEpic();
+            epic.addEpicSubtask(subtask);
+            epic.checkEpicStatus();
+        } else {
+            task.setTaskId(id);
+            taskList.put(id, task);
+        }
+    }
+
+    public void updateTask(Task task) {
+        int taskId = task.getTaskId();
+        if (task instanceof Epic) {
+            Epic epic = (Epic) task;
+            Epic currentEpic = epicList.getOrDefault(taskId, null);
+            if (isNullTask(currentEpic)) {
+                return;
+            }
+            epicList.put(taskId, epic);
+        } else if (task instanceof Subtask) {
+            Subtask subtask = (Subtask) task;
+            Subtask currentSubtask = subtaskList.getOrDefault(taskId, null);
+            if (isNullTask(currentSubtask)) {
+                return;
+            }
+            Epic epic = subtask.getEpic();
+            int index = epic.getEpicSubtaskId(currentSubtask);
+            taskList.put(taskId, subtask);
+            epic.updateEpicSubtask(index, subtask);
+            epic.checkEpicStatus();
+        } else {
+            Task currentTask = taskList.getOrDefault(taskId, null);
+            if (isNullTask(currentTask)) {
+                return;
+            }
+            taskList.put(taskId, task);
+        }
+
+    }
+
+    public void removeTaskById(int taskId) {
+        Task task = taskList.getOrDefault(taskId, null);
+        if (isNullTask(task)) {
+            return;
+        }
+        taskList.remove(taskId);
+    }
+
+    public void removeEpicById(int taskId) {
+        Epic epic = epicList.getOrDefault(taskId, null);
+        if (isNullTask(epic)) {
+            return;
+        }
+        // очистка списка подзадач удаляемого эпика
+        epic.removeAllEpicSubtasks();
+        taskList.remove(taskId);
+    }
+
+    public void removeSubtaskById(int subtaskId) {
+        Subtask subtask = subtaskList.getOrDefault(taskId, null);
+        if (isNullTask(subtask)) {
+            return;
+        }
+        Epic epic = subtask.getEpic();
+        taskList.remove(taskId);
+        epic.removeEpicSubtask(subtask);
+        epic.checkEpicStatus();
+    }
+
+    private int generateId() {
+        return taskId++;
+    }
+
+    private boolean isNullTask(Task task) {
+        return Objects.isNull(task);
     }
 
 

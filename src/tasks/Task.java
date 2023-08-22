@@ -1,10 +1,10 @@
-package model;
+package tasks;
 
 import java.util.Objects;
 
 public class Task{
     protected String taskName;
-    protected int taskId;
+    protected long taskId;
     protected String description;
     protected Status status;
 
@@ -26,7 +26,7 @@ public class Task{
         this.taskName = taskName;
     }
 
-    public int getTaskId() {
+    public long getTaskId() {
         return taskId;
     }
 
@@ -46,7 +46,7 @@ public class Task{
         this.status = status;
     }
 
-    public void setTaskId(int taskId) {
+    public void setTaskId(long taskId) {
         this.taskId = taskId;
     }
 

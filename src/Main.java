@@ -1,13 +1,15 @@
-import service.Manager;
-import model.Epic;
-import model.Status;
-import model.Subtask;
-import model.Task;
+import manager.Manager;
+import tasks.Epic;
+import tasks.Status;
+import tasks.Subtask;
+import tasks.Task;
+
+import java.util.HashMap;
 
 public class Main {
 
     public static void main(String[] args) {
-        Manager manager = new Manager();
+        Manager manager = new Manager(new HashMap<>(), new HashMap<>(), new HashMap<>());
 
         Task task1 = Task.create("Задача 1", "Описание задачи 1", Status.NEW);
         manager.addTask(task1);
@@ -16,19 +18,22 @@ public class Main {
 
 
         Epic epic1 = Epic.create("Эпик 1", "Описание эпика 1");
-        manager.addTask(epic1);
+        manager.addEpic(epic1);
 
-        Subtask subtask1 = Subtask.create("Подазадача 1", "Описание подзадачи 1", Status.NEW, epic1);
-        Subtask subtask2 = Subtask.create("Подзадача 2", "Описание подзадачи 2", Status.NEW, epic1);
-        manager.addTask(subtask1);
-        manager.addTask(subtask2);
+        Subtask subtask1 = Subtask.create("Подазадача 1", "Описание подзадачи 1",
+                Status.NEW, epic1.getTaskId());
+        Subtask subtask2 = Subtask.create("Подзадача 2", "Описание подзадачи 2",
+                Status.NEW, epic1.getTaskId());
+        manager.addSubtask(subtask1);
+        manager.addSubtask(subtask2);
 
 
         Epic epic2 = Epic.create("Эпик 2", "Описание эпика 2");
-        manager.addTask(epic2);
+        manager.addEpic(epic2);
 
-        Subtask subtask3 = Subtask.create("Подзадача 3", "Описание подзадачи 3", Status.NEW, epic2);
-        manager.addTask(subtask3);
+        Subtask subtask3 = Subtask.create("Подзадача 3", "Описание подзадачи 3",
+                Status.NEW, epic2.getTaskId());
+        manager.addSubtask(subtask3);
 
         System.out.println("Список всех задач:");
         System.out.println(manager.getTaskList());
@@ -51,13 +56,13 @@ public class Main {
         manager.updateTask(task2);
 
         subtask1.setStatus(Status.IN_PROGRESS);
-        manager.updateTask( subtask1);
+        manager.updateSubtask( subtask1);
 
         subtask2.setStatus(Status.DONE);
-        manager.updateTask(subtask2);
+        manager.updateSubtask(subtask2);
 
         subtask3.setStatus(Status.DONE);
-        manager.updateTask(subtask3);
+        manager.updateSubtask(subtask3);
 
         System.out.println("Список всех задач:");
         System.out.println(manager.getTaskList());

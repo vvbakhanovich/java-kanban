@@ -201,7 +201,7 @@ public class Manager {
         if (isNullTask(currentSubtask)) {
             return;
         }
-        taskList.put(subtaskId, subtask);
+        subtaskList.put(subtaskId, subtask);
         long epicId = subtask.getEpicId();
         Epic epic = getEpicById(epicId);
         EpicService.checkEpicStatus(epic, subtaskList);

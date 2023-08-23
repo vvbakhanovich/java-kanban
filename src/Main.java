@@ -1,8 +1,5 @@
 import manager.Manager;
-import tasks.Epic;
-import tasks.Status;
-import tasks.Subtask;
-import tasks.Task;
+import tasks.*;
 
 import java.util.HashMap;
 
@@ -11,10 +8,10 @@ public class Main {
     public static void main(String[] args) {
         Manager manager = new Manager(new HashMap<>(), new HashMap<>(), new HashMap<>());
 
-        Task task1 = Task.create("Задача 1", "Описание задачи 1", Status.NEW);
-        manager.addTask(task1);
-        Task task2 = Task.create("Задача 2", "Описание задачи 2", Status.NEW);
-        manager.addTask(task2);
+        BasicTask task1 = BasicTask.create("Задача 1", "Описание задачи 1", Status.NEW);
+        manager.addBasicTask(task1);
+        BasicTask task2 = BasicTask.create("Задача 2", "Описание задачи 2", Status.NEW);
+        manager.addBasicTask(task2);
 
 
         Epic epic1 = Epic.create("Эпик 1", "Описание эпика 1");
@@ -36,7 +33,7 @@ public class Main {
         manager.addSubtask(subtask3);
 
         System.out.println("Список всех задач:");
-        System.out.println(manager.getTaskList());
+        System.out.println(manager.getBasicTaskList());
         System.out.println("Список всех подзадач:");
         System.out.println(manager.getSubtaskList());
         System.out.println("Список всех 'эпиков:");
@@ -50,10 +47,10 @@ public class Main {
         System.out.println("Установка новых статусов");
 
         task1.setStatus(Status.DONE);
-        manager.updateTask(task1);
+        manager.updateBasicTask(task1);
 
         task2.setStatus(Status.IN_PROGRESS);
-        manager.updateTask(task2);
+        manager.updateBasicTask(task2);
 
         subtask1.setStatus(Status.IN_PROGRESS);
         manager.updateSubtask( subtask1);
@@ -65,7 +62,7 @@ public class Main {
         manager.updateSubtask(subtask3);
 
         System.out.println("Список всех задач:");
-        System.out.println(manager.getTaskList());
+        System.out.println(manager.getBasicTaskList());
         System.out.println("Список всех подзадач:");
         System.out.println(manager.getSubtaskList());
         System.out.println("Список всех 'эпиков:");
@@ -77,9 +74,9 @@ public class Main {
 
         System.out.println();
         // удаление одной задачи
-        manager.removeTaskById(task1.getTaskId());
+        manager.removeBasicTaskById(task1.getTaskId());
         System.out.println("Список всех задач после удаления одной задачи:");
-        System.out.println(manager.getTaskList());
+        System.out.println(manager.getBasicTaskList());
         // удаление подзадачи первого эпика
         manager.removeSubtaskById(subtask1.getTaskId());
 

@@ -1,5 +1,6 @@
 package manager;
 
+import tasks.BasicTask;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
@@ -16,24 +17,24 @@ import java.util.*;
 public class Manager {
 
     private long taskId;
-    private final Map<Long, Task> taskList;
+    private final Map<Long, BasicTask> basicTaskList;
     private final Map<Long, Subtask> subtaskList;
     private final Map<Long, Epic> epicList;
 
     /**
-     * Конструктор класса Manager. Принимает в качетсве параметро три мапы, хранящие разлтичные типы задач.
-     * Иницализирует уникальный идентификатор, начинающийся с нуля.
+     * Конструктор класса Manager. Принимает в качестве параметра три мапы, хранящие различные типы задач.
+     * Инициализирует уникальный идентификатор, начинающийся с нуля.
      *
-     * @param taskList    мапа, хранящая в качестве ключа идентификатор, а в качестве значения задачу
+     * @param basicTaskList    мапа, хранящая в качестве ключа идентификатор, а в качестве значения задачу
      * @param subtaskList мапа, хранящая в качестве ключа идентификатор, а в качестве значения подзадачу
      * @param epicList    мапа, хранящая в качестве ключа идентификатор, а в качестве значения эпик
      */
     public Manager(
-            Map<Long, Task> taskList,
+            Map<Long, BasicTask> basicTaskList,
             Map<Long, Subtask> subtaskList,
             Map<Long, Epic> epicList
     ) {
-        this.taskList = taskList;
+        this.basicTaskList = basicTaskList;
         this.subtaskList = subtaskList;
         this.epicList = epicList;
         taskId = 0;
@@ -42,8 +43,8 @@ public class Manager {
     /**
      * @return возвращает список задач из мапы taskList
      */
-    public List<Task> getTaskList() {
-        return new ArrayList<>(taskList.values());
+    public List<BasicTask> getBasicTaskList() {
+        return new ArrayList<>(basicTaskList.values());
     }
 
     /**
@@ -64,22 +65,22 @@ public class Manager {
 
     /**
      * @param epic в качестве параметра используется объект класса Epic
-     * @return возвращает спиок идентификаторов подзадач для переданного эпика
+     * @return возвращает список идентификаторов подзадач для переданного эпика
      */
     public List<Long> getEpicSubtaskList(Epic epic) {
         return new ArrayList<>(epic.getSubtaskList());
     }
 
     /**
-     * очищает всю мапу, хранящую задачи
+     * Очищает всю мапу, хранящую задачи
      */
-    public void removeAllTasks() {
-        taskList.clear();
+    public void removeAllBasicTasks() {
+        basicTaskList.clear();
     }
 
 
     /**
-     * очищает всю мапу, хранящую эпики
+     * Очищает всю мапу, хранящую эпики
      */
     public void removeAllEpics() {
         epicList.clear();
@@ -87,7 +88,7 @@ public class Manager {
     }
 
     /**
-     * очищает всю мапу, хранящую подазадачи
+     * Очищает всю мапу, хранящую подзадачи
      */
     public void removeAllSubtasks() {
         subtaskList.clear();
@@ -99,11 +100,11 @@ public class Manager {
     }
 
     /**
-     * @param taskId в качестве параметра используется идентификатор задачи
-     * @return возвраащет задачу, полученную по taskId из taskList
+     * @param basicTaskId в качестве параметра используется идентификатор задачи
+     * @return возвращает задачу, полученную по taskId из taskList
      */
-    public Task getTaskById(long taskId) {
-        return taskList.getOrDefault(taskId, null);
+    public BasicTask getBasicTaskById(long basicTaskId) {
+        return basicTaskList.getOrDefault(basicTaskId, null);
     }
 
     /**
@@ -127,12 +128,12 @@ public class Manager {
     /**
      * Добавление задачи в мапу taskList. В начале генерируется уникальный идентификатор, затем происходит
      * добавление задачи с данным идентификатором в taskList.
-     * @param task задача, которую необходимо добавить в мапу для хранения
+     * @param basicTask задача, которую необходимо добавить в мапу для хранения
      */
-    public void addTask(Task task) {
+    public void addBasicTask(BasicTask basicTask) {
         long id = generateId();
-        task.setTaskId(id);
-        taskList.put(id, task);
+        basicTask.setTaskId(id);
+        basicTaskList.put(id, basicTask);
 
     }
 
@@ -167,15 +168,15 @@ public class Manager {
 
     /**
      * Обновление задачи
-     * @param task новая версия объекта с верным идентификатором передается в виде параметра
+     * @param basicTask новая версия объекта с верным идентификатором передается в виде параметра
      */
-    public void updateTask(Task task) {
-        long taskId = task.getTaskId();
-        Task currentTask = taskList.getOrDefault(taskId, null);
+    public void updateBasicTask(BasicTask basicTask) {
+        long basicTaskId = basicTask.getTaskId();
+        Task currentTask = basicTaskList.getOrDefault(basicTaskId, null);
         if (isNullTask(currentTask)) {
             return;
         }
-        taskList.put(taskId, task);
+        basicTaskList.put(basicTaskId, basicTask);
     }
 
     /**
@@ -209,28 +210,28 @@ public class Manager {
 
     /**
      * Удаление по идентификатору
-     * @param taskId идентификатор задачи, которую необходимо удалить
+     * @param basicTaskId идентификатор задачи, которую необходимо удалить
      */
-    public void removeTaskById(long taskId) {
-        Task task = taskList.getOrDefault(taskId, null);
+    public void removeBasicTaskById(long basicTaskId) {
+        Task task = basicTaskList.getOrDefault(basicTaskId, null);
         if (isNullTask(task)) {
             return;
         }
-        taskList.remove(taskId);
+        basicTaskList.remove(basicTaskId);
     }
 
     /**
      * Удаление по идентификатору. После удаления эпика, список его подзадач также удаляется
-     * @param taskId идентификатор эпика, который необходимо удалить
+     * @param epicId идентификатор эпика, который необходимо удалить
      */
-    public void removeEpicById(long taskId) {
-        Epic epic = epicList.getOrDefault(taskId, null);
+    public void removeEpicById(long epicId) {
+        Epic epic = epicList.getOrDefault(epicId, null);
         if (isNullTask(epic)) {
             return;
         }
         // очистка списка подзадач удаляемого эпика
         EpicService.removeAllEpicSubtasks(epic);
-        taskList.remove(taskId);
+        basicTaskList.remove(epicId);
     }
 
     /**

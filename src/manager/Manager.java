@@ -104,7 +104,7 @@ public class Manager {
 
     /**
      * @param epicId в качестве параметра используется идентификатор эпика
-     * @return возвраащет эпик, полученный по epicId из epicList
+     * @return возвращает эпик, полученный по epicId из epicList
      */
     public Epic getEpicById(long epicId) {
         return epicList.getOrDefault(epicId, null);
@@ -113,7 +113,7 @@ public class Manager {
 
     /**
      * @param subtaskId в качестве параметра используется идентификатор подзадачи
-     * @return возвраащет подзадачу, полученную по subtaskId из subtaskList
+     * @return возвращает подзадачу, полученную по subtaskId из subtaskList
      */
     public Subtask getSubtaskById(long subtaskId) {
         return subtaskList.getOrDefault(subtaskId, null);
@@ -255,7 +255,7 @@ public class Manager {
     }
 
     /**
-     * При добавлении подзадачи указывется эпик, к которому она относится. Данный метод добавляет идентификатор
+     * При добавлении подзадачи указывается эпик, к которому она относится. Данный метод добавляет идентификатор
      * подзадачи в список идентификаторов для конкретного эпика.
      * @param epic эпик, для которого требуется добавить подзадачу
      * @param subtaskId идентификатор добавляемой подзадачи

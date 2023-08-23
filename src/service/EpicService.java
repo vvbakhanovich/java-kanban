@@ -7,6 +7,10 @@ import tasks.Subtask;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Данный класс отвечает за операции со связанными с эпиком подзадачами.
+ */
+
 public class EpicService {
 
     /**

@@ -2,7 +2,7 @@ package tasks;
 
 import java.util.Objects;
 
-public class Task{
+public abstract class Task{
     protected String taskName;
     protected long taskId;
     protected String description;
@@ -12,10 +12,6 @@ public class Task{
         this.taskName = taskName;
         this.description = description;
         this.status = status;
-    }
-
-    public static Task create(String taskName, String description, Status status) {
-        return new Task(taskName, description, status);
     }
 
     public String getTaskName() {

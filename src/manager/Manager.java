@@ -1,18 +1,13 @@
 package manager;
 
-import tasks.BasicTask;
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
+import tasks.*;
 
 import java.util.Map;
-
-import service.EpicService;
 
 import java.util.*;
 
 /**
- * Класс Manager отвчает за управление и хранение каждого типа задач
+ * Класс Manager отвечает за управление и хранение каждого типа задач
  */
 public class Manager {
 
@@ -94,8 +89,8 @@ public class Manager {
         subtaskList.clear();
 
         for (Epic epic : epicList.values()) {
-            EpicService.removeAllEpicSubtasks(epic);
-            EpicService.checkEpicStatus(epic, subtaskList);
+            removeAllEpicSubtasks(epic);
+            checkEpicStatus(epic);
         }
     }
 
@@ -150,10 +145,10 @@ public class Manager {
     }
 
     /**
-     * Добавление подзадачи в мапу subtaskList. Подзадача создается после создания эпкаю В начале генерируется
+     * Добавление подзадачи в мапу subtaskList. Подзадача создается после создания эпика. В начале генерируется
      * уникальный идентификатор, затем происходит добавление подзадачи с данным идентификатором в subtaskList. Так как
-     * подзадача напрямую связана со своим эпиком,необходимо добавить ее идентификатор в список подзадач связанного
-     * эпика. После чего требуется произвести обновление статуса эпика в соотвествии со статусом новой подзадачи.
+     * подзадача напрямую связана со своим эпиком, необходимо добавить ее идентификатор в список подзадач связанного
+     * эпика. После чего требуется произвести обновление статуса эпика в соответствии со статусом новой подзадачи.
      * @param subtask подзадача, которую необходимо добавить в мапу для хранения
      */
     public void addSubtask(Subtask subtask) {
@@ -162,8 +157,8 @@ public class Manager {
         subtaskList.put(id, subtask);
         long epicId = subtask.getEpicId();
         Epic epic = getEpicById(epicId);
-        EpicService.addEpicSubtask(epic, id);
-        EpicService.checkEpicStatus(epic, subtaskList);
+        addEpicSubtask(epic, id);
+        checkEpicStatus(epic);
     }
 
     /**
@@ -205,7 +200,7 @@ public class Manager {
         subtaskList.put(subtaskId, subtask);
         long epicId = subtask.getEpicId();
         Epic epic = getEpicById(epicId);
-        EpicService.checkEpicStatus(epic, subtaskList);
+        checkEpicStatus(epic);
     }
 
     /**
@@ -230,7 +225,7 @@ public class Manager {
             return;
         }
         // очистка списка подзадач удаляемого эпика
-        EpicService.removeAllEpicSubtasks(epic);
+        removeAllEpicSubtasks(epic);
         basicTaskList.remove(epicId);
     }
 
@@ -247,8 +242,8 @@ public class Manager {
         subtaskList.remove(subtaskId);
         long epicId = subtask.getEpicId();
         Epic epic = getEpicById(epicId);
-        EpicService.removeEpicSubtask(epic, subtaskId);
-        EpicService.checkEpicStatus(epic, subtaskList);
+        removeEpicSubtask(epic, subtaskId);
+        checkEpicStatus(epic);
     }
 
     private long generateId() {
@@ -259,5 +254,72 @@ public class Manager {
         return Objects.isNull(task);
     }
 
+    /**
+     * При добавлении подзадачи указывется эпик, к которому она относится. Данный метод добавляет идентификатор
+     * подзадачи в список идентификаторов для конкретного эпика.
+     * @param epic эпик, для которого требуется добавить подзадачу
+     * @param subtaskId идентификатор добавляемой подзадачи
+     */
+    private void addEpicSubtask(Epic epic, Long subtaskId) {
+        List<Long> subtaskList = epic.getSubtaskList();
+        subtaskList.add(subtaskId);
+    }
 
+    /**
+     * При удалении подзадачи требуется также удалить ее и из списка подзадач ее эпика.
+     * @param epic эпик, у которого требуется удалить подзадачу
+     * @param subtaskId идентификатор подзадачи для удаления
+     */
+    private void removeEpicSubtask(Epic epic, Long subtaskId) {
+        epic.getSubtaskList().remove(subtaskId);
+    }
+
+    /**
+     * Удаление списка подзадач эпика
+     * @param epic эпик, у которого необходимо очистить список подзадач
+     */
+    private void removeAllEpicSubtasks(Epic epic) {
+        epic.getSubtaskList().clear();
+    }
+
+    /**
+     * Метод для проверки статуса эпика после операций с подзадачами. В случае добавления/изменения/удаления подзадачи
+     * статус эпика должен быть пересчитан по следующей логике: если список подзадач пуст или все подзадачи имеют
+     * статус NEW, то статус эпика также должен быть NEW. Если все подзадачи эпика имеют статус DONE, эпик также должен
+     * иметь статус DONE. В противном случае статус эпика должен быть IN_PROGRESS.
+     * @param epic эпик, для которого необходимо произвести проверку статуса
+     */
+    private void checkEpicStatus(Epic epic) {
+        List<Long> subtasks = epic.getSubtaskList();
+
+        if (subtasks.isEmpty()) {
+            epic.setStatus(Status.NEW);
+            return;
+        }
+
+        int statusDone = 0;
+        int statusNew = 0;
+
+        for (Long subtaskId : subtasks) {
+            Subtask subtask = subtaskList.get(subtaskId);
+            switch (subtask.getStatus()) {
+                case IN_PROGRESS:
+                    epic.setStatus(Status.IN_PROGRESS);
+                    return;
+                case DONE:
+                    statusDone++;
+                    break;
+                case NEW:
+                    statusNew++;
+            }
+        }
+
+        if (statusDone == subtaskList.size()) {
+            epic.setStatus(Status.DONE);
+        } else if (statusNew == subtaskList.size()) {
+            epic.setStatus(Status.NEW);
+        } else {
+            epic.setStatus(Status.IN_PROGRESS);
+        }
+    }
 }

@@ -9,28 +9,28 @@ public class Main {
         InMemoryTaskManager manager = new InMemoryTaskManager(new HashMap<>(), new HashMap<>(), new HashMap<>());
 
         BasicTask task1 = BasicTask.create("Задача 1", "Описание задачи 1", Status.NEW);
-        manager.addBasicTask(task1);
+        manager.add(task1);
         BasicTask task2 = BasicTask.create("Задача 2", "Описание задачи 2", Status.NEW);
-        manager.addBasicTask(task2);
+        manager.add(task2);
 
 
         Epic epic1 = Epic.create("Эпик 1", "Описание эпика 1");
-        manager.addEpic(epic1);
+        manager.add(epic1);
 
         Subtask subtask1 = Subtask.create("Подазадача 1", "Описание подзадачи 1",
                 Status.NEW, epic1.getTaskId());
         Subtask subtask2 = Subtask.create("Подзадача 2", "Описание подзадачи 2",
                 Status.NEW, epic1.getTaskId());
-        manager.addSubtask(subtask1);
-        manager.addSubtask(subtask2);
+        manager.add(subtask1);
+        manager.add(subtask2);
 
 
         Epic epic2 = Epic.create("Эпик 2", "Описание эпика 2");
-        manager.addEpic(epic2);
+        manager.add(epic2);
 
         Subtask subtask3 = Subtask.create("Подзадача 3", "Описание подзадачи 3",
                 Status.NEW, epic2.getTaskId());
-        manager.addSubtask(subtask3);
+        manager.add(subtask3);
 
         System.out.println("Список всех задач:");
         System.out.println(manager.getBasicTaskList());
@@ -47,19 +47,19 @@ public class Main {
         System.out.println("Установка новых статусов");
 
         task1.setStatus(Status.DONE);
-        manager.updateBasicTask(task1);
+        manager.update(task1);
 
         task2.setStatus(Status.IN_PROGRESS);
-        manager.updateBasicTask(task2);
+        manager.update(task2);
 
         subtask1.setStatus(Status.IN_PROGRESS);
-        manager.updateSubtask( subtask1);
+        manager.update( subtask1);
 
         subtask2.setStatus(Status.DONE);
-        manager.updateSubtask(subtask2);
+        manager.update(subtask2);
 
         subtask3.setStatus(Status.DONE);
-        manager.updateSubtask(subtask3);
+        manager.update(subtask3);
 
         System.out.println("Список всех задач:");
         System.out.println(manager.getBasicTaskList());

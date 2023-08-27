@@ -1,4 +1,4 @@
-import manager.Manager;
+import manager.InMemoryTaskManager;
 import tasks.*;
 
 import java.util.HashMap;
@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class Main {
 
     public static void main(String[] args) {
-        Manager manager = new Manager(new HashMap<>(), new HashMap<>(), new HashMap<>());
+        InMemoryTaskManager manager = new InMemoryTaskManager(new HashMap<>(), new HashMap<>(), new HashMap<>());
 
         BasicTask task1 = BasicTask.create("Задача 1", "Описание задачи 1", Status.NEW);
         manager.addBasicTask(task1);

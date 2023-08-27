@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * Класс Manager отвечает за управление и хранение каждого типа задач
  */
-public class Manager {
+public class InMemoryTaskManager {
 
     private long taskId;
     private final Map<Long, BasicTask> basicTaskList;
@@ -29,7 +29,7 @@ public class Manager {
      * @param subtaskList мапа, хранящая в качестве ключа идентификатор, а в качестве значения подзадачу
      * @param epicList    мапа, хранящая в качестве ключа идентификатор, а в качестве значения эпик
      */
-    public Manager(
+    public InMemoryTaskManager(
             Map<Long, BasicTask> basicTaskList,
             Map<Long, Subtask> subtaskList,
             Map<Long, Epic> epicList

@@ -12,7 +12,7 @@ import service.EpicService;
 import java.util.*;
 
 /**
- * Класс Manager отвчает за управление и хранение каждого типа задач
+ * Класс Manager отвечает за управление и хранение каждого типа задач
  */
 public class Manager {
 
@@ -104,24 +104,24 @@ public class Manager {
      * @return возвращает задачу, полученную по taskId из taskList
      */
     public BasicTask getBasicTaskById(long basicTaskId) {
-        return basicTaskList.getOrDefault(basicTaskId, null);
+        return basicTaskList.get(basicTaskId);
     }
 
     /**
      * @param epicId в качестве параметра используется идентификатор эпика
-     * @return возвраащет эпик, полученный по epicId из epicList
+     * @return возвращает эпик, полученный по epicId из epicList
      */
     public Epic getEpicById(long epicId) {
-        return epicList.getOrDefault(epicId, null);
+        return epicList.get(epicId);
     }
 
 
     /**
      * @param subtaskId в качестве параметра используется идентификатор подзадачи
-     * @return возвраащет подзадачу, полученную по subtaskId из subtaskList
+     * @return возвращает подзадачу, полученную по subtaskId из subtaskList
      */
     public Subtask getSubtaskById(long subtaskId) {
-        return subtaskList.getOrDefault(subtaskId, null);
+        return subtaskList.get(subtaskId);
     }
 
 
@@ -150,10 +150,10 @@ public class Manager {
     }
 
     /**
-     * Добавление подзадачи в мапу subtaskList. Подзадача создается после создания эпкаю В начале генерируется
+     * Добавление подзадачи в мапу subtaskList. Подзадача создается после создания эпика. В начале генерируется
      * уникальный идентификатор, затем происходит добавление подзадачи с данным идентификатором в subtaskList. Так как
-     * подзадача напрямую связана со своим эпиком,необходимо добавить ее идентификатор в список подзадач связанного
-     * эпика. После чего требуется произвести обновление статуса эпика в соотвествии со статусом новой подзадачи.
+     * подзадача напрямую связана со своим эпиком, необходимо добавить ее идентификатор в список подзадач связанного
+     * эпика. После чего требуется произвести обновление статуса эпика в соответствии со статусом новой подзадачи.
      * @param subtask подзадача, которую необходимо добавить в мапу для хранения
      */
     public void addSubtask(Subtask subtask) {
@@ -172,7 +172,7 @@ public class Manager {
      */
     public void updateBasicTask(BasicTask basicTask) {
         long basicTaskId = basicTask.getTaskId();
-        Task currentTask = basicTaskList.getOrDefault(basicTaskId, null);
+        Task currentTask = basicTaskList.get(basicTaskId);
         if (isNullTask(currentTask)) {
             return;
         }
@@ -185,7 +185,7 @@ public class Manager {
      */
     public void updateEpic(Epic epic) {
         long epicId = epic.getTaskId();
-        Epic currentEpic = epicList.getOrDefault(epicId, null);
+        Epic currentEpic = epicList.get(epicId);
         if (isNullTask(currentEpic)) {
             return;
         }
@@ -198,7 +198,7 @@ public class Manager {
      */
     public void updateSubtask(Subtask subtask) {
         long subtaskId = subtask.getTaskId();
-        Subtask currentSubtask = subtaskList.getOrDefault(subtaskId, null);
+        Subtask currentSubtask = subtaskList.get(subtaskId);
         if (isNullTask(currentSubtask)) {
             return;
         }
@@ -213,7 +213,7 @@ public class Manager {
      * @param basicTaskId идентификатор задачи, которую необходимо удалить
      */
     public void removeBasicTaskById(long basicTaskId) {
-        Task task = basicTaskList.getOrDefault(basicTaskId, null);
+        Task task = basicTaskList.get(basicTaskId);
         if (isNullTask(task)) {
             return;
         }
@@ -225,7 +225,7 @@ public class Manager {
      * @param epicId идентификатор эпика, который необходимо удалить
      */
     public void removeEpicById(long epicId) {
-        Epic epic = epicList.getOrDefault(epicId, null);
+        Epic epic = epicList.get(epicId);
         if (isNullTask(epic)) {
             return;
         }
@@ -240,7 +240,7 @@ public class Manager {
      * @param subtaskId идентификатор подзадачи, которую необходимо удалить
      */
     public void removeSubtaskById(long subtaskId) {
-        Subtask subtask = subtaskList.getOrDefault(subtaskId, null);
+        Subtask subtask = subtaskList.get(subtaskId);
         if (isNullTask(subtask)) {
             return;
         }

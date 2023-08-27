@@ -1,4 +1,6 @@
+import manager.HistoryManager;
 import manager.InMemoryTaskManager;
+import manager.Managers;
 import manager.TaskManager;
 import tasks.*;
 
@@ -9,8 +11,11 @@ import java.util.HashMap;
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager manager = new InMemoryTaskManager(new HashMap<>(), new HashMap<>(),
-                                                              new HashMap<>(), new ArrayList<>());
+        HistoryManager historyManager = Managers.getDefaultHistory();
+        TaskManager manager = new InMemoryTaskManager(
+                new HashMap<>(), new HashMap<>(),
+                new HashMap<>(), historyManager
+        );
 
         BasicTask task1 = BasicTask.create("Задача 1", "Описание задачи 1", Status.NEW);
         manager.add(task1);
@@ -110,7 +115,7 @@ public class Main {
         manager.getSubtaskById(subtask2.getTaskId());
         manager.getSubtaskById(subtask2.getTaskId());
         System.out.println("История просмотров:");
-        System.out.println(manager.getHistory());
-        System.out.println(manager.getHistory().size());
+        System.out.println(historyManager.getHistory());
+        System.out.println(historyManager.getHistory().size());
     }
 }

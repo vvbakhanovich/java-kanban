@@ -15,13 +15,12 @@ import java.util.*;
  * Класс Manager отвечает за управление и хранение каждого типа задач
  */
 public class InMemoryTaskManager implements TaskManager{
-    private final int MAX_HISTORY_SIZE = 10;
 
     private long taskId;
     private final Map<Long, BasicTask> basicTaskList;
     private final Map<Long, Subtask> subtaskList;
     private final Map<Long, Epic> epicList;
-    private final List<Task> historyList;
+    private final HistoryManager historyManager;
 
     /**
      * Конструктор класса Manager. Принимает в качестве параметра три мапы, хранящие различные типы задач.
@@ -35,13 +34,13 @@ public class InMemoryTaskManager implements TaskManager{
             Map<Long, BasicTask> basicTaskList,
             Map<Long, Subtask> subtaskList,
             Map<Long, Epic> epicList,
-            List<Task> historyList
+            HistoryManager historyManager
     ) {
         this.basicTaskList = basicTaskList;
         this.subtaskList = subtaskList;
         this.epicList = epicList;
-        this.historyList = historyList;
         taskId = 0;
+        this.historyManager = historyManager;
     }
 
     /**
@@ -117,7 +116,7 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public BasicTask getBasicTaskById(long basicTaskId) {
         BasicTask basicTask = basicTaskList.get(basicTaskId);
-        addToHistory(basicTask);
+        historyManager.add(basicTask);
         return basicTask;
     }
 
@@ -128,7 +127,7 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public Epic getEpicById(long epicId) {
         Epic epic = epicList.get(epicId);
-        addToHistory(epic);
+        historyManager.add(epic);
         return epic;
     }
 
@@ -140,7 +139,7 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public Subtask getSubtaskById(long subtaskId) {
         Subtask subtask = subtaskList.get(subtaskId);
-        addToHistory(subtask);
+        historyManager.add(subtask);
         return subtask;
     }
 
@@ -280,16 +279,6 @@ public class InMemoryTaskManager implements TaskManager{
         EpicService.checkEpicStatus(epic, subtaskList);
     }
 
-    public List<Task> getHistory() {
-        return new ArrayList<>(historyList);
-    }
-
-    private void addToHistory(Task task) {
-        if (historyList.size() == MAX_HISTORY_SIZE) {
-            historyList.remove(0);
-        }
-        historyList.add(task);
-    }
 
     private long generateId() {
         return taskId++;

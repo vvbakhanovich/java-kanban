@@ -21,7 +21,7 @@ public class InMemoryHistoryManager implements HistoryManager{
     }
 
     /**
-     * сохранение задачи в список истории просмотров
+     * Сохранение задачи в список истории просмотров
      * @param task задача, которую необходимо сохранить
      */
     @Override

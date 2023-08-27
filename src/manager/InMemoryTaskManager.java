@@ -29,6 +29,7 @@ public class InMemoryTaskManager implements TaskManager{
      * @param basicTaskList    мапа, хранящая в качестве ключа идентификатор, а в качестве значения задачу
      * @param subtaskList мапа, хранящая в качестве ключа идентификатор, а в качестве значения подзадачу
      * @param epicList    мапа, хранящая в качестве ключа идентификатор, а в качестве значения эпик
+     * @param historyManager    объект, реализующий интерфейс HistoryManager, для хранения истории просмотров
      */
     public InMemoryTaskManager(
             Map<Long, BasicTask> basicTaskList,
@@ -39,8 +40,8 @@ public class InMemoryTaskManager implements TaskManager{
         this.basicTaskList = basicTaskList;
         this.subtaskList = subtaskList;
         this.epicList = epicList;
-        taskId = 0;
         this.historyManager = historyManager;
+        taskId = 0;
     }
 
     /**

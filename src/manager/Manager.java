@@ -99,7 +99,7 @@ public class Manager {
      * @return возвращает задачу, полученную по taskId из taskList
      */
     public BasicTask getBasicTaskById(long basicTaskId) {
-        return basicTaskList.getOrDefault(basicTaskId, null);
+        return basicTaskList.get(basicTaskId);
     }
 
     /**
@@ -107,7 +107,7 @@ public class Manager {
      * @return возвращает эпик, полученный по epicId из epicList
      */
     public Epic getEpicById(long epicId) {
-        return epicList.getOrDefault(epicId, null);
+        return epicList.get(epicId);
     }
 
 
@@ -116,9 +116,8 @@ public class Manager {
      * @return возвращает подзадачу, полученную по subtaskId из subtaskList
      */
     public Subtask getSubtaskById(long subtaskId) {
-        return subtaskList.getOrDefault(subtaskId, null);
+        return subtaskList.get(subtaskId);
     }
-
 
     /**
      * Добавление задачи в мапу taskList. В начале генерируется уникальный идентификатор, затем происходит
@@ -167,7 +166,8 @@ public class Manager {
      */
     public void updateBasicTask(BasicTask basicTask) {
         long basicTaskId = basicTask.getTaskId();
-        Task currentTask = basicTaskList.getOrDefault(basicTaskId, null);
+        Task currentTask = basicTaskList.get(basicTaskId);
+        //TODO убрать проверки на null
         if (isNullTask(currentTask)) {
             return;
         }
@@ -180,7 +180,7 @@ public class Manager {
      */
     public void updateEpic(Epic epic) {
         long epicId = epic.getTaskId();
-        Epic currentEpic = epicList.getOrDefault(epicId, null);
+        Epic currentEpic = epicList.get(epicId);
         if (isNullTask(currentEpic)) {
             return;
         }
@@ -193,7 +193,7 @@ public class Manager {
      */
     public void updateSubtask(Subtask subtask) {
         long subtaskId = subtask.getTaskId();
-        Subtask currentSubtask = subtaskList.getOrDefault(subtaskId, null);
+        Subtask currentSubtask = subtaskList.get(subtaskId);
         if (isNullTask(currentSubtask)) {
             return;
         }
@@ -208,7 +208,7 @@ public class Manager {
      * @param basicTaskId идентификатор задачи, которую необходимо удалить
      */
     public void removeBasicTaskById(long basicTaskId) {
-        Task task = basicTaskList.getOrDefault(basicTaskId, null);
+        Task task = basicTaskList.get(basicTaskId);
         if (isNullTask(task)) {
             return;
         }
@@ -220,7 +220,7 @@ public class Manager {
      * @param epicId идентификатор эпика, который необходимо удалить
      */
     public void removeEpicById(long epicId) {
-        Epic epic = epicList.getOrDefault(epicId, null);
+        Epic epic = epicList.get(epicId);
         if (isNullTask(epic)) {
             return;
         }
@@ -235,7 +235,7 @@ public class Manager {
      * @param subtaskId идентификатор подзадачи, которую необходимо удалить
      */
     public void removeSubtaskById(long subtaskId) {
-        Subtask subtask = subtaskList.getOrDefault(subtaskId, null);
+        Subtask subtask = subtaskList.get(subtaskId);
         if (isNullTask(subtask)) {
             return;
         }

@@ -15,11 +15,13 @@ import java.util.*;
  * Класс Manager отвечает за управление и хранение каждого типа задач
  */
 public class InMemoryTaskManager implements TaskManager{
+    private final int MAX_HISTORY_SIZE = 10;
 
     private long taskId;
     private final Map<Long, BasicTask> basicTaskList;
     private final Map<Long, Subtask> subtaskList;
     private final Map<Long, Epic> epicList;
+    private final List<Task> historyList;
 
     /**
      * Конструктор класса Manager. Принимает в качестве параметра три мапы, хранящие различные типы задач.
@@ -32,11 +34,13 @@ public class InMemoryTaskManager implements TaskManager{
     public InMemoryTaskManager(
             Map<Long, BasicTask> basicTaskList,
             Map<Long, Subtask> subtaskList,
-            Map<Long, Epic> epicList
+            Map<Long, Epic> epicList,
+            List<Task> historyList
     ) {
         this.basicTaskList = basicTaskList;
         this.subtaskList = subtaskList;
         this.epicList = epicList;
+        this.historyList = historyList;
         taskId = 0;
     }
 
@@ -112,7 +116,9 @@ public class InMemoryTaskManager implements TaskManager{
      */
     @Override
     public BasicTask getBasicTaskById(long basicTaskId) {
-        return basicTaskList.get(basicTaskId);
+        BasicTask basicTask = basicTaskList.get(basicTaskId);
+        addToHistory(basicTask);
+        return basicTask;
     }
 
     /**
@@ -121,7 +127,9 @@ public class InMemoryTaskManager implements TaskManager{
      */
     @Override
     public Epic getEpicById(long epicId) {
-        return epicList.get(epicId);
+        Epic epic = epicList.get(epicId);
+        addToHistory(epic);
+        return epic;
     }
 
 
@@ -131,7 +139,9 @@ public class InMemoryTaskManager implements TaskManager{
      */
     @Override
     public Subtask getSubtaskById(long subtaskId) {
-        return subtaskList.get(subtaskId);
+        Subtask subtask = subtaskList.get(subtaskId);
+        addToHistory(subtask);
+        return subtask;
     }
 
 
@@ -174,7 +184,7 @@ public class InMemoryTaskManager implements TaskManager{
         subtask.setTaskId(id);
         subtaskList.put(id, subtask);
         long epicId = subtask.getEpicId();
-        Epic epic = getEpicById(epicId);
+        Epic epic = epicList.get(epicId);
         EpicService.addEpicSubtask(epic, id);
         EpicService.checkEpicStatus(epic, subtaskList);
     }
@@ -220,7 +230,7 @@ public class InMemoryTaskManager implements TaskManager{
         }
         subtaskList.put(subtaskId, subtask);
         long epicId = subtask.getEpicId();
-        Epic epic = getEpicById(epicId);
+        Epic epic = epicList.get(epicId);
         EpicService.checkEpicStatus(epic, subtaskList);
     }
 
@@ -265,9 +275,20 @@ public class InMemoryTaskManager implements TaskManager{
         }
         subtaskList.remove(subtaskId);
         long epicId = subtask.getEpicId();
-        Epic epic = getEpicById(epicId);
+        Epic epic = epicList.get(epicId);
         EpicService.removeEpicSubtask(epic, subtaskId);
         EpicService.checkEpicStatus(epic, subtaskList);
+    }
+
+    public List<Task> getHistory() {
+        return new ArrayList<>(historyList);
+    }
+
+    private void addToHistory(Task task) {
+        if (historyList.size() == MAX_HISTORY_SIZE) {
+            historyList.remove(0);
+        }
+        historyList.add(task);
     }
 
     private long generateId() {

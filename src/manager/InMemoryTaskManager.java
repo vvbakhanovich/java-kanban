@@ -116,9 +116,13 @@ public class InMemoryTaskManager implements TaskManager{
      */
     @Override
     public BasicTask getBasicTaskById(long basicTaskId) {
-        BasicTask basicTask = basicTaskList.get(basicTaskId);
-        historyManager.add(basicTask);
-        return basicTask;
+        if (basicTaskList.containsKey(basicTaskId)) {
+            BasicTask basicTask = basicTaskList.get(basicTaskId);
+            historyManager.add(basicTask);
+            return basicTask;
+        } else {
+            throw new NoSuchElementException("Задачи с id " + basicTaskId +" не существует.");
+        }
     }
 
     /**
@@ -127,9 +131,13 @@ public class InMemoryTaskManager implements TaskManager{
      */
     @Override
     public Epic getEpicById(long epicId) {
-        Epic epic = epicList.get(epicId);
-        historyManager.add(epic);
-        return epic;
+        if (epicList.containsKey(epicId)) {
+            Epic epic = epicList.get(epicId);
+            historyManager.add(epic);
+            return epic;
+        } else {
+            throw new NoSuchElementException("Эпика с id " + epicId +" не существует.");
+        }
     }
 
 
@@ -139,9 +147,13 @@ public class InMemoryTaskManager implements TaskManager{
      */
     @Override
     public Subtask getSubtaskById(long subtaskId) {
-        Subtask subtask = subtaskList.get(subtaskId);
-        historyManager.add(subtask);
-        return subtask;
+        if (subtaskList.containsKey(subtaskId)) {
+            Subtask subtask = subtaskList.get(subtaskId);
+            historyManager.add(subtask);
+            return subtask;
+        } else {
+            throw new NoSuchElementException("Подзадачи с id " + subtaskId + " не существует.");
+        }
     }
 
 
@@ -155,7 +167,6 @@ public class InMemoryTaskManager implements TaskManager{
         long id = generateId();
         basicTask.setTaskId(id);
         basicTaskList.put(id, basicTask);
-
     }
 
     /**

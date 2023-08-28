@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * Класс Manager отвечает за управление и хранение каждого типа задач
  */
-public class InMemoryTaskManager implements TaskManager{
+public class InMemoryTaskManager implements TaskManager {
 
     private long taskId;
     private final Map<Long, BasicTask> basicTaskList;
@@ -26,10 +26,10 @@ public class InMemoryTaskManager implements TaskManager{
      * Конструктор класса Manager. Принимает в качестве параметра три мапы, хранящие различные типы задач.
      * Инициализирует уникальный идентификатор, начинающийся с нуля.
      *
-     * @param basicTaskList    мапа, хранящая в качестве ключа идентификатор, а в качестве значения задачу
-     * @param subtaskList мапа, хранящая в качестве ключа идентификатор, а в качестве значения подзадачу
-     * @param epicList    мапа, хранящая в качестве ключа идентификатор, а в качестве значения эпик
-     * @param historyManager    объект, реализующий интерфейс HistoryManager, для хранения истории просмотров
+     * @param basicTaskList  мапа, хранящая в качестве ключа идентификатор, а в качестве значения задачу
+     * @param subtaskList    мапа, хранящая в качестве ключа идентификатор, а в качестве значения подзадачу
+     * @param epicList       мапа, хранящая в качестве ключа идентификатор, а в качестве значения эпик
+     * @param historyManager объект, реализующий интерфейс HistoryManager, для хранения истории просмотров
      */
     public InMemoryTaskManager(
             Map<Long, BasicTask> basicTaskList,
@@ -121,7 +121,7 @@ public class InMemoryTaskManager implements TaskManager{
             historyManager.add(basicTask);
             return basicTask;
         } else {
-            throw new NoSuchElementException("Задачи с id " + basicTaskId +" не существует.");
+            throw new NoSuchElementException("Задачи с id " + basicTaskId + " не существует.");
         }
     }
 
@@ -136,7 +136,7 @@ public class InMemoryTaskManager implements TaskManager{
             historyManager.add(epic);
             return epic;
         } else {
-            throw new NoSuchElementException("Эпика с id " + epicId +" не существует.");
+            throw new NoSuchElementException("Эпика с id " + epicId + " не существует.");
         }
     }
 
@@ -160,10 +160,12 @@ public class InMemoryTaskManager implements TaskManager{
     /**
      * Добавление задачи в мапу taskList. В начале генерируется уникальный идентификатор, затем происходит
      * добавление задачи с данным идентификатором в taskList.
+     *
      * @param basicTask задача, которую необходимо добавить в мапу для хранения
      */
     @Override
     public void add(BasicTask basicTask) {
+        Objects.requireNonNull(basicTask, "Попытка добавить пустую задачу.");
         long id = generateId();
         basicTask.setTaskId(id);
         basicTaskList.put(id, basicTask);
@@ -173,10 +175,12 @@ public class InMemoryTaskManager implements TaskManager{
      * Добавление эпика в мапу epicList. В начале генерируется уникальный идентификатор, затем происходит
      * добавление эпика с данным идентификатором в epicList. Изначально эпик создается с пустым списком подзадач и
      * статусом NEW.
+     *
      * @param epic эпик, который необходимо добавить в мапу для хранения
      */
     @Override
     public void add(Epic epic) {
+        Objects.requireNonNull(epic, "Попытка добавить пустой эпик.");
         long id = generateId();
         epic.setTaskId(id);
         epicList.put(id, epic);
@@ -187,10 +191,12 @@ public class InMemoryTaskManager implements TaskManager{
      * уникальный идентификатор, затем происходит добавление подзадачи с данным идентификатором в subtaskList. Так как
      * подзадача напрямую связана со своим эпиком, необходимо добавить ее идентификатор в список подзадач связанного
      * эпика. После чего требуется произвести обновление статуса эпика в соответствии со статусом новой подзадачи.
+     *
      * @param subtask подзадача, которую необходимо добавить в мапу для хранения
      */
     @Override
     public void add(Subtask subtask) {
+        Objects.requireNonNull(subtask, "Попытка добавить пустую подзадачу");
         long id = generateId();
         subtask.setTaskId(id);
         subtaskList.put(id, subtask);
@@ -202,97 +208,113 @@ public class InMemoryTaskManager implements TaskManager{
 
     /**
      * Обновление задачи
+     *
      * @param basicTask новая версия объекта с верным идентификатором передается в виде параметра
      */
     @Override
     public void update(BasicTask basicTask) {
+        Objects.requireNonNull(basicTask, "Попытка обновить пустую задачу.");
         long basicTaskId = basicTask.getTaskId();
-        Task currentTask = basicTaskList.get(basicTaskId);
-        if (isNullTask(currentTask)) {
-            return;
+        if (basicTaskList.containsKey(basicTaskId)) {
+            Task currentTask = basicTaskList.get(basicTaskId);
+            basicTaskList.put(basicTaskId, basicTask);
+        } else {
+            throw new NoSuchElementException("Задачи с id " + basicTaskId + " не существует.");
         }
-        basicTaskList.put(basicTaskId, basicTask);
     }
 
     /**
      * Обновление задачи
+     *
      * @param epic новая версия объекта с верным идентификатором передается в виде параметра
      */
     @Override
     public void update(Epic epic) {
+        Objects.requireNonNull(epic, "Попытка обновить пустой эпик.");
         long epicId = epic.getTaskId();
-        Epic currentEpic = epicList.get(epicId);
-        if (isNullTask(currentEpic)) {
-            return;
+        if (epicList.containsKey(epicId)) {
+            Epic currentEpic = epicList.get(epicId);
+            epicList.put(epicId, epic);
+        } else {
+            throw new NoSuchElementException("Эпика с id " + epicId + " не существует.");
         }
-        epicList.put(epicId, epic);
     }
 
     /**
      * Обновление задачи
+     *
      * @param subtask новая версия объекта с верным идентификатором передается в виде параметра
      */
     @Override
     public void update(Subtask subtask) {
+        Objects.requireNonNull(subtask, "Попытка обновить пустую задачу.");
         long subtaskId = subtask.getTaskId();
-        Subtask currentSubtask = subtaskList.get(subtaskId);
-        if (isNullTask(currentSubtask)) {
-            return;
+        if (subtaskList.containsKey(subtaskId)) {
+            Subtask currentSubtask = subtaskList.get(subtaskId);
+            subtaskList.put(subtaskId, subtask);
+            long epicId = subtask.getEpicId();
+            Epic epic = epicList.get(epicId);
+            EpicService.checkEpicStatus(epic, subtaskList);
+        } else {
+            throw new NoSuchElementException("Подзадачи с id " + subtaskId + " не существует.");
         }
-        subtaskList.put(subtaskId, subtask);
-        long epicId = subtask.getEpicId();
-        Epic epic = epicList.get(epicId);
-        EpicService.checkEpicStatus(epic, subtaskList);
     }
 
     /**
      * Удаление по идентификатору
+     *
      * @param basicTaskId идентификатор задачи, которую необходимо удалить
      */
     @Override
     public void removeBasicTaskById(long basicTaskId) {
-        Task task = basicTaskList.get(basicTaskId);
-        if (isNullTask(task)) {
-            return;
+        if (basicTaskList.containsKey(basicTaskId)) {
+            Task task = basicTaskList.get(basicTaskId);
+            basicTaskList.remove(basicTaskId);
+        } else {
+            throw new NoSuchElementException("Задачи с id " + basicTaskId + " не существует.");
         }
-        basicTaskList.remove(basicTaskId);
     }
 
     /**
      * Удаление по идентификатору. После удаления эпика, список его подзадач также удаляется
+     *
      * @param epicId идентификатор эпика, который необходимо удалить
      */
     @Override
     public void removeEpicById(long epicId) {
-        Epic epic = epicList.get(epicId);
-        if (isNullTask(epic)) {
-            return;
+        if (epicList.containsKey(epicId)) {
+            Epic epic = epicList.get(epicId);
+            // очистка списка подзадач удаляемого эпика
+            EpicService.removeAllEpicSubtasks(epic);
+            basicTaskList.remove(epicId);
+        } else {
+            throw new NoSuchElementException("Эпика с id " + epicId + " не существует.");
         }
-        // очистка списка подзадач удаляемого эпика
-        EpicService.removeAllEpicSubtasks(epic);
-        basicTaskList.remove(epicId);
     }
 
     /**
      * Удаление по идентификатору. После удаления подзадачи необходимо также удалить ее из списка подзадач эпика. После
      * чего обновить статус эпика.
+     *
      * @param subtaskId идентификатор подзадачи, которую необходимо удалить
      */
     @Override
     public void removeSubtaskById(long subtaskId) {
-        Subtask subtask = subtaskList.get(subtaskId);
-        if (isNullTask(subtask)) {
-            return;
+        if (subtaskList.containsKey(subtaskId)) {
+            Subtask subtask = subtaskList.get(subtaskId);
+            subtaskList.remove(subtaskId);
+            long epicId = subtask.getEpicId();
+            Epic epic = epicList.get(epicId);
+            EpicService.removeEpicSubtask(epic, subtaskId);
+            EpicService.checkEpicStatus(epic, subtaskList);
+        } else {
+            throw new NoSuchElementException("Подзадачи с id " + subtaskId + " не существует.");
         }
-        subtaskList.remove(subtaskId);
-        long epicId = subtask.getEpicId();
-        Epic epic = epicList.get(epicId);
-        EpicService.removeEpicSubtask(epic, subtaskId);
-        EpicService.checkEpicStatus(epic, subtaskList);
     }
 
     /**
      * Получение списка просмотров через historyManager
+     *
      * @return список просмотренных задач
      */
     @Override

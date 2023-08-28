@@ -16,6 +16,10 @@ public class InMemoryHistoryManager implements HistoryManager{
 
     private final List<Task> historyList;
 
+    /**
+     * При вызове конструктора можно выбрать реализацию интерфейса List для хранения истории просмотров задач.
+     * @param historyList список истории просмотров
+     */
     public InMemoryHistoryManager(List<Task> historyList) {
         this.historyList = historyList;
     }

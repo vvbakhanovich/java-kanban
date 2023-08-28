@@ -10,7 +10,9 @@ import java.util.HashMap;
 public class Managers {
 
     /**
-     * Данный метод возвращает объект-менеджер
+     * Данный метод возвращает объект-менеджер. При вызове конструктора есть возможность выбрать реализацию Map,
+     * в которой будут храниться задачи, а также реализацию HistoryManager. Так как данный менеджер default, он также
+     * использует в качестве HistoryManager defaultHistoryManager.
      * @return объект-менеджер
      */
     public static TaskManager getDefault() {

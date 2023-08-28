@@ -3,6 +3,7 @@ package manager;
 import tasks.BasicTask;
 import tasks.Epic;
 import tasks.Subtask;
+import tasks.Task;
 
 import java.util.List;
 
@@ -31,5 +32,7 @@ public interface TaskManager {
     void removeBasicTaskById(long basicTaskId);
     void removeEpicById(long epicId);
     void removeSubtaskById(long subtaskId);
+
+    List<Task> getHistory();
 
 }

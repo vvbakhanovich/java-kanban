@@ -12,11 +12,8 @@ import java.util.HashMap;
 public class Main {
 
     public static void main(String[] args) {
-        HistoryManager historyManager = Managers.getDefaultHistory();
-        TaskManager manager = new InMemoryTaskManager(
-                new HashMap<>(), new HashMap<>(),
-                new HashMap<>(), historyManager
-        );
+        TaskManager manager = Managers.getDefault();
+
         // создаем две простые задачи
         BasicTask task1 = BasicTask.create("Задача 1", "Описание задачи 1", Status.NEW);
         manager.add(task1);
@@ -29,8 +26,8 @@ public class Main {
 
         //печатаем историю просмотров
         System.out.println("\nИстория просмотров после прочтения двух простых задач");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Количество просмотренных задач:" + historyManager.getHistory().size());
+        System.out.println(manager.getHistory());
+        System.out.println("Количество просмотренных задач:" + manager.getHistory().size());
 
         //создаем эпик и две его подзадачи
         Epic epic1 = Epic.create("Эпик 1", "Описание эпика 1");
@@ -50,8 +47,8 @@ public class Main {
 
         System.out.println("\n===================\n");
         System.out.println("После просмотра эпика и двух подзадач, история просмотров:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Количество просмотренных задач:" + historyManager.getHistory().size());
+        System.out.println(manager.getHistory());
+        System.out.println("Количество просмотренных задач:" + manager.getHistory().size());
 
         //создаем еще один эпик с одной подзадачей
         Epic epic2 = Epic.create("Эпик 2", "Описание эпика 2");
@@ -67,8 +64,8 @@ public class Main {
 
         System.out.println("\n===================\n");
         System.out.println("После просмотра эпика и одной подзадачи, история просмотров:");
-        System.out.println(historyManager.getHistory());
-        System.out.println("Количество просмотренных задач:" + historyManager.getHistory().size());
+        System.out.println(manager.getHistory());
+        System.out.println("Количество просмотренных задач:" + manager.getHistory().size());
 
 
         //прочитаем еще пять любых задач, чтобы проверить, что размер списка равен 10 и задачи, добавленные первыми,
@@ -80,7 +77,7 @@ public class Main {
         manager.getSubtaskById(subtask3.getTaskId());
         System.out.println("\n=============\n");
         System.out.println("После считывания еще 5 задач, история просмотров:");
-        System.out.println(historyManager.getHistory());
-        System.out.println(historyManager.getHistory().size());
+        System.out.println(manager.getHistory());
+        System.out.println(manager.getHistory().size());
     }
 }

@@ -280,6 +280,14 @@ public class InMemoryTaskManager implements TaskManager{
         EpicService.checkEpicStatus(epic, subtaskList);
     }
 
+    /**
+     * Получение списка просмотров через historyManager
+     * @return список просмотренных задач
+     */
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
+    }
 
     private long generateId() {
         return taskId++;

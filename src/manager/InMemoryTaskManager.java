@@ -23,28 +23,19 @@ public class InMemoryTaskManager implements TaskManager {
     private final HistoryManager historyManager;
 
     /**
-     * Конструктор класса Manager. Принимает в качестве параметра три мапы, хранящие различные типы задач и объект,
-     * реализующий интерфейс HistoryManager. Так как конструктор передаются интерфейсы, то при его вызове существует
-     * возможность выбрать подходящую реализацию Map и HistoryManager соответственно. (Используется в классе Manager).
-     * При необходимости можно использовать уже существующие мапы путем передачи их в качестве аргументов.
-     * Инициализирует уникальный идентификатор, начинающийся с нуля.
+     * Конструктор класса Manager. Принимает в качестве параметра объект, реализующий интерфейс HistoryManager.
      *
-     * @param basicTaskList  мапа, хранящая в качестве ключа идентификатор, а в качестве значения задачу
-     * @param subtaskList    мапа, хранящая в качестве ключа идентификатор, а в качестве значения подзадачу
-     * @param epicList       мапа, хранящая в качестве ключа идентификатор, а в качестве значения эпик
+     *
      * @param historyManager объект, реализующий интерфейс HistoryManager, для хранения истории просмотров
      */
     public InMemoryTaskManager(
-            Map<Long, BasicTask> basicTaskList,
-            Map<Long, Subtask> subtaskList,
-            Map<Long, Epic> epicList,
             HistoryManager historyManager
     ) {
-        this.basicTaskList = basicTaskList;
-        this.subtaskList = subtaskList;
-        this.epicList = epicList;
-        this.historyManager = historyManager;
+        basicTaskList = new HashMap<>();
+        subtaskList = new HashMap<>();
+        epicList = new HashMap<>();
         taskId = 0;
+        this.historyManager = historyManager;
     }
 
     /**

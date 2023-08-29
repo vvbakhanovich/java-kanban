@@ -10,13 +10,14 @@ import java.util.HashMap;
 public class Managers {
 
     /**
-     * Данный метод возвращает объект-менеджер. При вызове конструктора есть возможность выбрать реализацию Map,
-     * в которой будут храниться задачи, а также реализацию HistoryManager. Так как данный менеджер default, он также
-     * использует в качестве HistoryManager defaultHistoryManager.
+     * Данный метод возвращает объект-менеджер. При вызове конструктора есть возможность выбрать реализацию
+     * HistoryManager. Так как данный менеджер default, он также использует в качестве HistoryManager
+     * defaultHistoryManager.
+     *
      * @return объект-менеджер
      */
     public static TaskManager getDefault() {
-        return new InMemoryTaskManager(new HashMap<>(), new HashMap<>(), new HashMap<>(), getDefaultHistory());
+        return new InMemoryTaskManager(getDefaultHistory());
     }
 
     /**
@@ -24,7 +25,7 @@ public class Managers {
      * @return менеджер истории
      */
     public static HistoryManager getDefaultHistory() {
-        return new InMemoryHistoryManager(new ArrayList<>());
+        return new InMemoryHistoryManager();
     }
 
 

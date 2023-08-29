@@ -25,7 +25,6 @@ public class InMemoryTaskManager implements TaskManager {
     /**
      * Конструктор класса Manager. Принимает в качестве параметра объект, реализующий интерфейс HistoryManager.
      *
-     *
      * @param historyManager объект, реализующий интерфейс HistoryManager, для хранения истории просмотров
      */
     public InMemoryTaskManager(
@@ -319,10 +318,4 @@ public class InMemoryTaskManager implements TaskManager {
     private long generateId() {
         return taskId++;
     }
-
-    private boolean isNullTask(Task task) {
-        return Objects.isNull(task);
-    }
-
-
 }

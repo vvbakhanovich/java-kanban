@@ -157,7 +157,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @param basicTask задача, которую необходимо добавить в мапу для хранения
      */
     @Override
-    public void add(BasicTask basicTask) {
+    public void addBasicTask(BasicTask basicTask) {
         Objects.requireNonNull(basicTask, "Попытка добавить пустую задачу.");
         long id = generateId();
         basicTask.setTaskId(id);
@@ -172,7 +172,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @param epic эпик, который необходимо добавить в мапу для хранения
      */
     @Override
-    public void add(Epic epic) {
+    public void addEpic(Epic epic) {
         Objects.requireNonNull(epic, "Попытка добавить пустой эпик.");
         long id = generateId();
         epic.setTaskId(id);
@@ -188,7 +188,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @param subtask подзадача, которую необходимо добавить в мапу для хранения
      */
     @Override
-    public void add(Subtask subtask) {
+    public void addSubtask(Subtask subtask) {
         Objects.requireNonNull(subtask, "Попытка добавить пустую подзадачу");
         long id = generateId();
         subtask.setTaskId(id);
@@ -205,7 +205,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @param basicTask новая версия объекта с верным идентификатором передается в виде параметра
      */
     @Override
-    public void update(BasicTask basicTask) {
+    public void updateBasicTask(BasicTask basicTask) {
         Objects.requireNonNull(basicTask, "Попытка обновить пустую задачу.");
         long basicTaskId = basicTask.getTaskId();
         if (basicTaskList.containsKey(basicTaskId)) {
@@ -222,7 +222,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @param epic новая версия объекта с верным идентификатором передается в виде параметра
      */
     @Override
-    public void update(Epic epic) {
+    public void updateEpic(Epic epic) {
         Objects.requireNonNull(epic, "Попытка обновить пустой эпик.");
         long epicId = epic.getTaskId();
         if (epicList.containsKey(epicId)) {
@@ -239,7 +239,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @param subtask новая версия объекта с верным идентификатором передается в виде параметра
      */
     @Override
-    public void update(Subtask subtask) {
+    public void updateSubtask(Subtask subtask) {
         Objects.requireNonNull(subtask, "Попытка обновить пустую задачу.");
         long subtaskId = subtask.getTaskId();
         if (subtaskList.containsKey(subtaskId)) {

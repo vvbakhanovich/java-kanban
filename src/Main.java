@@ -1,13 +1,9 @@
-import manager.HistoryManager;
-import manager.InMemoryTaskManager;
 import manager.Managers;
 import manager.TaskManager;
 import tasks.BasicTask;
 import tasks.Epic;
 import tasks.Status;
 import tasks.Subtask;
-
-import java.util.HashMap;
 
 public class Main {
 
@@ -16,9 +12,9 @@ public class Main {
 
         // создаем две простые задачи
         BasicTask task1 = BasicTask.create("Задача 1", "Описание задачи 1", Status.NEW);
-        manager.add(task1);
+        manager.addBasicTask(task1);
         BasicTask task2 = BasicTask.create("Задача 2", "Описание задачи 2", Status.NEW);
-        manager.add(task2);
+        manager.addBasicTask(task2);
 
         // вызываем метод getBasicTaskById, чтобы задача внеслись в историю просмотров
         manager.getBasicTaskById(task1.getTaskId());
@@ -31,14 +27,14 @@ public class Main {
 
         //создаем эпик и две его подзадачи
         Epic epic1 = Epic.create("Эпик 1", "Описание эпика 1");
-        manager.add(epic1);
+        manager.addEpic(epic1);
 
         Subtask subtask1 = Subtask.create("Подазадача 1", "Описание подзадачи 1",
                 Status.NEW, epic1.getTaskId());
         Subtask subtask2 = Subtask.create("Подзадача 2", "Описание подзадачи 2",
                 Status.NEW, epic1.getTaskId());
-        manager.add(subtask1);
-        manager.add(subtask2);
+        manager.addSubtask(subtask1);
+        manager.addSubtask(subtask2);
 
         //получаем созданные задачи
         manager.getEpicById(epic1.getTaskId());
@@ -52,11 +48,11 @@ public class Main {
 
         //создаем еще один эпик с одной подзадачей
         Epic epic2 = Epic.create("Эпик 2", "Описание эпика 2");
-        manager.add(epic2);
+        manager.addEpic(epic2);
 
         Subtask subtask3 = Subtask.create("Подзадача 3", "Описание подзадачи 3",
                 Status.NEW, epic2.getTaskId());
-        manager.add(subtask3);
+        manager.addSubtask(subtask3);
 
         //считываем задачи
         manager.getEpicById(epic2.getTaskId());

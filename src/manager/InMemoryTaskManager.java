@@ -209,7 +209,6 @@ public class InMemoryTaskManager implements TaskManager {
         Objects.requireNonNull(basicTask, "Попытка обновить пустую задачу.");
         long basicTaskId = basicTask.getTaskId();
         if (basicTaskList.containsKey(basicTaskId)) {
-            Task currentTask = basicTaskList.get(basicTaskId);
             basicTaskList.put(basicTaskId, basicTask);
         } else {
             throw new NoSuchElementException("Задачи с id " + basicTaskId + " не существует.");
@@ -226,7 +225,6 @@ public class InMemoryTaskManager implements TaskManager {
         Objects.requireNonNull(epic, "Попытка обновить пустой эпик.");
         long epicId = epic.getTaskId();
         if (epicList.containsKey(epicId)) {
-            Epic currentEpic = epicList.get(epicId);
             epicList.put(epicId, epic);
         } else {
             throw new NoSuchElementException("Эпика с id " + epicId + " не существует.");
@@ -243,7 +241,6 @@ public class InMemoryTaskManager implements TaskManager {
         Objects.requireNonNull(subtask, "Попытка обновить пустую задачу.");
         long subtaskId = subtask.getTaskId();
         if (subtaskList.containsKey(subtaskId)) {
-            Subtask currentSubtask = subtaskList.get(subtaskId);
             subtaskList.put(subtaskId, subtask);
             long epicId = subtask.getEpicId();
             Epic epic = epicList.get(epicId);
@@ -261,7 +258,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeBasicTaskById(long basicTaskId) {
         if (basicTaskList.containsKey(basicTaskId)) {
-            Task task = basicTaskList.get(basicTaskId);
             basicTaskList.remove(basicTaskId);
         } else {
             throw new NoSuchElementException("Задачи с id " + basicTaskId + " не существует.");

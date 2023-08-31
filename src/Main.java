@@ -29,6 +29,8 @@ public class Main {
         Epic epic1 = Epic.create("Эпик 1", "Описание эпика 1");
         manager.addEpic(epic1);
 
+        System.out.println("epic1 " + manager.getEpicById(2));
+
         Subtask subtask1 = Subtask.create("Подазадача 1", "Описание подзадачи 1",
                 Status.NEW, epic1.getTaskId());
         Subtask subtask2 = Subtask.create("Подзадача 2", "Описание подзадачи 2",

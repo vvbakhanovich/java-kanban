@@ -12,9 +12,19 @@ public class Subtask extends Task{
         this.epicId = epicId;
     }
 
+    private Subtask(Subtask subtask, long taskId) {
+        super(subtask, taskId);
+        this.epicId = subtask.getEpicId();
+    }
+
     public static Subtask create(String taskName, String description, Status status, long epicId) {
         return new Subtask(taskName, description, status, epicId);
     }
+
+    public static Subtask createFromWithId(Subtask subtask, long subtaskId) {
+        return new Subtask(subtask, subtaskId);
+    }
+
 
     public long getEpicId() {
         return epicId;

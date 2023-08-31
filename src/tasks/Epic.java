@@ -7,16 +7,25 @@ import java.util.Objects;
 public class Epic extends Task {
 
     // у каждого эпика есть свой список подзадач
-    private final List<Long> subtaskList;
+    private final List<Long> subtaskList = new ArrayList<>();
 
     private Epic(String taskName, String description) {
         super(taskName, description, Status.NEW);
-        subtaskList = new ArrayList<>();
+    }
+
+    private Epic(Epic epic, long epicId) {
+        super(epic, epicId);
+        this.status = epic.getStatus();
     }
 
     public static Epic create(String taskName, String description) {
         return new Epic(taskName, description);
     }
+
+    public static Epic createFromWithId(Epic epic, long epicId) {
+        return new Epic(epic, epicId);
+    }
+
 
     // возвращает копию списка подзадач
     public List<Long> getSubtaskList() {

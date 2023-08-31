@@ -6,7 +6,15 @@ public class BasicTask extends Task{
         super(taskName, description, status);
     }
 
+    protected BasicTask(BasicTask basicTask, long id) {
+        super(basicTask, id);
+    }
+
     public static BasicTask create(String taskName, String description, Status status) {
         return new BasicTask(taskName, description, status);
+    }
+
+    public static BasicTask createFromWithId(BasicTask basicTask, long basicTaskId) {
+        return new BasicTask(basicTask, basicTaskId);
     }
 }

@@ -157,11 +157,12 @@ public class InMemoryTaskManager implements TaskManager {
      * @param basicTask задача, которую необходимо добавить в мапу для хранения
      */
     @Override
-    public void addBasicTask(BasicTask basicTask) {
+    public long addBasicTask(BasicTask basicTask) {
         Objects.requireNonNull(basicTask, "Попытка добавить пустую задачу.");
         long id = generateId();
         BasicTask newTask = BasicTask.createFromWithId(basicTask, id);
         basicTaskList.put(id, newTask);
+        return id;
     }
 
     /**
@@ -172,11 +173,12 @@ public class InMemoryTaskManager implements TaskManager {
      * @param epic эпик, который необходимо добавить в мапу для хранения
      */
     @Override
-    public void addEpic(Epic epic) {
+    public long addEpic(Epic epic) {
         Objects.requireNonNull(epic, "Попытка добавить пустой эпик.");
         long id = generateId();
         Epic newEpic = Epic.createFromWithId(epic, id);
         epicList.put(id, newEpic);
+        return id;
     }
 
     /**
@@ -188,7 +190,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @param subtask подзадача, которую необходимо добавить в мапу для хранения
      */
     @Override
-    public void addSubtask(Subtask subtask) {
+    public long addSubtask(Subtask subtask) {
         Objects.requireNonNull(subtask, "Попытка добавить пустую подзадачу");
         long id = generateId();
         Subtask newSubtask = Subtask.createFromWithId(subtask, id);
@@ -197,6 +199,7 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epicList.get(epicId);
         EpicService.addEpicSubtask(epic, id);
         EpicService.checkEpicStatus(epic, subtaskList);
+        return id;
     }
 
     /**

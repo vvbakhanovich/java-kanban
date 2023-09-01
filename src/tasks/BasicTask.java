@@ -2,11 +2,11 @@ package tasks;
 
 public class BasicTask extends Task{
 
-    protected BasicTask(String taskName, String description, Status status) {
+    private BasicTask(String taskName, String description, Status status) {
         super(taskName, description, status);
     }
 
-    protected BasicTask(BasicTask basicTask, long id) {
+    private BasicTask(BasicTask basicTask, long id) {
         super(basicTask, id);
     }
 

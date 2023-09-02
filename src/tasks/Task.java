@@ -8,12 +8,23 @@ public abstract class Task{
     protected String description;
     protected Status status;
 
+    /**
+     * Создает новую задачу
+     * @param taskName имя задачи
+     * @param description описание задачи
+     * @param status статус задачи
+     */
     protected Task(String taskName, String description, Status status) {
         this.taskName = taskName;
         this.description = description;
         this.status = status;
     }
 
+    /**
+     * Создает новую задачу на основе переданной в качестве параметра. Также присваивает новой задаче переданный id
+     * @param task задача, на основе которой создается новая
+     * @param taskId идентификатор, который необходимо присвоить новой задаче
+     */
     protected Task(Task task, long taskId) {
         this.taskName = task.getTaskName();
         this.description = task.getDescription();

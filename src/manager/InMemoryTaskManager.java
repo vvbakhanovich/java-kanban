@@ -155,13 +155,15 @@ public class InMemoryTaskManager implements TaskManager {
      * добавление задачи с данным идентификатором в taskList.
      *
      * @param basicTask задача, которую необходимо добавить в мапу для хранения
+     * @return id добавленной задачи
      */
     @Override
-    public void addBasicTask(BasicTask basicTask) {
+    public long addBasicTask(BasicTask basicTask) {
         Objects.requireNonNull(basicTask, "Попытка добавить пустую задачу.");
         long id = generateId();
         basicTask.setTaskId(id);
         basicTaskList.put(id, basicTask);
+        return id;
     }
 
     /**
@@ -170,13 +172,15 @@ public class InMemoryTaskManager implements TaskManager {
      * статусом NEW.
      *
      * @param epic эпик, который необходимо добавить в мапу для хранения
+     * @return id добавленного эпика
      */
     @Override
-    public void addEpic(Epic epic) {
+    public long addEpic(Epic epic) {
         Objects.requireNonNull(epic, "Попытка добавить пустой эпик.");
         long id = generateId();
         epic.setTaskId(id);
         epicList.put(id, epic);
+        return id;
     }
 
     /**
@@ -186,9 +190,10 @@ public class InMemoryTaskManager implements TaskManager {
      * эпика. После чего требуется произвести обновление статуса эпика в соответствии со статусом новой подзадачи.
      *
      * @param subtask подзадача, которую необходимо добавить в мапу для хранения
+     * @return id добавленной подзадачи
      */
     @Override
-    public void addSubtask(Subtask subtask) {
+    public long addSubtask(Subtask subtask) {
         Objects.requireNonNull(subtask, "Попытка добавить пустую подзадачу");
         long id = generateId();
         subtask.setTaskId(id);
@@ -197,6 +202,7 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epicList.get(epicId);
         EpicService.addEpicSubtask(epic, id);
         EpicService.checkEpicStatus(epic, subtaskList);
+        return id;
     }
 
     /**

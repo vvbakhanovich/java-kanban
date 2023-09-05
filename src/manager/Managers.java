@@ -1,7 +1,5 @@
 package manager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Со временем в приложении трекера появится несколько реализаций интерфейса TaskManager. На данном классе будет лежать

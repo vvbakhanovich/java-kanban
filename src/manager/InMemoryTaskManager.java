@@ -190,28 +190,34 @@ public class InMemoryTaskManager implements TaskManager {
      * эпика. После чего требуется произвести обновление статуса эпика в соответствии со статусом новой подзадачи.
      *
      * @param subtask подзадача, которую необходимо добавить в мапу для хранения
+     * @throws NoSuchElementException если не существует эпика с epicId
      * @return id добавленной подзадачи
      */
     @Override
-    public long addSubtask(Subtask subtask) {
+    public long addSubtask(Subtask subtask) throws NoSuchElementException{
         Objects.requireNonNull(subtask, "Попытка добавить пустую подзадачу");
-        long id = generateId();
-        subtask.setTaskId(id);
-        subtaskList.put(id, subtask);
-        long epicId = subtask.getEpicId();
-        Epic epic = epicList.get(epicId);
-        EpicService.addEpicSubtask(epic, id);
-        EpicService.checkEpicStatus(epic, subtaskList);
-        return id;
+        if (epicList.containsKey(subtask.getEpicId())) {
+            long id = generateId();
+            subtask.setTaskId(id);
+            subtaskList.put(id, subtask);
+            long epicId = subtask.getEpicId();
+            Epic epic = epicList.get(epicId);
+            EpicService.addEpicSubtask(epic, id);
+            EpicService.checkEpicStatus(epic, subtaskList);
+            return id;
+        } else {
+            throw new NoSuchElementException("Эпика с id " + subtask.getEpicId() + " не существует.");
+        }
     }
 
     /**
      * Обновление задачи
      *
      * @param basicTask новая версия объекта с верным идентификатором передается в виде параметра
+     * @throws NoSuchElementException если задачи с таким id нет в basicTaskList
      */
     @Override
-    public void updateBasicTask(BasicTask basicTask) {
+    public void updateBasicTask(BasicTask basicTask) throws NoSuchElementException{
         Objects.requireNonNull(basicTask, "Попытка обновить пустую задачу.");
         long basicTaskId = basicTask.getTaskId();
         if (basicTaskList.containsKey(basicTaskId)) {
@@ -225,9 +231,10 @@ public class InMemoryTaskManager implements TaskManager {
      * Обновление задачи
      *
      * @param epic новая версия объекта с верным идентификатором передается в виде параметра
+     * @throws NoSuchElementException если эпика с таким id нет в epicList
      */
     @Override
-    public void updateEpic(Epic epic) {
+    public void updateEpic(Epic epic) throws NoSuchElementException{
         Objects.requireNonNull(epic, "Попытка обновить пустой эпик.");
         long epicId = epic.getTaskId();
         if (epicList.containsKey(epicId)) {
@@ -241,9 +248,10 @@ public class InMemoryTaskManager implements TaskManager {
      * Обновление задачи
      *
      * @param subtask новая версия объекта с верным идентификатором передается в виде параметра
+     * @throws NoSuchElementException если подзадачи с таким id нет в subtaskList
      */
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public void updateSubtask(Subtask subtask) throws NoSuchElementException{
         Objects.requireNonNull(subtask, "Попытка обновить пустую задачу.");
         long subtaskId = subtask.getTaskId();
         if (subtaskList.containsKey(subtaskId)) {
@@ -260,9 +268,10 @@ public class InMemoryTaskManager implements TaskManager {
      * Удаление по идентификатору
      *
      * @param basicTaskId идентификатор задачи, которую необходимо удалить
+     * @throws NoSuchElementException если задачи с таким id нет в basicTaskList
      */
     @Override
-    public void removeBasicTaskById(long basicTaskId) {
+    public void removeBasicTaskById(long basicTaskId) throws NoSuchElementException{
         if (basicTaskList.containsKey(basicTaskId)) {
             basicTaskList.remove(basicTaskId);
         } else {
@@ -274,9 +283,10 @@ public class InMemoryTaskManager implements TaskManager {
      * Удаление по идентификатору. После удаления эпика, список его подзадач также удаляется
      *
      * @param epicId идентификатор эпика, который необходимо удалить
+     * @throws NoSuchElementException если эпика с таким id нет в epicList
      */
     @Override
-    public void removeEpicById(long epicId) {
+    public void removeEpicById(long epicId) throws NoSuchElementException{
         if (epicList.containsKey(epicId)) {
             Epic epic = epicList.get(epicId);
             // очистка списка подзадач удаляемого эпика
@@ -292,9 +302,10 @@ public class InMemoryTaskManager implements TaskManager {
      * чего обновить статус эпика.
      *
      * @param subtaskId идентификатор подзадачи, которую необходимо удалить
+     * @throws NoSuchElementException если подзадачи с таким id нет в subtaskList
      */
     @Override
-    public void removeSubtaskById(long subtaskId) {
+    public void removeSubtaskById(long subtaskId) throws NoSuchElementException{
         if (subtaskList.containsKey(subtaskId)) {
             Subtask subtask = subtaskList.get(subtaskId);
             subtaskList.remove(subtaskId);

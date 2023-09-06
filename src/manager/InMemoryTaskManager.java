@@ -33,7 +33,7 @@ public class InMemoryTaskManager implements TaskManager {
         basicTaskList = new HashMap<>();
         subtaskList = new HashMap<>();
         epicList = new HashMap<>();
-        taskId = 0;
+        taskId = 1;
         this.historyManager = historyManager;
     }
 

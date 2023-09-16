@@ -94,6 +94,9 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.remove(taskId);
         }
         epicList.clear();
+        for (Long taskId : subtaskList.keySet()) {
+            historyManager.remove(taskId);
+        }
         subtaskList.clear();
     }
 

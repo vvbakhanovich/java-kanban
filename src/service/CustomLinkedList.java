@@ -1,0 +1,109 @@
+package service;
+
+import tasks.Task;
+
+import java.util.*;
+
+/**
+ * Собственная реализация LinkedList. Позволяет совершать операцию удаления элемента за O(1) за счет хранения Node во
+ * внутренней таблице HashMap.
+ */
+public class CustomLinkedList {
+    private Node head;
+    private Node tail;
+    private final Map<Long, Node> nodes = new HashMap<>();
+    private int size = 0;
+
+    /**
+     * Добавление элемента типа Task в конец связного списка.
+     * @param task задача для сохранения
+     */
+    public void linkLast(Task task) {
+        if (nodes.containsKey(task.getTaskId())) {
+            removeNode(nodes.get(task.getTaskId()));
+        }
+        if (size == 0) {
+            head = new Node(null, task, null);
+            tail = head;
+            nodes.put(task.getTaskId(), head);
+        } else {
+            Node currNode = tail;
+            tail = new Node(currNode, task, null);
+            tail.prev = currNode;
+            currNode.next = tail;
+            nodes.put(task.getTaskId(), tail);
+        }
+        size++;
+    }
+
+    /**
+     * Получение списка истории задач, находящихся в CustomLinkedList
+     * @return список задач
+     */
+    public List<Task> getTasks() {
+        List<Task> taskList = new ArrayList<>();
+        Node currNode = head;
+
+        if (head == null) {
+            return taskList;
+        }
+
+        while (currNode != null) {
+            taskList.add(currNode.getValue());
+            currNode = currNode.next;
+        }
+        return taskList;
+    }
+
+    /**
+     * Удаление задачи из списка просмотров по id
+     * @param id идентификатор задачи, которую требуется удалить
+     */
+    public void remove(Long id) {
+        if (nodes.containsKey(id)) {
+            Node node = nodes.get(id);
+            removeNode(node);
+        }
+    }
+
+    /**
+     * Присваивание новых ссылок при удалении Node
+     * @param node Node, в которой хранится задача, которую требуется удалить
+     */
+    private void removeNode(Node node) {
+        Node nodeNext = node.next;
+        Node nodePrevious = node.prev;
+
+        if (nodeNext == null) {
+            nodePrevious.next = null;
+            tail = nodePrevious;
+        } else if (nodePrevious == null) {
+            nodeNext.prev = null;
+            head = nodeNext;
+        } else {
+            nodeNext.prev = nodePrevious;
+            nodePrevious.next = nodeNext;
+        }
+        size--;
+    }
+
+    /**
+     * Внутренний класс для CustomLinkedList. Содержит ссылку на предыдущий и следующий узел, а также ссылку на задачу,
+     * которую он хранит.
+     */
+    private static class Node {
+        private Node prev;
+        private Task value;
+        private Node next;
+
+        public Node(Node prev, Task value, Node next) {
+            this.next = next;
+            this.value = value;
+            this.prev = prev;
+        }
+
+        public Task getValue() {
+            return value;
+        }
+    }
+}

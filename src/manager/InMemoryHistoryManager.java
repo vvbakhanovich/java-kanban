@@ -1,44 +1,47 @@
 package manager;
 
+import service.CustomLinkedList;
 import tasks.Task;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Класс, ответственный за хранение списка просмотренных задач
  */
-public class InMemoryHistoryManager implements HistoryManager{
-    /**
-     * Максимальный размер списка просмотров
-     */
-    private final int MAX_HISTORY_SIZE = 10;
+public class InMemoryHistoryManager implements HistoryManager {
 
-    private final List<Task> historyList;
+    private final CustomLinkedList historyList;
 
     public InMemoryHistoryManager() {
-        historyList = new LinkedList<>();
+        historyList = new CustomLinkedList();
     }
 
     /**
      * Сохранение задачи в список истории просмотров
+     *
      * @param task задача, которую необходимо сохранить
      */
     @Override
     public void add(Task task) {
-        if (historyList.size() == MAX_HISTORY_SIZE) {
-            historyList.remove(0);
-        }
-        historyList.add(task);
+        historyList.linkLast(task);
     }
 
     /**
-     * Метод, возвращающий список просмотров
+     * Удаление задачи из истории просмотров
+     * @param id идентификатор задачи, которую требуется удалить
+     */
+    @Override
+    public void remove(long id) {
+        historyList.remove(id);
+    }
+
+    /**
+     * Возвращает список просмотров
+     *
      * @return список просмотров
      */
     @Override
     public List<Task> getHistory() {
-        return new LinkedList<>(historyList);
+        return historyList.getTasks();
     }
-
 }

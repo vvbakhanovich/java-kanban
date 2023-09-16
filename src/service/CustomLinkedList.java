@@ -93,7 +93,7 @@ public class CustomLinkedList {
      */
     private static class Node {
         private Node prev;
-        private Task value;
+        private final Task value;
         private Node next;
 
         public Node(Node prev, Task value, Node next) {

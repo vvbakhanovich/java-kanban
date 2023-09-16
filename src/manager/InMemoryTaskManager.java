@@ -304,6 +304,10 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeEpicById(long epicId) throws NoSuchElementException{
         if (epicList.containsKey(epicId)) {
             Epic epic = epicList.get(epicId);
+            //удаление подзадач эпика из истории просмотров
+            for (Long taskId : epic.getSubtaskList()) {
+                historyManager.remove(taskId);
+            }
             // очистка списка подзадач удаляемого эпика
             EpicService.removeAllEpicSubtasks(epic);
             basicTaskList.remove(epicId);

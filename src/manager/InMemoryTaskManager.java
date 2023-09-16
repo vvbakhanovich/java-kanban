@@ -77,9 +77,7 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public void removeAllBasicTasks() {
-        for (Long taskId : basicTaskList.keySet()) {
-            historyManager.remove(taskId);
-        }
+        removeTasksFromHistory(basicTaskList.keySet());
         basicTaskList.clear();
 
     }
@@ -90,13 +88,9 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public void removeAllEpics() {
-        for (Long taskId : epicList.keySet()) {
-            historyManager.remove(taskId);
-        }
+        removeTasksFromHistory(epicList.keySet());
         epicList.clear();
-        for (Long taskId : subtaskList.keySet()) {
-            historyManager.remove(taskId);
-        }
+        removeTasksFromHistory(subtaskList.keySet());
         subtaskList.clear();
     }
 
@@ -105,9 +99,7 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public void removeAllSubtasks() {
-        for (Long taskId : subtaskList.keySet()) {
-            historyManager.remove(taskId);
-        }
+        removeTasksFromHistory(subtaskList.keySet());
 
         subtaskList.clear();
 
@@ -305,9 +297,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epicList.containsKey(epicId)) {
             Epic epic = epicList.get(epicId);
             //удаление подзадач эпика из истории просмотров
-            for (Long taskId : epic.getSubtaskList()) {
-                historyManager.remove(taskId);
-            }
+            removeTasksFromHistory(epic.getSubtaskList());
             // очистка списка подзадач удаляемого эпика
             EpicService.removeAllEpicSubtasks(epic);
             basicTaskList.remove(epicId);
@@ -351,5 +341,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     private long generateId() {
         return taskId++;
+    }
+
+    private void removeTasksFromHistory(Collection<Long> keySet) {
+        for (Long taskId : keySet) {
+            historyManager.remove(taskId);
+        }
     }
 }

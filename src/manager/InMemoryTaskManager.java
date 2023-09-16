@@ -77,7 +77,11 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public void removeAllBasicTasks() {
+        for (Long taskId : basicTaskList.keySet()) {
+            historyManager.remove(taskId);
+        }
         basicTaskList.clear();
+
     }
 
 
@@ -86,6 +90,9 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public void removeAllEpics() {
+        for (Long taskId : epicList.keySet()) {
+            historyManager.remove(taskId);
+        }
         epicList.clear();
         subtaskList.clear();
     }
@@ -95,6 +102,10 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public void removeAllSubtasks() {
+        for (Long taskId : subtaskList.keySet()) {
+            historyManager.remove(taskId);
+        }
+
         subtaskList.clear();
 
         for (Epic epic : epicList.values()) {
@@ -274,6 +285,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeBasicTaskById(long basicTaskId) throws NoSuchElementException{
         if (basicTaskList.containsKey(basicTaskId)) {
             basicTaskList.remove(basicTaskId);
+            historyManager.remove(basicTaskId);
         } else {
             throw new NoSuchElementException("Задачи с id " + basicTaskId + " не существует.");
         }
@@ -292,6 +304,7 @@ public class InMemoryTaskManager implements TaskManager {
             // очистка списка подзадач удаляемого эпика
             EpicService.removeAllEpicSubtasks(epic);
             basicTaskList.remove(epicId);
+            historyManager.remove(epicId);
         } else {
             throw new NoSuchElementException("Эпика с id " + epicId + " не существует.");
         }
@@ -313,6 +326,7 @@ public class InMemoryTaskManager implements TaskManager {
             Epic epic = epicList.get(epicId);
             EpicService.removeEpicSubtask(epic, subtaskId);
             EpicService.checkEpicStatus(epic, subtaskList);
+            historyManager.remove(subtaskId);
         } else {
             throw new NoSuchElementException("Подзадачи с id " + subtaskId + " не существует.");
         }

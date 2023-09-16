@@ -32,6 +32,15 @@ public class InMemoryHistoryManager implements HistoryManager{
         historyList.add(task);
     }
 
+    @Override
+    public void remove(long id) {
+        for(Task task : historyList) {
+            if(task.getTaskId() == id) {
+                historyList.remove(task);
+            }
+        }
+    }
+
     /**
      * Метод, возвращающий список просмотров
      * @return список просмотров

@@ -52,12 +52,13 @@ public class Main {
         System.out.println("Количество просмотренных задач:" + manager.getHistory().size());
 
         //просматриваем оставшиеся задачи
-        manager.getEpicById(epic1Id);
+        manager.getEpicById(epic2Id);
         manager.getSubtaskById(subtask1Id);
         manager.getSubtaskById(subtask2Id);
         manager.getSubtaskById(subtask3Id);
+        manager.getEpicById(epic1Id);
         manager.getBasicTaskById(task2Id);
-        manager.getEpicById(epic2Id);
+
 
         System.out.println("\n===================\n");
         System.out.println("После однократного просмотра оставшихся задач:");
@@ -83,9 +84,9 @@ public class Main {
         System.out.println("Количество просмотренных задач:" + manager.getHistory().size());
 
         //тесты по удалению задач
-        manager.removeEpicById(epic1Id);
+        manager.removeEpicById(epic2Id);
         System.out.println("\n===================\n");
-        System.out.println("После удаления epic1 (из начала списка):");
+        System.out.println("После удаления epic2 (из начала списка):");
         System.out.println(manager.getHistory());
         System.out.println("Количество просмотренных задач:" + manager.getHistory().size());
 
@@ -101,9 +102,9 @@ public class Main {
         System.out.println(manager.getHistory());
         System.out.println("Количество просмотренных задач:" + manager.getHistory().size());
 
-        manager.removeAllEpics();
+        manager.removeEpicById(epic1Id);
         System.out.println("\n===================\n");
-        System.out.println("После удаления всех эпиков:");
+        System.out.println("После удаления epic1 (вместе удаляются и подзадачи):");
         System.out.println(manager.getHistory());
         System.out.println("Количество просмотренных задач:" + manager.getHistory().size());
     }

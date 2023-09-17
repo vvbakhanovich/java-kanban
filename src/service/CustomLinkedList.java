@@ -44,12 +44,8 @@ public class CustomLinkedList {
         List<Task> taskList = new ArrayList<>();
         Node currNode = head;
 
-        if (head == null) {
-            return taskList;
-        }
-
         while (currNode != null) {
-            taskList.add(currNode.getValue());
+            taskList.add(currNode.getTask());
             currNode = currNode.next;
         }
         return taskList;
@@ -94,17 +90,17 @@ public class CustomLinkedList {
      */
     private static class Node {
         private Node prev;
-        private final Task value;
+        private final Task task;
         private Node next;
 
-        public Node(Node prev, Task value, Node next) {
+        public Node(Node prev, Task task, Node next) {
             this.next = next;
-            this.value = value;
+            this.task = task;
             this.prev = prev;
         }
 
-        public Task getValue() {
-            return value;
+        public Task getTask() {
+            return task;
         }
     }
 }

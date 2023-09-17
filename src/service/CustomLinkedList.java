@@ -12,7 +12,6 @@ public class CustomLinkedList {
     private Node head;
     private Node tail;
     private final Map<Long, Node> nodes = new HashMap<>();
-    private int size = 0;
 
     /**
      * Добавление элемента типа Task в конец связного списка.
@@ -22,7 +21,7 @@ public class CustomLinkedList {
         if (nodes.containsKey(task.getTaskId())) {
             removeNode(nodes.get(task.getTaskId()));
         }
-        if (size == 0) {
+        if (head == null) {
             head = new Node(null, task, null);
             tail = head;
             nodes.put(task.getTaskId(), head);
@@ -33,7 +32,6 @@ public class CustomLinkedList {
             currNode.next = tail;
             nodes.put(task.getTaskId(), tail);
         }
-        size++;
     }
 
     /**
@@ -81,7 +79,6 @@ public class CustomLinkedList {
             nodeNext.prev = nodePrevious;
             nodePrevious.next = nodeNext;
         }
-        size--;
     }
 
     /**

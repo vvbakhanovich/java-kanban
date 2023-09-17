@@ -63,6 +63,7 @@ public class CustomLinkedList {
         if (nodes.containsKey(id)) {
             Node node = nodes.get(id);
             removeNode(node);
+            nodes.remove(id);
         }
     }
 

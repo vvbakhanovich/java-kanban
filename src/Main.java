@@ -20,7 +20,7 @@ public class Main {
         Epic epic1 = Epic.create("Эпик 1", "Описание эпика 1");
         long epic1Id = manager.addEpic(epic1);
 
-        Subtask subtask1 = Subtask.create("Подазадача 1", "Описание подзадачи 1",
+        Subtask subtask1 = Subtask.create("Подзадача 1", "Описание подзадачи 1",
                 Status.NEW, epic1Id);
         Subtask subtask2 = Subtask.create("Подзадача 2", "Описание подзадачи 2",
                 Status.NEW, epic1Id);
@@ -42,7 +42,7 @@ public class Main {
         System.out.println(manager.getHistory());
         System.out.println("Количество просмотренных задач:" + manager.getHistory().size());
 
-        //просматриваем 2й эпик
+        //просматриваем 2-й эпик
         manager.getEpicById(epic2Id);
 
         //печатаем историю просмотров

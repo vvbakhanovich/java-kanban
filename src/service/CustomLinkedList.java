@@ -63,7 +63,7 @@ public class CustomLinkedList {
 
     /**
      * Присваивание новых ссылок при удалении Node
-     * @param node Node, в которой хранится задача, которую требуется удалить
+     * @param node Node, которую требуется удалить
      */
     private void removeNode(Node node) {
         Node nodeNext = node.next;

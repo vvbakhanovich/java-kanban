@@ -7,6 +7,8 @@ public abstract class Task{
     protected long taskId;
     protected String description;
     protected Status status;
+    protected final TaskTypes taskType = null;
+
 
     protected Task(String taskName, String description, Status status) {
         this.taskName = taskName;
@@ -36,6 +38,10 @@ public abstract class Task{
 
     public Status getStatus() {
         return status;
+    }
+
+    public TaskTypes getTaskType() {
+        return taskType;
     }
 
     public void setStatus(Status status) {

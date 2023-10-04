@@ -6,6 +6,8 @@ import java.util.Objects;
 
 public class Epic extends Task {
 
+    private final TaskTypes taskType = TaskTypes.EPIC;
+
     // у каждого эпика есть свой список подзадач
     private final List<Long> subtaskList;
 
@@ -21,6 +23,10 @@ public class Epic extends Task {
     // возвращает копию списка подзадач
     public List<Long> getSubtaskList() {
         return subtaskList;
+    }
+
+    public TaskTypes getTaskType() {
+        return taskType;
     }
 
     @Override

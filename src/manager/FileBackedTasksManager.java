@@ -1,19 +1,24 @@
 package manager;
 
-import service.TasksSaveRestore;
+import exceptions.ManagerLoadException;
+import exceptions.ManagerSaveException;
+import utility.EpicService;
+import utility.TasksSaveRestore;
 import tasks.*;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.nio.file.Paths;
+import java.util.*;
 
+/**
+ * Данный класс после каждой операции автоматически сохраняет все задачи и их состояние в файл. В конструкторе менеджер
+ * получает путь файла для автосохранения.
+ */
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private final String path;
+    private final Path path;
 
-    public FileBackedTasksManager(String path) {
+    public FileBackedTasksManager(Path path) {
         super();
         this.path = path;
     }
@@ -57,7 +62,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public BasicTask getBasicTaskById(long basicTaskId) throws NoSuchElementException{
+    public BasicTask getBasicTaskById(long basicTaskId) throws NoSuchElementException {
         if (basicTaskList.containsKey(basicTaskId)) {
             BasicTask basicTask = basicTaskList.get(basicTaskId);
             historyManager.add(basicTask);
@@ -69,7 +74,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Epic getEpicById(long epicId) throws NoSuchElementException{
+    public Epic getEpicById(long epicId) throws NoSuchElementException {
         if (epicList.containsKey(epicId)) {
             Epic epic = epicList.get(epicId);
             historyManager.add(epic);
@@ -81,7 +86,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Subtask getSubtaskById(long subtaskId) throws NoSuchElementException{
+    public Subtask getSubtaskById(long subtaskId) throws NoSuchElementException {
         if (subtaskList.containsKey(subtaskId)) {
             Subtask subtask = subtaskList.get(subtaskId);
             historyManager.add(subtask);
@@ -151,18 +156,80 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return super.getHistory();
     }
 
-    @Override
-    protected long generateId() {
-        return super.generateId();
+    /**
+     * Восстановление состояния FileBackedTasksManager из файла
+     *
+     * @param path файл, в котором хранятся сохраненные данные задач и истории просмотров
+     * @return объект FileBackedTasksManager
+     */
+    public static FileBackedTasksManager loadFromFile(Path path) {
+        FileBackedTasksManager manager = new FileBackedTasksManager(path);
+        try (BufferedReader br = new BufferedReader(new FileReader(path.toFile()))) {
+            //считываем заголовок и не обрабатываем
+            br.readLine();
+            //строка с первой задачей
+            String task = br.readLine();
+            while (!task.isEmpty()) {
+                Task restoredTask = Objects.requireNonNull(TasksSaveRestore.stringToTask(task)
+                        , "Файл не содержит задач.");
+                restoreTask(restoredTask, manager);
+                task = br.readLine();
+            }
+            String history = br.readLine();
+            List<Long> historyIds = TasksSaveRestore.historyFromString(history);
+            restoreHistory(historyIds, manager);
+        } catch (IOException e) {
+            System.out.println("Ошибка при попытке считать данные из файла");
+            throw new ManagerLoadException(e);
+        }
+        return manager;
     }
 
-    @Override
-    protected void removeTasksFromHistory(Collection<Long> keySet) {
-        super.removeTasksFromHistory(keySet);
+    /**
+     * Восстановление задачи, считанной из файла. В зависимости от типа, задача помещается в соответсвующую мапу
+     *
+     * @param restoredTask задача, считанная из файла
+     * @param manager      менеджер, в который требуется сохранить задачу
+     */
+    private static void restoreTask(Task restoredTask, FileBackedTasksManager manager) {
+        long taskId = restoredTask.getTaskId();
+        if (restoredTask instanceof BasicTask) {
+            manager.basicTaskList.put(taskId, ((BasicTask) restoredTask));
+        } else if (restoredTask instanceof Epic) {
+            manager.epicList.put(taskId, (Epic) restoredTask);
+        } else if (restoredTask instanceof Subtask) {
+            Subtask subtask = (Subtask) restoredTask;
+            long subtaskId = subtask.getTaskId();
+            manager.subtaskList.put(subtaskId, subtask);
+            Epic epic = manager.epicList.get(subtask.getEpicId());
+            EpicService.addEpicSubtask(epic, subtaskId);
+        }
     }
 
+    /**
+     * Восстановление истории просмотров, считанной из файла.
+     *
+     * @param historyIds список id из истории просмотров
+     * @param manager    менеджер, в котором требуется восстановить историю
+     */
+    private static void restoreHistory(List<Long> historyIds, FileBackedTasksManager manager) {
+        for (Long taskId : historyIds) {
+
+            if (manager.basicTaskList.containsKey(taskId)) {
+                manager.historyManager.add(manager.basicTaskList.get(taskId));
+            } else if (manager.epicList.containsKey(taskId)) {
+                manager.historyManager.add(manager.epicList.get(taskId));
+            } else {
+                manager.historyManager.add(manager.subtaskList.get(taskId));
+            }
+        }
+    }
+
+    /**
+     * Сохранение текущего состояния менеджера в файл. Сохраняются все созданные задачи и история просмотров.
+     */
     private void save() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path.toFile()))) {
             String header = "id,type,name,description,status,epic\n";
             bw.write(header);
             //проходимся по всем типам задач, преобразуем в строку и записываем в файл
@@ -179,49 +246,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             bw.write("\n");
 
             bw.write(TasksSaveRestore.historyToString(historyManager));
-            // проходимся по истории, считываем айдишники просмотров и записываем в файл
+            // проходимся по истории, считываем id просмотров и записываем в файл
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Ошибка при сохранении файла");
+            throw new ManagerSaveException(e);
         }
     }
 
-    public static FileBackedTasksManager restoreFromFile(File file) throws IOException {
-        FileBackedTasksManager manager = new FileBackedTasksManager(file.getPath());
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            //считываем заголовок и не обрабатываем
-            br.readLine();
-            String task = br.readLine();
-            while(!task.isEmpty()) {
-                try {
-                    Task restoredTask = TasksSaveRestore.stringToTask(task);
-                    if (restoredTask instanceof BasicTask) {
-                        manager.addBasicTask((BasicTask) restoredTask);
-                    } else if (restoredTask instanceof Epic) {
-                        manager.addEpic((Epic) restoredTask);
-                    } else if (restoredTask instanceof Subtask) {
-                        manager.addSubtask((Subtask) restoredTask);
-                    }
-                } catch (NoSuchFieldException e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-        }
-        return manager;
-    }
+    public static void main(String[] args) {
 
-    public String getPath() {
-        return path;
-    }
+        /*FileBackedTasksManager manager = new FileBackedTasksManager(Paths.get("test.csv"));
 
-    public static void main(String[] args) throws IOException {
-
-        FileBackedTasksManager manager = new FileBackedTasksManager("test.csv");
-
-//            FileBackedTasksManager manager = restoreFromFile(new File("test.csv"));
-//        System.out.println(manager.getBasicTaskList());
-//        System.out.println(manager.getBasicTaskList());
-//        System.out.println(manager.getBasicTaskList());
         BasicTask task1 = BasicTask.create("Задача 1", "Описание задачи 1", Status.NEW);
         manager.addBasicTask(task1);
 
@@ -229,19 +265,33 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         manager.addEpic(epic1);
 
         Subtask subtask1 = Subtask.create("Подзадача 1", "Описание подзадачи 1",
-                Status.NEW, epic1.getTaskId());
+                Status.DONE, epic1.getTaskId());
         manager.addSubtask(subtask1);
+
+        BasicTask task2 = BasicTask.create("Задача 2", "Описание задачи 2", Status.DONE);
+        manager.addBasicTask(task2);
+
+        Epic epic2 = Epic.create("Эпик 2", "Описание эпика 2");
+        manager.addEpic(epic2);
+
+        Subtask subtask2 = Subtask.create("Подзадача 2", "Описание подзадачи 2",
+                Status.NEW, epic2.getTaskId());
+        manager.addSubtask(subtask2);
+        Subtask subtask3 = Subtask.create("Подзадача 3", "Описание подзадачи 3",
+                Status.DONE, epic2.getTaskId());
+        manager.addSubtask(subtask3);
 
         manager.getBasicTaskById(task1.getTaskId());
         manager.getEpicById(epic1.getTaskId());
-        manager.getSubtaskById(subtask1.getTaskId());
-//
-//        try {
-//            System.out.println(Files.readString(Path.of(manager.getPath())));
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
+        manager.getSubtaskById(subtask1.getTaskId());*/
 
+
+        // Данный закомментированный код считывает сохраненные данные и печатает восстановленные задачи и историю.
+        FileBackedTasksManager manager = loadFromFile(Paths.get("test.csv"));
+        System.out.println(manager.getBasicTaskList());
+        System.out.println(manager.getEpicList());
+        System.out.println(manager.getSubtaskList());
+        System.out.println(manager.getHistory());
     }
 }
 

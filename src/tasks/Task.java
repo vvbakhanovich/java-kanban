@@ -16,6 +16,13 @@ public abstract class Task{
         this.status = status;
     }
 
+    protected Task(long taskId, String taskName, String description, Status status) {
+        this.taskId = taskId;
+        this.taskName = taskName;
+        this.description = description;
+        this.status = status;
+    }
+
     public String getTaskName() {
         return taskName;
     }

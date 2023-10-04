@@ -1,8 +1,9 @@
 package tasks;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
-public class Subtask extends Task{
+public class Subtask extends Task {
 
     private final TaskTypes taskType = TaskTypes.SUBTASK;
 
@@ -14,14 +15,24 @@ public class Subtask extends Task{
         this.epicId = epicId;
     }
 
+    private Subtask(long taskId, String taskName, String description, Status status, long epicId) {
+        super(taskId, taskName, description, status);
+        this.epicId = epicId;
+    }
+
     public static Subtask create(String taskName, String description, Status status, long epicId) {
         return new Subtask(taskName, description, status, epicId);
+    }
+
+    public static Subtask createFromFile(long taskId, String taskName, String description, Status status, long epicId) {
+        return new Subtask(taskId, taskName, description, status, epicId);
     }
 
     public long getEpicId() {
         return epicId;
     }
 
+    @Override
     public TaskTypes getTaskType() {
         return taskType;
     }

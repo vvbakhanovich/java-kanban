@@ -16,8 +16,17 @@ public class Epic extends Task {
         subtaskList = new ArrayList<>();
     }
 
+    private Epic(long taskId, String taskName, String description, Status status) {
+        super(taskId, taskName, description, status);
+        subtaskList = new ArrayList<>();
+    }
+
     public static Epic create(String taskName, String description) {
         return new Epic(taskName, description);
+    }
+
+    public static Epic createFromFile(long taskId, String taskName, String description, Status status) {
+        return new Epic(taskId, taskName, description, status);
     }
 
     // возвращает копию списка подзадач
@@ -25,6 +34,7 @@ public class Epic extends Task {
         return subtaskList;
     }
 
+    @Override
     public TaskTypes getTaskType() {
         return taskType;
     }

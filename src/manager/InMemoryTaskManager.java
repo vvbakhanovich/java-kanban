@@ -336,11 +336,11 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
-    protected long generateId() {
+    private long generateId() {
         return taskId++;
     }
 
-    protected void removeTasksFromHistory(Collection<Long> keySet) {
+    private void removeTasksFromHistory(Collection<Long> keySet) {
         for (Long taskId : keySet) {
             historyManager.remove(taskId);
         }

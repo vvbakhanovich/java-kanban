@@ -27,11 +27,12 @@ public class BasicTask extends Task {
 
     @Override
     public String toString() {
-        return "{" +
+        return "BasicTask{" +
                 "taskName='" + taskName + '\'' +
                 ", taskId=" + taskId +
                 ", description='" + description + '\'' +
                 ", status=" + status +
+                ", taskType=" + taskType +
                 '}';
     }
 }

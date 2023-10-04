@@ -16,25 +16,23 @@ import java.util.*;
  */
 public class InMemoryTaskManager implements TaskManager {
 
-    private long taskId;
-    private final Map<Long, BasicTask> basicTaskList;
-    private final Map<Long, Subtask> subtaskList;
-    private final Map<Long, Epic> epicList;
-    private final HistoryManager historyManager;
+    protected long taskId;
+    protected final Map<Long, BasicTask> basicTaskList;
+    protected final Map<Long, Subtask> subtaskList;
+    protected final Map<Long, Epic> epicList;
+    protected final HistoryManager historyManager;
 
     /**
      * Конструктор класса Manager. Принимает в качестве параметра объект, реализующий интерфейс HistoryManager.
      *
-     * @param historyManager объект, реализующий интерфейс HistoryManager, для хранения истории просмотров
+     *
      */
-    public InMemoryTaskManager(
-            HistoryManager historyManager
-    ) {
+    public InMemoryTaskManager() {
         basicTaskList = new HashMap<>();
         subtaskList = new HashMap<>();
         epicList = new HashMap<>();
         taskId = 1;
-        this.historyManager = historyManager;
+        historyManager = Managers.getDefaultHistory();
     }
 
     /**
@@ -164,12 +162,12 @@ public class InMemoryTaskManager implements TaskManager {
      * @return id добавленной задачи
      */
     @Override
-    public long addBasicTask(BasicTask basicTask) {
+    public void addBasicTask(BasicTask basicTask) {
         Objects.requireNonNull(basicTask, "Попытка добавить пустую задачу.");
         long id = generateId();
         basicTask.setTaskId(id);
         basicTaskList.put(id, basicTask);
-        return id;
+
     }
 
     /**
@@ -181,12 +179,12 @@ public class InMemoryTaskManager implements TaskManager {
      * @return id добавленного эпика
      */
     @Override
-    public long addEpic(Epic epic) {
+    public void addEpic(Epic epic) {
         Objects.requireNonNull(epic, "Попытка добавить пустой эпик.");
         long id = generateId();
         epic.setTaskId(id);
         epicList.put(id, epic);
-        return id;
+
     }
 
     /**
@@ -200,7 +198,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @return id добавленной подзадачи
      */
     @Override
-    public long addSubtask(Subtask subtask) throws NoSuchElementException{
+    public void addSubtask(Subtask subtask) throws NoSuchElementException{
         Objects.requireNonNull(subtask, "Попытка добавить пустую подзадачу");
         if (epicList.containsKey(subtask.getEpicId())) {
             long id = generateId();
@@ -210,7 +208,6 @@ public class InMemoryTaskManager implements TaskManager {
             Epic epic = epicList.get(epicId);
             EpicService.addEpicSubtask(epic, id);
             EpicService.checkEpicStatus(epic, subtaskList);
-            return id;
         } else {
             throw new NoSuchElementException("Эпика с id " + subtask.getEpicId() + " не существует.");
         }
@@ -339,11 +336,11 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
-    private long generateId() {
+    protected long generateId() {
         return taskId++;
     }
 
-    private void removeTasksFromHistory(Collection<Long> keySet) {
+    protected void removeTasksFromHistory(Collection<Long> keySet) {
         for (Long taskId : keySet) {
             historyManager.remove(taskId);
         }

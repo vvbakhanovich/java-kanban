@@ -256,7 +256,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
 
-        /*FileBackedTasksManager manager = new FileBackedTasksManager(Paths.get("test.csv"));
+        FileBackedTasksManager manager = new FileBackedTasksManager(Paths.get("test.csv"));
 
         BasicTask task1 = BasicTask.create("Задача 1", "Описание задачи 1", Status.NEW);
         manager.addBasicTask(task1);
@@ -283,15 +283,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         manager.getBasicTaskById(task1.getTaskId());
         manager.getEpicById(epic1.getTaskId());
-        manager.getSubtaskById(subtask1.getTaskId());*/
+        manager.getSubtaskById(subtask1.getTaskId());
 
 
         // Данный закомментированный код считывает сохраненные данные и печатает восстановленные задачи и историю.
-        FileBackedTasksManager manager = loadFromFile(Paths.get("test.csv"));
+       /* FileBackedTasksManager manager = loadFromFile(Paths.get("test.csv"));
         System.out.println(manager.getBasicTaskList());
         System.out.println(manager.getEpicList());
         System.out.println(manager.getSubtaskList());
-        System.out.println(manager.getHistory());
+        System.out.println(manager.getHistory());*/
     }
 }
 

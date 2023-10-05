@@ -10,7 +10,7 @@ public class ManagerLoadException extends RuntimeException{
         super(message);
     }
 
-    public ManagerLoadException(Throwable cause) {
+    public ManagerLoadException(Exception cause) {
         super(cause);
     }
 }

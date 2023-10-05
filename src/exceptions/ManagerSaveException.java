@@ -9,7 +9,7 @@ public class ManagerSaveException extends RuntimeException{
         super(message);
     }
 
-    public ManagerSaveException(Throwable cause) {
+    public ManagerSaveException(Exception cause) {
         super(cause);
     }
 }

@@ -24,8 +24,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     /**
      * Конструктор класса Manager. Принимает в качестве параметра объект, реализующий интерфейс HistoryManager.
-     *
-     *
      */
     public InMemoryTaskManager() {
         basicTaskList = new HashMap<>();
@@ -167,7 +165,6 @@ public class InMemoryTaskManager implements TaskManager {
         long id = generateId();
         basicTask.setTaskId(id);
         basicTaskList.put(id, basicTask);
-
     }
 
     /**
@@ -184,7 +181,6 @@ public class InMemoryTaskManager implements TaskManager {
         long id = generateId();
         epic.setTaskId(id);
         epicList.put(id, epic);
-
     }
 
     /**
@@ -194,11 +190,11 @@ public class InMemoryTaskManager implements TaskManager {
      * эпика. После чего требуется произвести обновление статуса эпика в соответствии со статусом новой подзадачи.
      *
      * @param subtask подзадача, которую необходимо добавить в мапу для хранения
-     * @throws NoSuchElementException если не существует эпика с epicId
      * @return id добавленной подзадачи
+     * @throws NoSuchElementException если не существует эпика с epicId
      */
     @Override
-    public void addSubtask(Subtask subtask) throws NoSuchElementException{
+    public void addSubtask(Subtask subtask) {
         Objects.requireNonNull(subtask, "Попытка добавить пустую подзадачу");
         if (epicList.containsKey(subtask.getEpicId())) {
             long id = generateId();
@@ -220,7 +216,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @throws NoSuchElementException если задачи с таким id нет в basicTaskList
      */
     @Override
-    public void updateBasicTask(BasicTask basicTask) throws NoSuchElementException{
+    public void updateBasicTask(BasicTask basicTask) {
         Objects.requireNonNull(basicTask, "Попытка обновить пустую задачу.");
         long basicTaskId = basicTask.getTaskId();
         if (basicTaskList.containsKey(basicTaskId)) {
@@ -237,7 +233,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @throws NoSuchElementException если эпика с таким id нет в epicList
      */
     @Override
-    public void updateEpic(Epic epic) throws NoSuchElementException{
+    public void updateEpic(Epic epic) {
         Objects.requireNonNull(epic, "Попытка обновить пустой эпик.");
         long epicId = epic.getTaskId();
         if (epicList.containsKey(epicId)) {
@@ -254,7 +250,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @throws NoSuchElementException если подзадачи с таким id нет в subtaskList
      */
     @Override
-    public void updateSubtask(Subtask subtask) throws NoSuchElementException{
+    public void updateSubtask(Subtask subtask) {
         Objects.requireNonNull(subtask, "Попытка обновить пустую задачу.");
         long subtaskId = subtask.getTaskId();
         if (subtaskList.containsKey(subtaskId)) {
@@ -274,7 +270,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @throws NoSuchElementException если задачи с таким id нет в basicTaskList
      */
     @Override
-    public void removeBasicTaskById(long basicTaskId) throws NoSuchElementException{
+    public void removeBasicTaskById(long basicTaskId) {
         if (basicTaskList.containsKey(basicTaskId)) {
             basicTaskList.remove(basicTaskId);
             historyManager.remove(basicTaskId);
@@ -290,7 +286,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @throws NoSuchElementException если эпика с таким id нет в epicList
      */
     @Override
-    public void removeEpicById(long epicId) throws NoSuchElementException{
+    public void removeEpicById(long epicId) {
         if (epicList.containsKey(epicId)) {
             Epic epic = epicList.get(epicId);
             //удаление подзадач эпика из истории просмотров
@@ -312,7 +308,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @throws NoSuchElementException если подзадачи с таким id нет в subtaskList
      */
     @Override
-    public void removeSubtaskById(long subtaskId) throws NoSuchElementException{
+    public void removeSubtaskById(long subtaskId) {
         if (subtaskList.containsKey(subtaskId)) {
             Subtask subtask = subtaskList.get(subtaskId);
             subtaskList.remove(subtaskId);

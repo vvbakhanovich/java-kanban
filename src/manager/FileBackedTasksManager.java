@@ -90,43 +90,43 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addSubtask(Subtask subtask) throws NoSuchElementException {
+    public void addSubtask(Subtask subtask) {
         super.addSubtask(subtask);
         save();
     }
 
     @Override
-    public void updateBasicTask(BasicTask basicTask) throws NoSuchElementException {
+    public void updateBasicTask(BasicTask basicTask) {
         super.updateBasicTask(basicTask);
         save();
     }
 
     @Override
-    public void updateEpic(Epic epic) throws NoSuchElementException {
+    public void updateEpic(Epic epic) {
         super.updateEpic(epic);
         save();
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) throws NoSuchElementException {
+    public void updateSubtask(Subtask subtask) {
         super.updateSubtask(subtask);
         save();
     }
 
     @Override
-    public void removeBasicTaskById(long basicTaskId) throws NoSuchElementException {
+    public void removeBasicTaskById(long basicTaskId) {
         super.removeBasicTaskById(basicTaskId);
         save();
     }
 
     @Override
-    public void removeEpicById(long epicId) throws NoSuchElementException {
+    public void removeEpicById(long epicId) {
         super.removeEpicById(epicId);
         save();
     }
 
     @Override
-    public void removeSubtaskById(long subtaskId) throws NoSuchElementException {
+    public void removeSubtaskById(long subtaskId) {
         super.removeSubtaskById(subtaskId);
         save();
     }

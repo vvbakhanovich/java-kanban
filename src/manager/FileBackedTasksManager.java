@@ -24,26 +24,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public List<BasicTask> getBasicTaskList() {
-        return super.getBasicTaskList();
-    }
-
-    @Override
-    public List<Epic> getEpicList() {
-        return super.getEpicList();
-    }
-
-    @Override
-    public List<Subtask> getSubtaskList() {
-        return super.getSubtaskList();
-    }
-
-    @Override
-    public List<Long> getEpicSubtaskList(Epic epic) {
-        return super.getEpicSubtaskList(epic);
-    }
-
-    @Override
     public void removeAllBasicTasks() {
         super.removeAllBasicTasks();
         save();
@@ -149,11 +129,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public void removeSubtaskById(long subtaskId) throws NoSuchElementException {
         super.removeSubtaskById(subtaskId);
         save();
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        return super.getHistory();
     }
 
     /**

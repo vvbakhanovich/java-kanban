@@ -42,7 +42,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public BasicTask getBasicTaskById(long basicTaskId) throws NoSuchElementException {
+    public BasicTask getBasicTaskById(long basicTaskId) {
         if (basicTaskList.containsKey(basicTaskId)) {
             BasicTask basicTask = basicTaskList.get(basicTaskId);
             historyManager.add(basicTask);
@@ -54,7 +54,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Epic getEpicById(long epicId) throws NoSuchElementException {
+    public Epic getEpicById(long epicId) {
         if (epicList.containsKey(epicId)) {
             Epic epic = epicList.get(epicId);
             historyManager.add(epic);
@@ -66,7 +66,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Subtask getSubtaskById(long subtaskId) throws NoSuchElementException {
+    public Subtask getSubtaskById(long subtaskId) {
         if (subtaskList.containsKey(subtaskId)) {
             Subtask subtask = subtaskList.get(subtaskId);
             historyManager.add(subtask);

@@ -7,6 +7,7 @@ import utility.TasksSaveRestore;
 import tasks.*;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -139,7 +140,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      */
     public static FileBackedTasksManager loadFromFile(Path path) {
         FileBackedTasksManager manager = new FileBackedTasksManager(path);
-        try (BufferedReader br = new BufferedReader(new FileReader(path.toFile()))) {
+        try (BufferedReader br = Files.newBufferedReader(path)) {
             //считываем заголовок и не обрабатываем
             br.readLine();
             //строка с первой задачей
@@ -204,7 +205,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * Сохранение текущего состояния менеджера в файл. Сохраняются все созданные задачи и история просмотров.
      */
     private void save() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path.toFile()))) {
+        try (BufferedWriter bw = Files.newBufferedWriter(path)) {
             String header = "id,type,name,description,status,epic\n";
             bw.write(header);
             //проходимся по всем типам задач, преобразуем в строку и записываем в файл

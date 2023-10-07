@@ -19,9 +19,9 @@ import java.util.*;
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path path;
 
-    public FileBackedTasksManager(Path path) {
+    public FileBackedTasksManager(String path) {
         super();
-        this.path = path;
+        this.path = Paths.get(path);
     }
 
     @Override
@@ -138,9 +138,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * @param path файл, в котором хранятся сохраненные данные задач и истории просмотров
      * @return объект FileBackedTasksManager
      */
-    public static FileBackedTasksManager loadFromFile(Path path) {
+    public static FileBackedTasksManager loadFromFile(String path) {
         FileBackedTasksManager manager = new FileBackedTasksManager(path);
-        try (BufferedReader br = Files.newBufferedReader(path)) {
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(path))) {
             //считываем заголовок и не обрабатываем
             br.readLine();
             //строка с первой задачей
@@ -232,7 +232,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
 
-        FileBackedTasksManager manager = new FileBackedTasksManager(Paths.get("src/resources/test.csv"));
+        FileBackedTasksManager manager = new FileBackedTasksManager("src/resources/test.csv");
 
         BasicTask task1 = BasicTask.create("Задача 1", "Описание задачи 1", Status.NEW);
         manager.addBasicTask(task1);

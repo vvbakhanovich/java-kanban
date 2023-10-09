@@ -81,7 +81,7 @@ public final class TasksSaveRestore {
         StringBuilder sb = new StringBuilder();
         String separator = "";
         for (Task task : historyManager.getHistory()) {
-            sb.append(separator + task.getTaskId());
+            sb.append(separator).append(task.getTaskId());
             separator = ",";
         }
         return sb.toString();

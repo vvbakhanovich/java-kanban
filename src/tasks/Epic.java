@@ -6,19 +6,19 @@ import java.util.Objects;
 
 public class Epic extends Task {
 
-    private final TaskTypes taskType = TaskTypes.EPIC;
-
     // у каждого эпика есть свой список подзадач
     private final List<Long> subtaskList;
 
     private Epic(String taskName, String description) {
         super(taskName, description, Status.NEW);
         subtaskList = new ArrayList<>();
+        taskType = TaskTypes.EPIC;
     }
 
     private Epic(long taskId, String taskName, String description, Status status) {
         super(taskId, taskName, description, status);
         subtaskList = new ArrayList<>();
+        taskType = TaskTypes.EPIC;
     }
 
     public static Epic create(String taskName, String description) {
@@ -32,11 +32,6 @@ public class Epic extends Task {
     // возвращает копию списка подзадач
     public List<Long> getSubtaskList() {
         return subtaskList;
-    }
-
-    @Override
-    public TaskTypes getTaskType() {
-        return taskType;
     }
 
     @Override

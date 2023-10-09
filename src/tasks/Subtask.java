@@ -1,11 +1,8 @@
 package tasks;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class Subtask extends Task {
-
-    private final TaskTypes taskType = TaskTypes.SUBTASK;
 
     // у каждой подзадачи есть ссылка на эпик, к которому она относится
     private final long epicId;
@@ -13,11 +10,13 @@ public class Subtask extends Task {
     private Subtask(String taskName, String description, Status status, long epicId) {
         super(taskName, description, status);
         this.epicId = epicId;
+        taskType = TaskTypes.SUBTASK;
     }
 
     private Subtask(long taskId, String taskName, String description, Status status, long epicId) {
         super(taskId, taskName, description, status);
         this.epicId = epicId;
+        taskType = TaskTypes.SUBTASK;
     }
 
     public static Subtask create(String taskName, String description, Status status, long epicId) {
@@ -30,11 +29,6 @@ public class Subtask extends Task {
 
     public long getEpicId() {
         return epicId;
-    }
-
-    @Override
-    public TaskTypes getTaskType() {
-        return taskType;
     }
 
     @Override

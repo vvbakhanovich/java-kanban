@@ -7,7 +7,7 @@ public abstract class Task{
     protected long taskId;
     protected String description;
     protected Status status;
-    protected final TaskTypes taskType = null;
+    protected TaskTypes taskType;
 
 
     protected Task(String taskName, String description, Status status) {

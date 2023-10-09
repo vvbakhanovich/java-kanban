@@ -11,35 +11,50 @@ import java.util.List;
  */
 public final class TasksSaveRestore {
 
-    private TasksSaveRestore() {}
+    private TasksSaveRestore() {
+    }
 
     /**
      * Преобразование задачи в строку формата csv
+     *
      * @param task задача, которую требуется преобразовать
      * @return строковое представление задачи
      */
     public static String taskToString(Task task) {
-        if (task instanceof BasicTask) {
-            return String.format("%d,%s,%s,%s,%s\n", task.getTaskId(), task.getTaskType(), task.getTaskName(),
-                    task.getDescription(), task.getStatus());
-        } else if (task instanceof Epic) {
-            return String.format("%d,%s,%s,%s,%s\n", task.getTaskId(), task.getTaskType(), task.getTaskName(),
-                    task.getDescription(), task.getStatus());
-        } else if (task instanceof Subtask) {
-            Subtask subtask = (Subtask) task;
-            return String.format("%d,%s,%s,%s,%s,%s\n", subtask.getTaskId(), subtask.getTaskType(), subtask.getTaskName(),
-                    subtask.getDescription(), subtask.getStatus(), subtask.getEpicId());
-        } else {
-            return null;
+        String delimiter = ",";
+        TaskTypes type = task.getTaskType();
+
+        switch (type) {
+            case BASIC_TASK:
+            case EPIC:
+                return String.join(delimiter,
+                        String.valueOf(task.getTaskId()),
+                        task.getTaskType().toString(),
+                        task.getTaskName(),
+                        task.getDescription(),
+                        task.getStatus().toString());
+            case SUBTASK:
+                Subtask subtask = (Subtask) task;
+                return String.join(delimiter,
+                        String.valueOf(subtask.getTaskId()),
+                        subtask.getTaskType().toString(),
+                        subtask.getTaskName(),
+                        subtask.getDescription(),
+                        subtask.getStatus().toString(),
+                        String.valueOf(subtask.getEpicId()));
+            default:
+                throw new AssertionError("Несуществующий тип задачи: " + type);
         }
+
     }
 
     /**
      * Преобразование строки csv файла в задачу.
+     *
      * @param value строка, из которой требуется получить задачу
      * @return задача, созданная из csv строки
      */
-    public static Task stringToTask(String value){
+    public static Task stringToTask(String value) {
         String[] task = value.split(",");
         TaskTypes type = TaskTypes.valueOf(task[1]);
 
@@ -58,6 +73,7 @@ public final class TasksSaveRestore {
 
     /**
      * Преобразование истории в строку формата csv. Строка состоит из id просмотренных задач
+     *
      * @param historyManager менеджер истории, чьи просмотры необходимо сохранить
      * @return строка, в которой содержатся id просмотренных задач
      */
@@ -73,13 +89,14 @@ public final class TasksSaveRestore {
 
     /**
      * Преобразование строки формата csv в список id задач.
+     *
      * @param value строка, состоящая из id просмотренных задач
      * @return список id задач из истории просмотров
      */
     public static List<Long> historyFromString(String value) {
         List<Long> result = new ArrayList<>();
         String[] historyId = value.split(",");
-        for(String taskId : historyId) {
+        for (String taskId : historyId) {
             result.add(Long.parseLong(taskId));
         }
         return result;

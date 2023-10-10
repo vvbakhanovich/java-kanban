@@ -5,6 +5,7 @@ import tasks.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * Вспомогательный класс для преобразования задач в строки и обратно.
@@ -32,7 +33,8 @@ public final class TasksSaveRestore {
                         task.getTaskType().toString(),
                         task.getTaskName(),
                         task.getDescription(),
-                        task.getStatus().toString());
+                        task.getStatus().toString(),
+                        "\n");
             case SUBTASK:
                 Subtask subtask = (Subtask) task;
                 return String.join(delimiter,
@@ -41,7 +43,8 @@ public final class TasksSaveRestore {
                         subtask.getTaskName(),
                         subtask.getDescription(),
                         subtask.getStatus().toString(),
-                        String.valueOf(subtask.getEpicId()));
+                        String.valueOf(subtask.getEpicId()),
+                        "\n");
             default:
                 throw new AssertionError("Несуществующий тип задачи: " + type);
         }
@@ -78,13 +81,11 @@ public final class TasksSaveRestore {
      * @return строка, в которой содержатся id просмотренных задач
      */
     public static String historyToString(HistoryManager historyManager) {
-        StringBuilder sb = new StringBuilder();
-        String separator = "";
+        StringJoiner sj = new StringJoiner(",");
         for (Task task : historyManager.getHistory()) {
-            sb.append(separator).append(task.getTaskId());
-            separator = ",";
+            sj.add(String.valueOf(task.getTaskId()));
         }
-        return sb.toString();
+        return sj.toString();
     }
 
     /**

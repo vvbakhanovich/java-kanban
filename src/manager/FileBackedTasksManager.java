@@ -171,14 +171,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         long taskId = restoredTask.getTaskId();
         if (restoredTask instanceof BasicTask) {
             manager.basicTaskList.put(taskId, ((BasicTask) restoredTask));
+            manager.taskId = taskId;
         } else if (restoredTask instanceof Epic) {
             manager.epicList.put(taskId, (Epic) restoredTask);
+            manager.taskId = taskId;
         } else if (restoredTask instanceof Subtask) {
             Subtask subtask = (Subtask) restoredTask;
             long subtaskId = subtask.getTaskId();
             manager.subtaskList.put(subtaskId, subtask);
             Epic epic = manager.epicList.get(subtask.getEpicId());
             EpicService.addEpicSubtask(epic, subtaskId);
+            manager.taskId = taskId;
         }
     }
 
@@ -261,15 +264,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         manager.getEpicById(epic1.getTaskId());
         manager.getSubtaskById(subtask1.getTaskId());
 
-
         // Данный закомментированный код считывает сохраненные данные и печатает восстановленные задачи и историю.
-        /*
-        FileBackedTasksManager manager = loadFromFile(Paths.get("src/resources/test.csv"));
-        System.out.println(manager.getBasicTaskList());
-        System.out.println(manager.getEpicList());
-        System.out.println(manager.getSubtaskList());
-        System.out.println(manager.getHistory());
-        */
+        FileBackedTasksManager manager1 = loadFromFile("src/resources/test.csv");
+        System.out.println(manager1.getBasicTaskList());
+        System.out.println(manager1.getEpicList());
+        System.out.println(manager1.getSubtaskList());
+        System.out.println(manager1.getHistory());
     }
 }
 

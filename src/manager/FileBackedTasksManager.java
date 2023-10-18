@@ -169,19 +169,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      */
     private static void restoreTask(Task restoredTask, FileBackedTasksManager manager) {
         long taskId = restoredTask.getTaskId();
+        manager.taskId = Math.max(taskId, manager.taskId);
         if (restoredTask instanceof BasicTask) {
             manager.basicTaskList.put(taskId, ((BasicTask) restoredTask));
-            manager.taskId = taskId;
         } else if (restoredTask instanceof Epic) {
             manager.epicList.put(taskId, (Epic) restoredTask);
-            manager.taskId = taskId;
         } else if (restoredTask instanceof Subtask) {
             Subtask subtask = (Subtask) restoredTask;
             long subtaskId = subtask.getTaskId();
             manager.subtaskList.put(subtaskId, subtask);
             Epic epic = manager.epicList.get(subtask.getEpicId());
             EpicService.addEpicSubtask(epic, subtaskId);
-            manager.taskId = taskId;
         }
     }
 

@@ -33,8 +33,8 @@ public final class TasksSaveRestore {
                         task.getTaskType().toString(),
                         task.getTaskName(),
                         task.getDescription(),
-                        task.getStatus().toString(),
-                        "\n");
+                        task.getStatus().toString()) +
+                        "\n";
             case SUBTASK:
                 Subtask subtask = (Subtask) task;
                 return String.join(delimiter,
@@ -43,8 +43,8 @@ public final class TasksSaveRestore {
                         subtask.getTaskName(),
                         subtask.getDescription(),
                         subtask.getStatus().toString(),
-                        String.valueOf(subtask.getEpicId()),
-                        "\n");
+                        String.valueOf(subtask.getEpicId())) +
+                        "\n";
             default:
                 throw new AssertionError("Несуществующий тип задачи: " + type);
         }
@@ -81,11 +81,13 @@ public final class TasksSaveRestore {
      * @return строка, в которой содержатся id просмотренных задач
      */
     public static String historyToString(HistoryManager historyManager) {
-        StringJoiner sj = new StringJoiner(",");
+        StringBuilder sb = new StringBuilder();
+        String delimiter = "";
         for (Task task : historyManager.getHistory()) {
-            sj.add(String.valueOf(task.getTaskId()));
+            sb.append(delimiter).append(task.getTaskId());
+            delimiter = ",";
         }
-        return sj.toString();
+        return sb.toString();
     }
 
     /**

@@ -160,11 +160,12 @@ public class InMemoryTaskManager implements TaskManager {
      * @return id добавленной задачи
      */
     @Override
-    public void addBasicTask(BasicTask basicTask) {
+    public long addBasicTask(BasicTask basicTask) {
         Objects.requireNonNull(basicTask, "Попытка добавить пустую задачу.");
         long id = generateId();
         basicTask.setTaskId(id);
         basicTaskList.put(id, basicTask);
+        return id;
     }
 
     /**
@@ -176,11 +177,12 @@ public class InMemoryTaskManager implements TaskManager {
      * @return id добавленного эпика
      */
     @Override
-    public void addEpic(Epic epic) {
+    public long addEpic(Epic epic) {
         Objects.requireNonNull(epic, "Попытка добавить пустой эпик.");
         long id = generateId();
         epic.setTaskId(id);
         epicList.put(id, epic);
+        return id;
     }
 
     /**
@@ -194,7 +196,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @throws NoSuchElementException если не существует эпика с epicId
      */
     @Override
-    public void addSubtask(Subtask subtask) {
+    public long addSubtask(Subtask subtask) {
         Objects.requireNonNull(subtask, "Попытка добавить пустую подзадачу");
         if (epicList.containsKey(subtask.getEpicId())) {
             long id = generateId();
@@ -204,6 +206,7 @@ public class InMemoryTaskManager implements TaskManager {
             Epic epic = epicList.get(epicId);
             EpicService.addEpicSubtask(epic, id);
             EpicService.checkEpicStatus(epic, subtaskList);
+            return id;
         } else {
             throw new NoSuchElementException("Эпика с id " + subtask.getEpicId() + " не существует.");
         }

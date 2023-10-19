@@ -23,6 +23,10 @@ public final class Managers {
         return new InMemoryTaskManager();
     }
 
+    public static TaskManager getFileManager() {
+        return new FileBackedTasksManager("src/resources/test2.csv");
+    }
+
     /**
      * Данный метод возвращает менеджер истории
      * @return менеджер истории

@@ -65,6 +65,7 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public List<Long> getEpicSubtaskList(Epic epic) {
+        Objects.requireNonNull(epic, "Попытка найти список подзадач несуществующего эпика");
         return new ArrayList<>(epic.getSubtaskList());
     }
 

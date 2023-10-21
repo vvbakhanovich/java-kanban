@@ -45,7 +45,7 @@ class EpicServiceTest {
     @Test
     void removeAllEpicSubtasksShouldMakeSubtaskListSizeZero() {
         assertEquals(3, epic.getSubtaskList().size());
-        EpicService.removeAllEpicSubtasks(epic);
+        EpicService.removeAllEpicSubtasks(epic, subtaskList);
         assertEquals(0, epic.getSubtaskList().size());
     }
 

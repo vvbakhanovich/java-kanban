@@ -37,7 +37,10 @@ public class EpicService {
      * Удаление списка подзадач эпика
      * @param epic эпик, у которого необходимо очистить список подзадач
      */
-    public static void removeAllEpicSubtasks(Epic epic) {
+    public static void removeAllEpicSubtasks(Epic epic, Map<Long, Subtask> subtasks) {
+        for (Long id : epic.getSubtaskList()) {
+            subtasks.remove(id);
+        }
         epic.getSubtaskList().clear();
     }
 

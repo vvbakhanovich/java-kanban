@@ -15,8 +15,20 @@ public class Epic extends Task {
         taskType = TaskTypes.EPIC;
     }
 
+    private Epic(String taskName, String description, String startTime, long duration, Status status) {
+        super(taskName, description, startTime, duration, status);
+        subtaskList = new ArrayList<>();
+        taskType = TaskTypes.EPIC;
+    }
+
     private Epic(long taskId, String taskName, String description, Status status) {
         super(taskId, taskName, description, status);
+        subtaskList = new ArrayList<>();
+        taskType = TaskTypes.EPIC;
+    }
+
+    private Epic(long taskId, String taskName, String description, String startTime, long duration, Status status) {
+        super(taskId, taskName, description, startTime, duration, status);
         subtaskList = new ArrayList<>();
         taskType = TaskTypes.EPIC;
     }
@@ -25,8 +37,25 @@ public class Epic extends Task {
         return new Epic(taskName, description);
     }
 
+    public static Epic createWithStartTime(String taskName,
+                                                String description,
+                                                String startTime,
+                                                long duration,
+                                                Status status) {
+        return new Epic(taskName, description, startTime, duration, status);
+    }
+
     public static Epic createFromFile(long taskId, String taskName, String description, Status status) {
         return new Epic(taskId, taskName, description, status);
+    }
+
+    public static Epic createFromFileWithStartTime(long taskId,
+                                                        String taskName,
+                                                        String description,
+                                                        String startTime,
+                                                        long duration,
+                                                        Status status) {
+        return new Epic(taskId, taskName, description, startTime, duration, status);
     }
 
     // возвращает копию списка подзадач
@@ -51,10 +80,13 @@ public class Epic extends Task {
     @Override
     public String toString() {
         return "Epic{" +
-                "numberOfSubtasks=" + subtaskList.size() +
-                ", taskName='" + taskName + '\'' +
                 ", taskId=" + taskId +
+                ", taskName='" + taskName + '\'' +
                 ", description='" + description + '\'' +
+                ", taskType=" + taskType +
+                ", startTime=" + startTime +
+                ", duration=" + duration +
+                ", numberOfSubtasks=" + subtaskList.size() +
                 ", status=" + status +
                 '}';
     }

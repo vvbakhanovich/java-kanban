@@ -29,6 +29,13 @@ public abstract class Task implements Comparable<Task>{
         this.duration = duration;
     }
 
+    protected Task(long taskId, String taskName, String description, Status status) {
+        this.taskId = taskId;
+        this.taskName = taskName;
+        this.description = description;
+        this.status = status;
+    }
+
     protected Task(long taskId, String taskName, String description, String startTime, long duration, Status status) {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("MM.dd.yyyy HH:mm");
         this.taskId = taskId;

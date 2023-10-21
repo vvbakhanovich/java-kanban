@@ -80,7 +80,7 @@ public class Epic extends Task {
     @Override
     public String toString() {
         return "Epic{" +
-                ", taskId=" + taskId +
+                "taskId=" + taskId +
                 ", taskName='" + taskName + '\'' +
                 ", description='" + description + '\'' +
                 ", taskType=" + taskType +

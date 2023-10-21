@@ -136,8 +136,14 @@ public class EpicService {
      * окончания.
      * @param epic эпик, длительность которого требуется рассчитать
      */
-    public static void setEpicDuration(Epic epic) {
+    public static void getEpicDuration(Epic epic) {
         Duration duration = Duration.between(epic.getStartTime(), epic.getEndTime());
         epic.setDuration(duration.toMinutes());
+    }
+
+    public static void getEpicTimes(Epic epic, Map<Long, Subtask> subtasks) {
+        getEpicStartTime(epic, subtasks);
+        getEpicEndTime(epic, subtasks);
+        getEpicDuration(epic);
     }
 }

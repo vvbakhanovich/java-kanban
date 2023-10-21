@@ -103,8 +103,9 @@ public class EpicService {
 
         Subtask subtask = subtaskList.stream()
                 .map(subtasks::get)
-                .min(Comparator.comparing(subtask1 ->
-                        subtask1.getStartTime().plusMinutes(subtask1.getDuration())))
+                .filter(subtask1 -> subtask1.getStartTime() != null)
+                .min(Comparator.comparing(subtask2 ->
+                        subtask2.getStartTime().plusMinutes(subtask2.getDuration())))
                 .orElseThrow(() ->
                         new IllegalArgumentException("У эпика с id " + epic.getTaskId() + " пустой список подзадач."));
         epic.setStartTime(subtask.getStartTime());
@@ -121,8 +122,9 @@ public class EpicService {
 
         Subtask subtask = subtaskList.stream()
                 .map(subtasks::get)
-                .max(Comparator.comparing(subtask1 ->
-                        subtask1.getStartTime().plusMinutes(subtask1.getDuration())))
+                .filter(subtask1 -> subtask1.getStartTime() != null)
+                .max(Comparator.comparing(subtask2 ->
+                        subtask2.getStartTime().plusMinutes(subtask2.getDuration())))
                 .orElseThrow(() ->
                         new IllegalArgumentException("У эпика с id " + epic.getTaskId() + " пустой список подзадач."));
 

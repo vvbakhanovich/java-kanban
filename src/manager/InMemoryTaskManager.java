@@ -359,4 +359,30 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.remove(taskId);
         }
     }
+
+    private boolean isValidStartTime(Task task) {
+        List<Task> sortedTasks = new ArrayList<>(getPrioritizedTasks());
+        LocalDateTime endTime = task.getEndTime();
+        LocalDateTime startTime = task.getStartTime();
+
+        if(sortedTasks.isEmpty()) {
+            return true;
+        }
+
+        if (endTime.isBefore(sortedTasks.get(0).getStartTime()) ||
+                startTime.isAfter(sortedTasks.get(sortedTasks.size() -1).getEndTime())) {
+            return true;
+        }
+
+        for(int i = 1; i < sortedTasks.size(); i++) {
+            Task currentTask = sortedTasks.get(i);
+            Task prevTask = sortedTasks.get(i -1);
+
+            if (startTime.isAfter(prevTask.getEndTime()) && endTime.isBefore(currentTask.getStartTime())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

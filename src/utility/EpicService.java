@@ -4,6 +4,8 @@ import tasks.Epic;
 import tasks.Status;
 import tasks.Subtask;
 
+import java.time.Duration;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +18,8 @@ public class EpicService {
     /**
      * При добавлении подзадачи указывается эпик, к которому она относится. Данный метод добавляет идентификатор
      * подзадачи в список идентификаторов для конкретного эпика.
-     * @param epic эпик, для которого требуется добавить подзадачу
+     *
+     * @param epic      эпик, для которого требуется добавить подзадачу
      * @param subtaskId идентификатор добавляемой подзадачи
      */
     public static void addEpicSubtask(Epic epic, Long subtaskId) {
@@ -26,7 +29,8 @@ public class EpicService {
 
     /**
      * При удалении подзадачи требуется также удалить ее и из списка подзадач ее эпика.
-     * @param epic эпик, у которого требуется удалить подзадачу
+     *
+     * @param epic      эпик, у которого требуется удалить подзадачу
      * @param subtaskId идентификатор подзадачи для удаления
      */
     public static void removeEpicSubtask(Epic epic, Long subtaskId) {
@@ -35,6 +39,7 @@ public class EpicService {
 
     /**
      * Удаление списка подзадач эпика
+     *
      * @param epic эпик, у которого необходимо очистить список подзадач
      */
     public static void removeAllEpicSubtasks(Epic epic, Map<Long, Subtask> subtasks) {
@@ -49,7 +54,8 @@ public class EpicService {
      * статус эпика должен быть перecчитан по следующей логике: если список подзадач пуст или все подзадачи имеют
      * статус NEW, то статус эпика также должен быть NEW. Если все подзадачи эпика имеют статус DONE, эпик также должен
      * иметь статус DONE. В противном случае статус эпика должен быть IN_PROGRESS.
-     * @param epic эпик, для которого необходимо произвести проверку статуса
+     *
+     * @param epic     эпик, для которого необходимо произвести проверку статуса
      * @param subtasks мапа, хранящая в себе полный список подзадач, из которой по id будет получен статус подзадачи
      */
     public static void checkEpicStatus(Epic epic, Map<Long, Subtask> subtasks) {
@@ -84,5 +90,52 @@ public class EpicService {
         } else {
             epic.setStatus(Status.IN_PROGRESS);
         }
+    }
+
+    /**
+     * Метод для установки startTime эпика. Под временем старта эпика подразумевается время старта самой ранней
+     * подзадачи.
+     * @param epic эпик, время старта которого требуется рассчитать
+     * @param subtasks мапа, хранящая подзадачи
+     */
+    public static void getEpicStartTime(Epic epic, Map<Long, Subtask> subtasks) {
+        List<Long> subtaskList = epic.getSubtaskList();
+
+        Subtask subtask = subtaskList.stream()
+                .map(subtasks::get)
+                .min(Comparator.comparing(subtask1 ->
+                        subtask1.getStartTime().plusMinutes(subtask1.getDuration())))
+                .orElseThrow(() ->
+                        new IllegalArgumentException("У эпика с id " + epic.getTaskId() + " пустой список подзадач."));
+        epic.setStartTime(subtask.getStartTime());
+    }
+
+    /**
+     * Метод для установки endTime эпика. Под временем окончания эпика подразумевается время окончания самой поздней
+     * подзадачи.
+     * @param epic эпик, время окончания которого требуется рассчитать
+     * @param subtasks мапа, хранящая подзадачи
+     */
+    public static void getEpicEndTime(Epic epic, Map<Long, Subtask> subtasks) {
+        List<Long> subtaskList = epic.getSubtaskList();
+
+        Subtask subtask = subtaskList.stream()
+                .map(subtasks::get)
+                .max(Comparator.comparing(subtask1 ->
+                        subtask1.getStartTime().plusMinutes(subtask1.getDuration())))
+                .orElseThrow(() ->
+                        new IllegalArgumentException("У эпика с id " + epic.getTaskId() + " пустой список подзадач."));
+
+        epic.setEndTime(subtask.getStartTime().plusMinutes(subtask.getDuration()));
+    }
+
+    /**
+     * Расчет длительности выполнения эпика. Под длительностью подразумевается разница между временем старта и
+     * окончания.
+     * @param epic эпик, длительность которого требуется рассчитать
+     */
+    public static void setEpicDuration(Epic epic) {
+        Duration duration = Duration.between(epic.getStartTime(), epic.getEndTime());
+        epic.setDuration(duration.toMinutes());
     }
 }

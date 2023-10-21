@@ -1,5 +1,7 @@
 package tasks;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public abstract class Task{
@@ -8,6 +10,8 @@ public abstract class Task{
     protected String description;
     protected Status status;
     protected TaskTypes taskType;
+    protected LocalDateTime startTime;
+    protected long duration;
 
 
     protected Task(String taskName, String description, Status status) {
@@ -16,11 +20,23 @@ public abstract class Task{
         this.status = status;
     }
 
-    protected Task(long taskId, String taskName, String description, Status status) {
+    protected Task(String taskName, String description, String startTime, long duration, Status status) {
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("MM.dd.yyyy HH:mm");
+        this.taskName = taskName;
+        this.description = description;
+        this.status = status;
+        this.startTime = LocalDateTime.parse(startTime, format);
+        this.duration = duration;
+    }
+
+    protected Task(long taskId, String taskName, String description, String startTime, long duration, Status status) {
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("MM.dd.yyyy HH:mm");
         this.taskId = taskId;
         this.taskName = taskName;
         this.description = description;
         this.status = status;
+        this.startTime = LocalDateTime.parse(startTime, format);
+        this.duration = duration;
     }
 
     public String getTaskName() {
@@ -59,6 +75,22 @@ public abstract class Task{
         this.taskId = taskId;
     }
 
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
 
 
     @Override
@@ -77,9 +109,11 @@ public abstract class Task{
     @Override
     public String toString() {
         return "Task{" +
-                "taskName='" + taskName + '\'' +
-                ", taskId=" + taskId +
+                "taskId='" + taskId + '\'' +
+                ", taskName=" + taskName +
                 ", description='" + description + '\'' +
+                ", startTime=" + startTime +
+                ", duration=" + duration +
                 ", status=" + status +
                 '}';
     }

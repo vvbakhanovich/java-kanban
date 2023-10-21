@@ -5,11 +5,14 @@ import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import utility.EpicService;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Класс Manager отвечает за управление и хранение каждого типа задач
@@ -334,6 +337,17 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
+    }
+
+    /**
+     * Возвращает, отсортированный по времени стара, список задач и подзадач. Задачи без времени старта помещаются в
+     * конец списка.
+     * @return отсортированный список
+     */
+    public TreeSet<Task> getPrioritizedTasks() {
+        List<Task> tasksAndSubtasks = Stream.concat(getBasicTaskList().stream(), getSubtaskList().stream())
+                .collect(Collectors.toList());
+        return new TreeSet<>(tasksAndSubtasks);
     }
 
     private long generateId() {

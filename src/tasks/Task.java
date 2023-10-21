@@ -46,6 +46,10 @@ public abstract class Task implements Comparable<Task>{
         this.duration = duration;
     }
 
+    public LocalDateTime getEndTime() {
+        return startTime.plusMinutes(duration);
+    }
+
     public String getTaskName() {
         return taskName;
     }

@@ -297,7 +297,7 @@ public class InMemoryTaskManager implements TaskManager {
             removeTasksFromHistory(epic.getSubtaskList());
             // очистка списка подзадач удаляемого эпика
             EpicService.removeAllEpicSubtasks(epic);
-            basicTaskList.remove(epicId);
+            epicList.remove(epicId);
             historyManager.remove(epicId);
         } else {
             throw new NoSuchElementException("Эпика с id " + epicId + " не существует.");

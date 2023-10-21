@@ -101,7 +101,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtaskList.clear();
 
         for (Epic epic : epicList.values()) {
-            EpicService.removeAllEpicSubtasks(epic);
+            EpicService.removeAllEpicSubtasks(epic, subtaskList);
             EpicService.checkEpicStatus(epic, subtaskList);
         }
     }
@@ -296,7 +296,7 @@ public class InMemoryTaskManager implements TaskManager {
             //удаление подзадач эпика из истории просмотров
             removeTasksFromHistory(epic.getSubtaskList());
             // очистка списка подзадач удаляемого эпика
-            EpicService.removeAllEpicSubtasks(epic);
+            EpicService.removeAllEpicSubtasks(epic, subtaskList);
             epicList.remove(epicId);
             historyManager.remove(epicId);
         } else {

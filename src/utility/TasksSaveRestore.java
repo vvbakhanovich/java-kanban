@@ -97,9 +97,11 @@ public final class TasksSaveRestore {
      */
     public static List<Long> historyFromString(String value) {
         List<Long> result = new ArrayList<>();
-        String[] historyId = value.split(",");
-        for (String taskId : historyId) {
-            result.add(Long.parseLong(taskId));
+        if (value != null) {
+            String[] historyId = value.split(",");
+            for (String taskId : historyId) {
+                result.add(Long.parseLong(taskId));
+            }
         }
         return result;
     }

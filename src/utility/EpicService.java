@@ -95,7 +95,8 @@ public class EpicService {
 
     /**
      * Расчет времени старта, окончания и длительности эпика.
-     * @param epic для которого нужно рассчитать дату начала, окончания и длительность
+     *
+     * @param epic     для которого нужно рассчитать дату начала, окончания и длительность
      * @param subtasks мапа, в которой хранятся подзадачи
      */
     public static void getEpicTimes(Epic epic, Map<Long, Subtask> subtasks) {
@@ -107,31 +108,29 @@ public class EpicService {
     /**
      * Метод для установки startTime эпика. Под временем старта эпика подразумевается время старта самой ранней
      * подзадачи.
-     * @param epic эпик, время старта которого требуется рассчитать
+     *
+     * @param epic     эпик, время старта которого требуется рассчитать
      * @param subtasks мапа, хранящая подзадачи
      */
     private static void getEpicStartTime(Epic epic, Map<Long, Subtask> subtasks) {
         List<Long> subtaskList = epic.getSubtaskList();
-        if(subtaskList.isEmpty()) {
+        if (subtaskList.isEmpty()) {
             epic.setStartTime(null);
         }
 
-        Optional<Subtask> subtask = subtaskList.stream()
+        subtaskList.stream()
                 .map(subtasks::get)
                 .filter(subtask1 -> subtask1.getStartTime() != null)
                 .min(Comparator.comparing(subtask2 ->
-                        subtask2.getStartTime().plusMinutes(subtask2.getDuration())));
-//                .orElseThrow(() ->
-//                        new IllegalArgumentException("У эпика с id " + epic.getTaskId() + " пустой список подзадач."));
-        if (subtask.isPresent()) {
-            epic.setStartTime(subtask.get().getStartTime());
-        }
+                        subtask2.getStartTime().plusMinutes(subtask2.getDuration())))
+                .ifPresent(startTask -> epic.setStartTime(startTask.getStartTime()));
     }
 
     /**
      * Метод для установки endTime эпика. Под временем окончания эпика подразумевается время окончания самой поздней
      * подзадачи.
-     * @param epic эпик, время окончания которого требуется рассчитать
+     *
+     * @param epic     эпик, время окончания которого требуется рассчитать
      * @param subtasks мапа, хранящая подзадачи
      */
     private static void getEpicEndTime(Epic epic, Map<Long, Subtask> subtasks) {
@@ -140,21 +139,18 @@ public class EpicService {
             epic.setEndTime(null);
         }
 
-        Optional<Subtask> subtask = subtaskList.stream()
+        subtaskList.stream()
                 .map(subtasks::get)
                 .filter(subtask1 -> subtask1.getStartTime() != null)
                 .max(Comparator.comparing(subtask2 ->
-                        subtask2.getStartTime().plusMinutes(subtask2.getDuration())));
-//                .orElseThrow(() ->
-//                        new IllegalArgumentException("У эпика с id " + epic.getTaskId() + " пустой список подзадач."));
-        if (subtask.isPresent()) {
-            epic.setEndTime(subtask.get().getStartTime().plusMinutes(subtask.get().getDuration()));
-        }
+                        subtask2.getStartTime().plusMinutes(subtask2.getDuration())))
+                .ifPresent(endTask -> epic.setEndTime(endTask.getEndTime()));
     }
 
     /**
      * Расчет длительности выполнения эпика. Под длительностью подразумевается разница между временем старта и
      * окончания.
+     *
      * @param epic эпик, длительность которого требуется рассчитать
      */
     private static void getEpicDuration(Epic epic) {

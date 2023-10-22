@@ -198,7 +198,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      */
     private void save() {
         try (BufferedWriter bw = Files.newBufferedWriter(path)) {
-            String header = "id,type,name,description,status,epic\n";
+            String header = "id,type,name,description,startTime,duration,status,epic\n";
             bw.write(header);
             //проходимся по всем типам задач, преобразуем в строку и записываем в файл
             for (BasicTask basicTask : basicTaskList.values()) {

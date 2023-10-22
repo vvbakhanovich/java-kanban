@@ -24,6 +24,13 @@ class FileBackedTasksManagerTest {
     Subtask subtask1;
     Subtask subtask2;
     Subtask subtask3;
+    BasicTask taskWithDate1;
+    BasicTask taskWithDate2;
+    BasicTask taskWithDate3;
+    Subtask subtaskWithDate1;
+    Subtask subtaskWithDate2;
+    Subtask subtaskWithDate3;
+
 
     @BeforeEach
     void setUp() {
@@ -38,6 +45,18 @@ class FileBackedTasksManagerTest {
                 Status.NEW, 3);
         subtask3 = Subtask.create("Подзадача 3", "Описание подзадачи 3",
                 Status.DONE, 1);
+        taskWithDate1 = BasicTask.createWithStartTime("Задача со временем 1",
+                "Описание задачи со временем 1", "22.10.2023 09:09", 23, Status.IN_PROGRESS);
+        taskWithDate2 = BasicTask.createWithStartTime("Задача со временем 2",
+                "Описание задачи со временем 2", "22.10.2023 08:00", 15, Status.NEW);
+        taskWithDate3 = BasicTask.createWithStartTime("Задача со временем 2",
+                "Описание задачи со временем 2", "22.10.2023 09:00", 15, Status.NEW);
+        subtaskWithDate1 = Subtask.createWithStartTime("Subtask 1", "Description 1",
+                "20.09.2023 09:00", 50, Status.NEW, 3);
+        subtaskWithDate2 = Subtask.createWithStartTime("Subtask 2", "Description 3",
+                "21.09.2020 10:00", 20, Status.NEW, 3);
+        subtaskWithDate3 = Subtask.createWithStartTime("Subtask 3", "Description 3",
+                "10.12.2023 10:00", 13, Status.NEW, 3);
     }
 
     @Test
@@ -78,6 +97,40 @@ class FileBackedTasksManagerTest {
         manager.getBasicTaskById(task2.getTaskId());
         manager.getEpicById(epic1.getTaskId());
         manager.getBasicTaskById(task1.getTaskId());
+
+        FileBackedTasksManager restoredManager = FileBackedTasksManager
+                .loadFromFile("src/resources/recovery_test.csv");
+        assertIterableEquals(manager.getBasicTaskList(), restoredManager.getBasicTaskList());
+        assertIterableEquals(manager.getEpicList(), restoredManager.getEpicList());
+        assertIterableEquals(manager.getSubtaskList(), restoredManager.getSubtaskList());
+        assertIterableEquals(manager.getHistory(), restoredManager.getHistory());
+    }
+
+    @Test
+    void loadingFromFileShouldReturnSameTaskListWithDateAndEmptyHistoryList() {
+        manager.addBasicTask(taskWithDate1);
+        manager.addBasicTask(taskWithDate2);
+        manager.addEpic(epic1);
+        manager.addSubtask(subtaskWithDate1);
+        manager.addSubtask(subtaskWithDate2);
+
+        FileBackedTasksManager restoredManager = FileBackedTasksManager
+                .loadFromFile("src/resources/recovery_test.csv");
+        assertIterableEquals(manager.getBasicTaskList(), restoredManager.getBasicTaskList());
+        assertIterableEquals(manager.getEpicList(), restoredManager.getEpicList());
+        assertIterableEquals(manager.getSubtaskList(), restoredManager.getSubtaskList());
+        assertIterableEquals(manager.getHistory(), restoredManager.getHistory());
+        assertEquals(0, restoredManager.getHistory().size());
+    }
+
+    @Test
+    void loadingFromFileShouldReturnSameTaskListWithDateAndHistoryList() {
+        manager.addBasicTask(taskWithDate1);
+        manager.addBasicTask(taskWithDate2);
+        manager.addEpic(epic1);
+        manager.getBasicTaskById(taskWithDate2.getTaskId());
+        manager.getEpicById(epic1.getTaskId());
+        manager.getBasicTaskById(taskWithDate1.getTaskId());
 
         FileBackedTasksManager restoredManager = FileBackedTasksManager
                 .loadFromFile("src/resources/recovery_test.csv");

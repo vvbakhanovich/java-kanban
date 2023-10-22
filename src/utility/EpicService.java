@@ -8,7 +8,6 @@ import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Данный класс отвечает за операции со связанными с эпиком подзадачами.

@@ -3,6 +3,8 @@ package utility;
 import manager.HistoryManager;
 import tasks.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +12,7 @@ import java.util.List;
  * Вспомогательный класс для преобразования задач в строки и обратно.
  */
 public final class TasksSaveRestore {
+    private static final DateTimeFormatter formatter = Task.FORMATTER;
 
     private TasksSaveRestore() {
     }
@@ -32,6 +35,8 @@ public final class TasksSaveRestore {
                         task.getTaskType().toString(),
                         task.getTaskName(),
                         task.getDescription(),
+                        printStartTime(task.getStartTime()),
+                        String.valueOf(task.getDuration()),
                         task.getStatus().toString()) +
                         "\n";
             case SUBTASK:
@@ -41,6 +46,8 @@ public final class TasksSaveRestore {
                         subtask.getTaskType().toString(),
                         subtask.getTaskName(),
                         subtask.getDescription(),
+                        printStartTime(task.getStartTime()),
+                        String.valueOf(task.getDuration()),
                         subtask.getStatus().toString(),
                         String.valueOf(subtask.getEpicId())) +
                         "\n";
@@ -62,12 +69,14 @@ public final class TasksSaveRestore {
 
         switch (type) {
             case BASIC_TASK:
-                return BasicTask.createFromFile(Long.parseLong(task[0]), task[2], task[3], Status.valueOf(task[4]));
+                return BasicTask.createFromFileWithStartTime(Long.parseLong(task[0]), task[2], task[3],
+                        task[4], Long.parseLong(task[5]), Status.valueOf(task[6]));
             case EPIC:
-                return Epic.createFromFile(Long.parseLong(task[0]), task[2], task[3], Status.valueOf(task[4]));
+                return Epic.createFromFileWithStartTime(Long.parseLong(task[0]), task[2], task[3],
+                        task[4], Long.parseLong(task[5]), Status.valueOf(task[6]));
             case SUBTASK:
-                return Subtask.createFromFile(Long.parseLong(task[0]), task[2], task[3], Status.valueOf(task[4]),
-                        Long.parseLong(task[5]));
+                return Subtask.createFromFileWithStartTime(Long.parseLong(task[0]), task[2], task[3],
+                        task[4], Long.parseLong(task[5]), Status.valueOf(task[6]), Long.parseLong(task[7]));
             default:
                 return null;
         }
@@ -104,5 +113,12 @@ public final class TasksSaveRestore {
             }
         }
         return result;
+    }
+
+    private static String printStartTime(LocalDateTime startTime) {
+        if(startTime != null) {
+            return startTime.format(formatter);
+        }
+        return "null";
     }
 }

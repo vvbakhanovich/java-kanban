@@ -93,12 +93,23 @@ public class EpicService {
     }
 
     /**
+     * Расчет времени старта, окончания и длительности эпика.
+     * @param epic для которого нужно рассчитать дату начала, окончания и длительность
+     * @param subtasks мапа, в которой хранятся подзадачи
+     */
+    public static void getEpicTimes(Epic epic, Map<Long, Subtask> subtasks) {
+        getEpicStartTime(epic, subtasks);
+        getEpicEndTime(epic, subtasks);
+        getEpicDuration(epic);
+    }
+
+    /**
      * Метод для установки startTime эпика. Под временем старта эпика подразумевается время старта самой ранней
      * подзадачи.
      * @param epic эпик, время старта которого требуется рассчитать
      * @param subtasks мапа, хранящая подзадачи
      */
-    public static void getEpicStartTime(Epic epic, Map<Long, Subtask> subtasks) {
+    private static void getEpicStartTime(Epic epic, Map<Long, Subtask> subtasks) {
         List<Long> subtaskList = epic.getSubtaskList();
 
         Subtask subtask = subtaskList.stream()
@@ -117,7 +128,7 @@ public class EpicService {
      * @param epic эпик, время окончания которого требуется рассчитать
      * @param subtasks мапа, хранящая подзадачи
      */
-    public static void getEpicEndTime(Epic epic, Map<Long, Subtask> subtasks) {
+    private static void getEpicEndTime(Epic epic, Map<Long, Subtask> subtasks) {
         List<Long> subtaskList = epic.getSubtaskList();
 
         Subtask subtask = subtaskList.stream()
@@ -136,14 +147,8 @@ public class EpicService {
      * окончания.
      * @param epic эпик, длительность которого требуется рассчитать
      */
-    public static void getEpicDuration(Epic epic) {
+    private static void getEpicDuration(Epic epic) {
         Duration duration = Duration.between(epic.getStartTime(), epic.getEndTime());
         epic.setDuration(duration.toMinutes());
-    }
-
-    public static void getEpicTimes(Epic epic, Map<Long, Subtask> subtasks) {
-        getEpicStartTime(epic, subtasks);
-        getEpicEndTime(epic, subtasks);
-        getEpicDuration(epic);
     }
 }

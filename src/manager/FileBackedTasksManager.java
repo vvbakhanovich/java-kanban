@@ -22,6 +22,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public FileBackedTasksManager(String path) {
         super();
         this.path = Paths.get(path);
+        if (!Files.exists(this.path)) {
+            save();
+        }
     }
 
     @Override
@@ -44,56 +47,44 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public BasicTask getBasicTaskById(long basicTaskId) {
-        if (basicTaskList.containsKey(basicTaskId)) {
-            BasicTask basicTask = basicTaskList.get(basicTaskId);
-            historyManager.add(basicTask);
-            save();
-            return basicTask;
-        } else {
-            throw new NoSuchElementException("Задачи с id " + basicTaskId + " не существует.");
-        }
+        BasicTask basicTask = super.getBasicTaskById(basicTaskId);
+        save();
+        return basicTask;
     }
 
     @Override
     public Epic getEpicById(long epicId) {
-        if (epicList.containsKey(epicId)) {
-            Epic epic = epicList.get(epicId);
-            historyManager.add(epic);
-            save();
-            return epic;
-        } else {
-            throw new NoSuchElementException("Эпика с id " + epicId + " не существует.");
-        }
+        Epic epic = super.getEpicById(epicId);
+        save();
+        return epic;
     }
 
     @Override
     public Subtask getSubtaskById(long subtaskId) {
-        if (subtaskList.containsKey(subtaskId)) {
-            Subtask subtask = subtaskList.get(subtaskId);
-            historyManager.add(subtask);
-            save();
-            return subtask;
-        } else {
-            throw new NoSuchElementException("Подзадачи с id " + subtaskId + " не существует.");
-        }
+        Subtask subtask = super.getSubtaskById(subtaskId);
+        save();
+        return subtask;
     }
 
     @Override
-    public void addBasicTask(BasicTask basicTask) {
-        super.addBasicTask(basicTask);
+    public long addBasicTask(BasicTask basicTask) {
+        long id = super.addBasicTask(basicTask);
         save();
+        return id;
     }
 
     @Override
-    public void addEpic(Epic epic) {
-        super.addEpic(epic);
+    public long addEpic(Epic epic) {
+        long id = super.addEpic(epic);
         save();
+        return id;
     }
 
     @Override
-    public void addSubtask(Subtask subtask) {
-        super.addSubtask(subtask);
+    public long addSubtask(Subtask subtask) {
+        long id = super.addSubtask(subtask);
         save();
+        return id;
     }
 
     @Override
@@ -169,6 +160,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      */
     private static void restoreTask(Task restoredTask, FileBackedTasksManager manager) {
         long taskId = restoredTask.getTaskId();
+        manager.taskId = Math.max(taskId, manager.taskId);
         if (restoredTask instanceof BasicTask) {
             manager.basicTaskList.put(taskId, ((BasicTask) restoredTask));
         } else if (restoredTask instanceof Epic) {
@@ -206,7 +198,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      */
     private void save() {
         try (BufferedWriter bw = Files.newBufferedWriter(path)) {
-            String header = "id,type,name,description,status,epic\n";
+            String header = "id,type,name,description,startTime,duration,status,epic\n";
             bw.write(header);
             //проходимся по всем типам задач, преобразуем в строку и записываем в файл
             for (BasicTask basicTask : basicTaskList.values()) {
@@ -261,15 +253,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         manager.getEpicById(epic1.getTaskId());
         manager.getSubtaskById(subtask1.getTaskId());
 
-
         // Данный закомментированный код считывает сохраненные данные и печатает восстановленные задачи и историю.
-        /*
-        FileBackedTasksManager manager = loadFromFile(Paths.get("src/resources/test.csv"));
-        System.out.println(manager.getBasicTaskList());
-        System.out.println(manager.getEpicList());
-        System.out.println(manager.getSubtaskList());
-        System.out.println(manager.getHistory());
-        */
+        FileBackedTasksManager manager1 = loadFromFile("src/resources/test.csv");
+        System.out.println(manager1.getBasicTaskList());
+        System.out.println(manager1.getEpicList());
+        System.out.println(manager1.getSubtaskList());
+        System.out.println(manager1.getHistory());
     }
 }
 

@@ -1,15 +1,16 @@
 package manager;
 
+import exceptions.InvalidTimeException;
 import tasks.BasicTask;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
-
-import java.util.Map;
-
 import utility.EpicService;
 
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Класс Manager отвечает за управление и хранение каждого типа задач
@@ -65,6 +66,7 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public List<Long> getEpicSubtaskList(Epic epic) {
+        Objects.requireNonNull(epic, "Попытка найти список подзадач несуществующего эпика");
         return new ArrayList<>(epic.getSubtaskList());
     }
 
@@ -100,8 +102,9 @@ public class InMemoryTaskManager implements TaskManager {
         subtaskList.clear();
 
         for (Epic epic : epicList.values()) {
-            EpicService.removeAllEpicSubtasks(epic);
+            EpicService.removeAllEpicSubtasks(epic, subtaskList);
             EpicService.checkEpicStatus(epic, subtaskList);
+            EpicService.getEpicTimes(epic, subtaskList);
         }
     }
 
@@ -160,11 +163,16 @@ public class InMemoryTaskManager implements TaskManager {
      * @return id добавленной задачи
      */
     @Override
-    public void addBasicTask(BasicTask basicTask) {
+    public long addBasicTask(BasicTask basicTask) {
         Objects.requireNonNull(basicTask, "Попытка добавить пустую задачу.");
-        long id = generateId();
-        basicTask.setTaskId(id);
-        basicTaskList.put(id, basicTask);
+        if (isValidStartTime(basicTask)) {
+            long id = generateId();
+            basicTask.setTaskId(id);
+            basicTaskList.put(id, basicTask);
+            return id;
+        } else {
+            throw new InvalidTimeException("Задачи не должны пересекаться по времени!");
+        }
     }
 
     /**
@@ -176,11 +184,16 @@ public class InMemoryTaskManager implements TaskManager {
      * @return id добавленного эпика
      */
     @Override
-    public void addEpic(Epic epic) {
+    public long addEpic(Epic epic) {
         Objects.requireNonNull(epic, "Попытка добавить пустой эпик.");
-        long id = generateId();
-        epic.setTaskId(id);
-        epicList.put(id, epic);
+        if (isValidStartTime(epic)) {
+            long id = generateId();
+            epic.setTaskId(id);
+            epicList.put(id, epic);
+            return id;
+        } else {
+            throw new InvalidTimeException("Задачи не должны пересекаться по времени!");
+        }
     }
 
     /**
@@ -194,16 +207,22 @@ public class InMemoryTaskManager implements TaskManager {
      * @throws NoSuchElementException если не существует эпика с epicId
      */
     @Override
-    public void addSubtask(Subtask subtask) {
+    public long addSubtask(Subtask subtask) {
         Objects.requireNonNull(subtask, "Попытка добавить пустую подзадачу");
         if (epicList.containsKey(subtask.getEpicId())) {
-            long id = generateId();
-            subtask.setTaskId(id);
-            subtaskList.put(id, subtask);
-            long epicId = subtask.getEpicId();
-            Epic epic = epicList.get(epicId);
-            EpicService.addEpicSubtask(epic, id);
-            EpicService.checkEpicStatus(epic, subtaskList);
+            if (isValidStartTime(subtask)) {
+                long id = generateId();
+                subtask.setTaskId(id);
+                subtaskList.put(id, subtask);
+                long epicId = subtask.getEpicId();
+                Epic epic = epicList.get(epicId);
+                EpicService.addEpicSubtask(epic, id);
+                EpicService.checkEpicStatus(epic, subtaskList);
+                EpicService.getEpicTimes(epic, subtaskList);
+                return id;
+            } else {
+                throw new InvalidTimeException("Задачи не должны пересекаться по времени!");
+            }
         } else {
             throw new NoSuchElementException("Эпика с id " + subtask.getEpicId() + " не существует.");
         }
@@ -220,7 +239,14 @@ public class InMemoryTaskManager implements TaskManager {
         Objects.requireNonNull(basicTask, "Попытка обновить пустую задачу.");
         long basicTaskId = basicTask.getTaskId();
         if (basicTaskList.containsKey(basicTaskId)) {
-            basicTaskList.put(basicTaskId, basicTask);
+            BasicTask currentTask = basicTaskList.get(basicTaskId);
+            basicTaskList.remove(basicTaskId);
+            if (isValidStartTime(basicTask)) {
+                basicTaskList.put(basicTaskId, basicTask);
+            } else {
+                basicTaskList.put(basicTaskId, currentTask);
+                throw new InvalidTimeException("Задачи не должны пересекаться по времени!");
+            }
         } else {
             throw new NoSuchElementException("Задачи с id " + basicTaskId + " не существует.");
         }
@@ -254,10 +280,18 @@ public class InMemoryTaskManager implements TaskManager {
         Objects.requireNonNull(subtask, "Попытка обновить пустую задачу.");
         long subtaskId = subtask.getTaskId();
         if (subtaskList.containsKey(subtaskId)) {
-            subtaskList.put(subtaskId, subtask);
-            long epicId = subtask.getEpicId();
-            Epic epic = epicList.get(epicId);
-            EpicService.checkEpicStatus(epic, subtaskList);
+            Subtask currentSubtask = subtaskList.get(subtaskId);
+            subtaskList.remove(subtaskId);
+            if (isValidStartTime(subtask)) {
+                subtaskList.put(subtaskId, subtask);
+                long epicId = subtask.getEpicId();
+                Epic epic = epicList.get(epicId);
+                EpicService.checkEpicStatus(epic, subtaskList);
+                EpicService.getEpicTimes(epic, subtaskList);
+            } else {
+                subtaskList.put(subtaskId, currentSubtask);
+                throw new InvalidTimeException("Задачи не должны пересекаться по времени!");
+            }
         } else {
             throw new NoSuchElementException("Подзадачи с id " + subtaskId + " не существует.");
         }
@@ -292,8 +326,8 @@ public class InMemoryTaskManager implements TaskManager {
             //удаление подзадач эпика из истории просмотров
             removeTasksFromHistory(epic.getSubtaskList());
             // очистка списка подзадач удаляемого эпика
-            EpicService.removeAllEpicSubtasks(epic);
-            basicTaskList.remove(epicId);
+            EpicService.removeAllEpicSubtasks(epic, subtaskList);
+            epicList.remove(epicId);
             historyManager.remove(epicId);
         } else {
             throw new NoSuchElementException("Эпика с id " + epicId + " не существует.");
@@ -316,6 +350,7 @@ public class InMemoryTaskManager implements TaskManager {
             Epic epic = epicList.get(epicId);
             EpicService.removeEpicSubtask(epic, subtaskId);
             EpicService.checkEpicStatus(epic, subtaskList);
+            EpicService.getEpicTimes(epic, subtaskList);
             historyManager.remove(subtaskId);
         } else {
             throw new NoSuchElementException("Подзадачи с id " + subtaskId + " не существует.");
@@ -332,6 +367,18 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
+    /**
+     * Возвращает, отсортированный по времени стара, список задач и подзадач. Задачи без времени старта помещаются в
+     * конец списка.
+     *
+     * @return отсортированный список
+     */
+    public List<Task> getPrioritizedTasks() {
+        return Stream.concat(getBasicTaskList().stream(), getSubtaskList().stream())
+                .sorted((Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder()))))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
     private long generateId() {
         return taskId++;
     }
@@ -341,4 +388,33 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.remove(taskId);
         }
     }
+
+    private boolean isValidStartTime(Task task) {
+        List<Task> sortedTasks = new ArrayList<>(getPrioritizedTasks());
+        LocalDateTime startTime = task.getStartTime();
+        if (startTime == null) {
+            return true;
+        }
+        LocalDateTime endTime = task.getEndTime();
+
+        if (sortedTasks.isEmpty()) {
+            return true;
+        }
+
+        if (endTime.isBefore(sortedTasks.get(0).getStartTime()) ||
+                startTime.isAfter(sortedTasks.get(sortedTasks.size() - 1).getEndTime())) {
+            return true;
+        }
+
+        for (int i = 1; i < sortedTasks.size(); i++) {
+            Task currentTask = sortedTasks.get(i);
+            Task prevTask = sortedTasks.get(i - 1);
+
+            if (startTime.isAfter(prevTask.getEndTime()) && endTime.isBefore(currentTask.getStartTime())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

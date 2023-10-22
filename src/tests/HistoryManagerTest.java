@@ -21,6 +21,7 @@ class HistoryManagerTest {
     static BasicTask task3;
     static Epic epic1;
     static Subtask subtask1;
+
     @BeforeAll
     static void setUp() {
         historyManager = new InMemoryHistoryManager();

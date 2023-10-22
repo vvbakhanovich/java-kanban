@@ -8,6 +8,7 @@ import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Данный класс отвечает за операции со связанными с эпиком подзадачами.
@@ -111,15 +112,20 @@ public class EpicService {
      */
     private static void getEpicStartTime(Epic epic, Map<Long, Subtask> subtasks) {
         List<Long> subtaskList = epic.getSubtaskList();
+        if(subtaskList.isEmpty()) {
+            epic.setStartTime(null);
+        }
 
-        Subtask subtask = subtaskList.stream()
+        Optional<Subtask> subtask = subtaskList.stream()
                 .map(subtasks::get)
                 .filter(subtask1 -> subtask1.getStartTime() != null)
                 .min(Comparator.comparing(subtask2 ->
-                        subtask2.getStartTime().plusMinutes(subtask2.getDuration())))
-                .orElseThrow(() ->
-                        new IllegalArgumentException("У эпика с id " + epic.getTaskId() + " пустой список подзадач."));
-        epic.setStartTime(subtask.getStartTime());
+                        subtask2.getStartTime().plusMinutes(subtask2.getDuration())));
+//                .orElseThrow(() ->
+//                        new IllegalArgumentException("У эпика с id " + epic.getTaskId() + " пустой список подзадач."));
+        if (subtask.isPresent()) {
+            epic.setStartTime(subtask.get().getStartTime());
+        }
     }
 
     /**
@@ -130,16 +136,20 @@ public class EpicService {
      */
     private static void getEpicEndTime(Epic epic, Map<Long, Subtask> subtasks) {
         List<Long> subtaskList = epic.getSubtaskList();
+        if (subtaskList.isEmpty()) {
+            epic.setEndTime(null);
+        }
 
-        Subtask subtask = subtaskList.stream()
+        Optional<Subtask> subtask = subtaskList.stream()
                 .map(subtasks::get)
                 .filter(subtask1 -> subtask1.getStartTime() != null)
                 .max(Comparator.comparing(subtask2 ->
-                        subtask2.getStartTime().plusMinutes(subtask2.getDuration())))
-                .orElseThrow(() ->
-                        new IllegalArgumentException("У эпика с id " + epic.getTaskId() + " пустой список подзадач."));
-
-        epic.setEndTime(subtask.getStartTime().plusMinutes(subtask.getDuration()));
+                        subtask2.getStartTime().plusMinutes(subtask2.getDuration())));
+//                .orElseThrow(() ->
+//                        new IllegalArgumentException("У эпика с id " + epic.getTaskId() + " пустой список подзадач."));
+        if (subtask.isPresent()) {
+            epic.setEndTime(subtask.get().getStartTime().plusMinutes(subtask.get().getDuration()));
+        }
     }
 
     /**
@@ -148,7 +158,11 @@ public class EpicService {
      * @param epic эпик, длительность которого требуется рассчитать
      */
     private static void getEpicDuration(Epic epic) {
-        Duration duration = Duration.between(epic.getStartTime(), epic.getEndTime());
-        epic.setDuration(duration.toMinutes());
+        if (epic.getStartTime() != null) {
+            Duration duration = Duration.between(epic.getStartTime(), epic.getEndTime());
+            epic.setDuration(duration.toMinutes());
+        } else {
+            epic.setDuration(0);
+        }
     }
 }

@@ -1,6 +1,7 @@
 id,type,name,description,startTime,duration,status,epic
-1,BASIC_TASK,Задача со временем 1,Описание задачи со временем 1,22.10.2023 09:09,23,IN_PROGRESS
-2,BASIC_TASK,Задача со временем 2,Описание задачи со временем 2,22.10.2023 08:00,15,NEW
-3,EPIC,Эпик 1,Описание эпика 1,null,0,NEW
+1,BASIC_TASK,Задача 1,Описание задачи 1,null,0,NEW
+2,BASIC_TASK,Задача 2,Описание задачи 2,null,0,DONE
+3,EPIC,Эпик 1,Описание эпика 1,null,0,IN_PROGRESS
+4,SUBTASK,Подзадача 1,Описание подзадачи 1,null,0,DONE,3
+5,SUBTASK,Подзадача 2,Описание подзадачи 2,null,0,NEW,3
 
-2,3,1

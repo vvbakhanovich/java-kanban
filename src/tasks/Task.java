@@ -3,8 +3,9 @@ package tasks;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
-public abstract class Task implements Comparable<Task>{
+public abstract class Task {
     protected String taskName;
     protected long taskId;
     protected String description;
@@ -12,7 +13,8 @@ public abstract class Task implements Comparable<Task>{
     protected TaskTypes taskType;
     protected LocalDateTime startTime;
     protected long duration;
-    protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    Pattern dateTimePattern = Pattern.compile("\\d{2}.\\d{2}.\\d{4} \\d{2}:\\d{2}");
 
     protected Task(String taskName, String description, Status status) {
         this.taskName = taskName;
@@ -24,7 +26,9 @@ public abstract class Task implements Comparable<Task>{
         this.taskName = taskName;
         this.description = description;
         this.status = status;
-        this.startTime = LocalDateTime.parse(startTime, formatter);
+        if(dateTimePattern.matcher(startTime).matches()) {
+            this.startTime = LocalDateTime.parse(startTime, FORMATTER);
+        }
         this.duration = duration;
     }
 
@@ -40,7 +44,9 @@ public abstract class Task implements Comparable<Task>{
         this.taskName = taskName;
         this.description = description;
         this.status = status;
-        this.startTime = LocalDateTime.parse(startTime, formatter);
+        if(dateTimePattern.matcher(startTime).matches()) {
+            this.startTime = LocalDateTime.parse(startTime, FORMATTER);
+        }
         this.duration = duration;
     }
 
@@ -101,7 +107,7 @@ public abstract class Task implements Comparable<Task>{
     }
 
     public DateTimeFormatter getFormatter() {
-        return formatter;
+        return FORMATTER;
     }
 
 
@@ -116,14 +122,6 @@ public abstract class Task implements Comparable<Task>{
     @Override
     public int hashCode() {
         return Objects.hash(taskName, description, status);
-    }
-
-    @Override
-    public int compareTo(Task o) {
-        if (o.getStartTime() == null) {
-            return -1;
-        }
-        return this.getStartTime().compareTo(o.getStartTime());
     }
 
     @Override

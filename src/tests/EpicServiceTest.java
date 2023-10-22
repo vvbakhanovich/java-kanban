@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 class EpicServiceTest {
 
     private Epic epic;
+    private Epic epicWithDate;
     private Map<Long, Subtask> subtaskList;
     private Subtask subtask1;
     private Subtask subtask2;
@@ -30,7 +31,9 @@ class EpicServiceTest {
     @BeforeEach
     void setUp() {
         epic = Epic.create("Epic 1", "Description of epic 1");
+        epicWithDate = Epic.create("EpicWithDate 1", "Description of epicWithDate 1");
         epic.setTaskId(1L);
+        epicWithDate.setTaskId(2L);
         subtaskList = new HashMap<>();
         fillSubtaskMap();
     }
@@ -124,22 +127,22 @@ class EpicServiceTest {
     @Test
     void getStartTimeShouldReturnEarliestTime() {
         LocalDateTime result = LocalDateTime.of(2020, 9, 21, 10, 0);
-        EpicService.getEpicTimes(epic, subtaskList);
-        assertEquals(result, epic.getStartTime());
+        EpicService.getEpicTimes(epicWithDate, subtaskList);
+        assertEquals(result, epicWithDate.getStartTime());
     }
 
     @Test
     void getEndTimeShouldReturnLatestTime() {
         LocalDateTime result = LocalDateTime.of(2023, 12, 10, 10, 13);
-        EpicService.getEpicTimes(epic, subtaskList);
-        assertEquals(result, epic.getEndTime());
+        EpicService.getEpicTimes(epicWithDate, subtaskList);
+        assertEquals(result, epicWithDate.getEndTime());
     }
 
     @Test
     void getDurationShouldReturnNumberOfMinutesBetweenStartAndEnd() {
         long result = Duration.between(subtaskWithDate2.getStartTime(), subtaskWithDate3.getEndTime()).toMinutes();
-        EpicService.getEpicTimes(epic, subtaskList);
-        assertEquals(result, epic.getDuration());
+        EpicService.getEpicTimes(epicWithDate, subtaskList);
+        assertEquals(result, epicWithDate.getDuration());
     }
 
 
@@ -151,13 +154,13 @@ class EpicServiceTest {
         subtask3 = Subtask.create("Subtask 3", "Description 3", Status.NEW, 1);
         subtask3.setTaskId(4L);
         subtaskWithDate1 = Subtask.createWithStartTime("Subtask 1", "Description 1",
-                "20.09.2023 09:00", 50, Status.NEW, 1);
+                "20.09.2023 09:00", 50, Status.NEW, 2);
         subtaskWithDate1.setTaskId(5L);
         subtaskWithDate2 = Subtask.createWithStartTime("Subtask 2", "Description 3",
-                "21.09.2020 10:00", 20, Status.NEW, 1);
+                "21.09.2020 10:00", 20, Status.NEW, 2);
         subtaskWithDate2.setTaskId(6L);
         subtaskWithDate3 = Subtask.createWithStartTime("Subtask 3", "Description 3",
-                "10.12.2023 10:00", 13, Status.NEW, 1);
+                "10.12.2023 10:00", 13, Status.NEW, 2);
         subtaskWithDate3.setTaskId(7L);
 
 
@@ -171,8 +174,8 @@ class EpicServiceTest {
         EpicService.addEpicSubtask(epic, subtask1.getTaskId());
         EpicService.addEpicSubtask(epic, subtask2.getTaskId());
         EpicService.addEpicSubtask(epic, subtask3.getTaskId());
-        EpicService.addEpicSubtask(epic, subtaskWithDate1.getTaskId());
-        EpicService.addEpicSubtask(epic, subtaskWithDate2.getTaskId());
-        EpicService.addEpicSubtask(epic, subtaskWithDate3.getTaskId());
+        EpicService.addEpicSubtask(epicWithDate, subtaskWithDate1.getTaskId());
+        EpicService.addEpicSubtask(epicWithDate, subtaskWithDate2.getTaskId());
+        EpicService.addEpicSubtask(epicWithDate, subtaskWithDate3.getTaskId());
     }
 }

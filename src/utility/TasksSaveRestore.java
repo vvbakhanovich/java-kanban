@@ -3,14 +3,16 @@ package utility;
 import manager.HistoryManager;
 import tasks.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 
 /**
  * Вспомогательный класс для преобразования задач в строки и обратно.
  */
 public final class TasksSaveRestore {
+    private static final DateTimeFormatter formatter = Task.FORMATTER;
 
     private TasksSaveRestore() {
     }
@@ -33,8 +35,10 @@ public final class TasksSaveRestore {
                         task.getTaskType().toString(),
                         task.getTaskName(),
                         task.getDescription(),
-                        task.getStatus().toString(),
-                        "\n");
+                        printStartTime(task.getStartTime()),
+                        String.valueOf(task.getDuration()),
+                        task.getStatus().toString()) +
+                        "\n";
             case SUBTASK:
                 Subtask subtask = (Subtask) task;
                 return String.join(delimiter,
@@ -42,9 +46,11 @@ public final class TasksSaveRestore {
                         subtask.getTaskType().toString(),
                         subtask.getTaskName(),
                         subtask.getDescription(),
+                        printStartTime(task.getStartTime()),
+                        String.valueOf(task.getDuration()),
                         subtask.getStatus().toString(),
-                        String.valueOf(subtask.getEpicId()),
-                        "\n");
+                        String.valueOf(subtask.getEpicId())) +
+                        "\n";
             default:
                 throw new AssertionError("Несуществующий тип задачи: " + type);
         }
@@ -63,12 +69,14 @@ public final class TasksSaveRestore {
 
         switch (type) {
             case BASIC_TASK:
-                return BasicTask.createFromFile(Long.parseLong(task[0]), task[2], task[3], Status.valueOf(task[4]));
+                return BasicTask.createFromFileWithStartTime(Long.parseLong(task[0]), task[2], task[3],
+                        task[4], Long.parseLong(task[5]), Status.valueOf(task[6]));
             case EPIC:
-                return Epic.createFromFile(Long.parseLong(task[0]), task[2], task[3], Status.valueOf(task[4]));
+                return Epic.createFromFileWithStartTime(Long.parseLong(task[0]), task[2], task[3],
+                        task[4], Long.parseLong(task[5]), Status.valueOf(task[6]));
             case SUBTASK:
-                return Subtask.createFromFile(Long.parseLong(task[0]), task[2], task[3], Status.valueOf(task[4]),
-                        Long.parseLong(task[5]));
+                return Subtask.createFromFileWithStartTime(Long.parseLong(task[0]), task[2], task[3],
+                        task[4], Long.parseLong(task[5]), Status.valueOf(task[6]), Long.parseLong(task[7]));
             default:
                 return null;
         }
@@ -81,11 +89,13 @@ public final class TasksSaveRestore {
      * @return строка, в которой содержатся id просмотренных задач
      */
     public static String historyToString(HistoryManager historyManager) {
-        StringJoiner sj = new StringJoiner(",");
+        StringBuilder sb = new StringBuilder();
+        String delimiter = "";
         for (Task task : historyManager.getHistory()) {
-            sj.add(String.valueOf(task.getTaskId()));
+            sb.append(delimiter).append(task.getTaskId());
+            delimiter = ",";
         }
-        return sj.toString();
+        return sb.toString();
     }
 
     /**
@@ -96,10 +106,19 @@ public final class TasksSaveRestore {
      */
     public static List<Long> historyFromString(String value) {
         List<Long> result = new ArrayList<>();
-        String[] historyId = value.split(",");
-        for (String taskId : historyId) {
-            result.add(Long.parseLong(taskId));
+        if (value != null) {
+            String[] historyId = value.split(",");
+            for (String taskId : historyId) {
+                result.add(Long.parseLong(taskId));
+            }
         }
         return result;
+    }
+
+    private static String printStartTime(LocalDateTime startTime) {
+        if(startTime != null) {
+            return startTime.format(formatter);
+        }
+        return "null";
     }
 }

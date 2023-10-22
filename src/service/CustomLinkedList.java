@@ -53,12 +53,14 @@ public class CustomLinkedList {
      * Удаление задачи из списка просмотров по id
      * @param id идентификатор задачи, которую требуется удалить
      */
-    public void remove(Long id) {
+    public boolean remove(Long id) {
         if (nodes.containsKey(id)) {
             Node node = nodes.get(id);
             removeNode(node);
             nodes.remove(id);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -68,8 +70,10 @@ public class CustomLinkedList {
     private void removeNode(Node node) {
         Node nodeNext = node.next;
         Node nodePrevious = node.prev;
-
-        if (nodeNext == null) {
+        if (nodePrevious == null && nodeNext == null) {
+            head = null;
+            tail = null;
+        } else if (nodeNext == null) {
             nodePrevious.next = null;
             tail = nodePrevious;
         } else if (nodePrevious == null) {

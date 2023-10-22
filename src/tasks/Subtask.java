@@ -13,18 +13,42 @@ public class Subtask extends Task {
         taskType = TaskTypes.SUBTASK;
     }
 
+    private Subtask(String taskName, String description, String startTime, long duration, Status status, long epicId) {
+        super(taskName, description, startTime, duration, status);
+        this.epicId = epicId;
+        taskType = TaskTypes.SUBTASK;
+    }
+
     private Subtask(long taskId, String taskName, String description, Status status, long epicId) {
         super(taskId, taskName, description, status);
         this.epicId = epicId;
         taskType = TaskTypes.SUBTASK;
     }
 
+    private Subtask(long taskId, String taskName, String description, String startTime, long duration, Status status,
+                    long epicId) {
+        super(taskId, taskName, description, startTime, duration, status);
+        this.epicId = epicId;
+        taskType = TaskTypes.SUBTASK;
+    }
+
+
     public static Subtask create(String taskName, String description, Status status, long epicId) {
         return new Subtask(taskName, description, status, epicId);
     }
 
+    public static Subtask createWithStartTime(String taskName, String description, String startTime, long duration,
+                                                Status status, long epicId) {
+        return new Subtask(taskName, description, startTime, duration, status, epicId);
+    }
+
     public static Subtask createFromFile(long taskId, String taskName, String description, Status status, long epicId) {
         return new Subtask(taskId, taskName, description, status, epicId);
+    }
+
+    public static Subtask createFromFileWithStartTime(long taskId, String taskName, String description,
+                                                        String startTime, long duration, Status status, long epicId) {
+        return new Subtask(taskId, taskName, description, startTime, duration, status, epicId);
     }
 
     public long getEpicId() {
@@ -48,10 +72,12 @@ public class Subtask extends Task {
     @Override
     public String toString() {
         return "Subtask{" +
-                "epicID=" + epicId +
+                "taskId=" + taskId +
                 ", taskName='" + taskName + '\'' +
-                ", taskId=" + taskId +
                 ", description='" + description + '\'' +
+                ", startTime=" + startTime +
+                ", duration=" + duration +
+                ", epicId=" + epicId +
                 ", status=" + status +
                 '}';
     }

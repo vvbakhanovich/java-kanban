@@ -17,18 +17,6 @@ public class Epic extends Task {
         taskType = TaskTypes.EPIC;
     }
 
-    private Epic(String taskName, String description, String startTime, long duration, Status status) {
-        super(taskName, description, startTime, duration, status);
-        subtaskList = new ArrayList<>();
-        taskType = TaskTypes.EPIC;
-    }
-
-    private Epic(long taskId, String taskName, String description, Status status) {
-        super(taskId, taskName, description, status);
-        subtaskList = new ArrayList<>();
-        taskType = TaskTypes.EPIC;
-    }
-
     private Epic(long taskId, String taskName, String description, String startTime, long duration, Status status) {
         super(taskId, taskName, description, startTime, duration, status);
         subtaskList = new ArrayList<>();

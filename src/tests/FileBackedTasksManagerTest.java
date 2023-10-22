@@ -1,8 +1,6 @@
 package tests;
 
 import manager.FileBackedTasksManager;
-import manager.InMemoryTaskManager;
-import manager.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.BasicTask;
@@ -10,9 +8,8 @@ import tasks.Epic;
 import tasks.Status;
 import tasks.Subtask;
 
-import java.util.Collections;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 class FileBackedTasksManagerTest {
 

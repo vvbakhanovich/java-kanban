@@ -106,11 +106,6 @@ public abstract class Task {
         this.duration = duration;
     }
 
-    public DateTimeFormatter getFormatter() {
-        return FORMATTER;
-    }
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

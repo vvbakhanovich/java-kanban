@@ -1,9 +1,10 @@
 package tasks;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.regex.Pattern;
+
+import static utility.Constants.FORMATTER;
 
 public abstract class Task {
     protected String taskName;
@@ -13,8 +14,7 @@ public abstract class Task {
     protected TaskTypes taskType;
     protected LocalDateTime startTime;
     protected long duration;
-    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-    Pattern dateTimePattern = Pattern.compile("\\d{2}.\\d{2}.\\d{4} \\d{2}:\\d{2}");
+    private final Pattern dateTimePattern = Pattern.compile("\\d{2}.\\d{2}.\\d{4} \\d{2}:\\d{2}");
 
     protected Task(String taskName, String description, Status status) {
         this.taskName = taskName;
@@ -111,12 +111,12 @@ public abstract class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(taskName, task.taskName) && Objects.equals(description, task.description) && status == task.status;
+        return taskId == task.taskId && Objects.equals(startTime, task.startTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(taskName, description, status);
+        return Objects.hash(taskName, taskId, description, status, taskType, startTime, duration, dateTimePattern);
     }
 
     @Override

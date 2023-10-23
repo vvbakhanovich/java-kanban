@@ -1,6 +1,7 @@
 package manager;
 
 import exceptions.InvalidTimeException;
+import service.TaskComparator;
 import tasks.BasicTask;
 import tasks.Epic;
 import tasks.Subtask;
@@ -9,8 +10,6 @@ import utility.EpicService;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Класс Manager отвечает за управление и хранение каждого типа задач
@@ -22,6 +21,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Long, Subtask> subtaskList;
     protected final Map<Long, Epic> epicList;
     protected final HistoryManager historyManager;
+    private final TreeSet<Task> sortedTasks;
 
     /**
      * Конструктор класса Manager. Принимает в качестве параметра объект, реализующий интерфейс HistoryManager.
@@ -32,6 +32,7 @@ public class InMemoryTaskManager implements TaskManager {
         epicList = new HashMap<>();
         taskId = 1;
         historyManager = Managers.getDefaultHistory();
+        sortedTasks = new TreeSet<>(new TaskComparator());
     }
 
     /**
@@ -76,8 +77,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeAllBasicTasks() {
         removeTasksFromHistory(basicTaskList.keySet());
+        for (BasicTask task : basicTaskList.values()) {
+            sortedTasks.remove(task);
+        }
         basicTaskList.clear();
-
     }
 
 
@@ -89,6 +92,9 @@ public class InMemoryTaskManager implements TaskManager {
         removeTasksFromHistory(epicList.keySet());
         epicList.clear();
         removeTasksFromHistory(subtaskList.keySet());
+        for (Subtask subtask : subtaskList.values()) {
+            sortedTasks.remove(subtask);
+        }
         subtaskList.clear();
     }
 
@@ -98,6 +104,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeAllSubtasks() {
         removeTasksFromHistory(subtaskList.keySet());
+        for (Subtask subtask : subtaskList.values()) {
+            sortedTasks.remove(subtask);
+        }
 
         subtaskList.clear();
 
@@ -169,6 +178,7 @@ public class InMemoryTaskManager implements TaskManager {
             long id = generateId();
             basicTask.setTaskId(id);
             basicTaskList.put(id, basicTask);
+            sortedTasks.add(basicTask);
             return id;
         } else {
             throw new InvalidTimeException("Задачи не должны пересекаться по времени!");
@@ -214,6 +224,7 @@ public class InMemoryTaskManager implements TaskManager {
                 long id = generateId();
                 subtask.setTaskId(id);
                 subtaskList.put(id, subtask);
+                sortedTasks.add(subtask);
                 long epicId = subtask.getEpicId();
                 Epic epic = epicList.get(epicId);
                 EpicService.addEpicSubtask(epic, id);
@@ -241,10 +252,13 @@ public class InMemoryTaskManager implements TaskManager {
         if (basicTaskList.containsKey(basicTaskId)) {
             BasicTask currentTask = basicTaskList.get(basicTaskId);
             basicTaskList.remove(basicTaskId);
+            sortedTasks.remove(currentTask);
             if (isValidStartTime(basicTask)) {
                 basicTaskList.put(basicTaskId, basicTask);
+                sortedTasks.add(basicTask);
             } else {
                 basicTaskList.put(basicTaskId, currentTask);
+                sortedTasks.add(currentTask);
                 throw new InvalidTimeException("Задачи не должны пересекаться по времени!");
             }
         } else {
@@ -282,14 +296,17 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtaskList.containsKey(subtaskId)) {
             Subtask currentSubtask = subtaskList.get(subtaskId);
             subtaskList.remove(subtaskId);
+            sortedTasks.remove(currentSubtask);
             if (isValidStartTime(subtask)) {
                 subtaskList.put(subtaskId, subtask);
+                sortedTasks.add(subtask);
                 long epicId = subtask.getEpicId();
                 Epic epic = epicList.get(epicId);
                 EpicService.checkEpicStatus(epic, subtaskList);
                 EpicService.getEpicTimes(epic, subtaskList);
             } else {
                 subtaskList.put(subtaskId, currentSubtask);
+                sortedTasks.add(currentSubtask);
                 throw new InvalidTimeException("Задачи не должны пересекаться по времени!");
             }
         } else {
@@ -306,6 +323,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeBasicTaskById(long basicTaskId) {
         if (basicTaskList.containsKey(basicTaskId)) {
+            sortedTasks.remove(basicTaskList.get(basicTaskId));
             basicTaskList.remove(basicTaskId);
             historyManager.remove(basicTaskId);
         } else {
@@ -325,6 +343,9 @@ public class InMemoryTaskManager implements TaskManager {
             Epic epic = epicList.get(epicId);
             //удаление подзадач эпика из истории просмотров
             removeTasksFromHistory(epic.getSubtaskList());
+            for (Long id : epic.getSubtaskList()) {
+                sortedTasks.remove(subtaskList.get(id));
+            }
             // очистка списка подзадач удаляемого эпика
             EpicService.removeAllEpicSubtasks(epic, subtaskList);
             epicList.remove(epicId);
@@ -345,6 +366,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeSubtaskById(long subtaskId) {
         if (subtaskList.containsKey(subtaskId)) {
             Subtask subtask = subtaskList.get(subtaskId);
+            sortedTasks.remove(subtask);
             subtaskList.remove(subtaskId);
             long epicId = subtask.getEpicId();
             Epic epic = epicList.get(epicId);
@@ -374,9 +396,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @return отсортированный список
      */
     public List<Task> getPrioritizedTasks() {
-        return Stream.concat(getBasicTaskList().stream(), getSubtaskList().stream())
-                .sorted((Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder()))))
-                .collect(Collectors.toCollection(ArrayList::new));
+        return new ArrayList<>(sortedTasks);
     }
 
     private long generateId() {
@@ -390,7 +410,6 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private boolean isValidStartTime(Task task) {
-        List<Task> sortedTasks = new ArrayList<>(getPrioritizedTasks());
         LocalDateTime startTime = task.getStartTime();
         if (startTime == null) {
             return true;
@@ -401,20 +420,21 @@ public class InMemoryTaskManager implements TaskManager {
             return true;
         }
 
-        if (endTime.isBefore(sortedTasks.get(0).getStartTime()) ||
-                startTime.isAfter(sortedTasks.get(sortedTasks.size() - 1).getEndTime())) {
+        Task earlierTask = sortedTasks.floor(task);
+        Task laterTask = sortedTasks.ceiling(task);
+
+        if (earlierTask == null && laterTask == null) {
             return true;
         }
 
-        for (int i = 1; i < sortedTasks.size(); i++) {
-            Task currentTask = sortedTasks.get(i);
-            Task prevTask = sortedTasks.get(i - 1);
-
-            if (startTime.isAfter(prevTask.getEndTime()) && endTime.isBefore(currentTask.getStartTime())) {
-                return true;
-            }
+        if (earlierTask == null) {
+            return endTime.isBefore((laterTask).getStartTime());
+        } else if (laterTask == null) {
+            return startTime.isAfter(earlierTask.getEndTime());
+        } else {
+            return startTime.isAfter(earlierTask.getEndTime()) &&
+                    endTime.isBefore(Objects.requireNonNull(laterTask).getStartTime());
         }
-        return false;
     }
 
 }

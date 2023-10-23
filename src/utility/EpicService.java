@@ -4,7 +4,6 @@ import tasks.Epic;
 import tasks.Status;
 import tasks.Subtask;
 
-import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -101,7 +100,7 @@ public class EpicService {
     public static void getEpicTimes(Epic epic, Map<Long, Subtask> subtasks) {
         getEpicStartTime(epic, subtasks);
         getEpicEndTime(epic, subtasks);
-        getEpicDuration(epic);
+        getEpicDuration(epic, subtasks);
     }
 
     /**
@@ -147,17 +146,15 @@ public class EpicService {
     }
 
     /**
-     * Расчет длительности выполнения эпика. Под длительностью подразумевается разница между временем старта и
-     * окончания.
+     * Расчет длительности выполнения эпика. Под длительностью подразумевается сумма длительностей всех подзадач
      *
      * @param epic эпик, длительность которого требуется рассчитать
      */
-    private static void getEpicDuration(Epic epic) {
-        if (epic.getStartTime() != null) {
-            Duration duration = Duration.between(epic.getStartTime(), epic.getEndTime());
-            epic.setDuration(duration.toMinutes());
-        } else {
-            epic.setDuration(0);
-        }
+    private static void getEpicDuration(Epic epic, Map<Long, Subtask> subtasks) {
+        long duration = epic.getSubtaskList().stream()
+                .map(subtasks::get)
+                .mapToLong(Subtask::getDuration)
+                .sum();
+        epic.setDuration(duration);
     }
 }

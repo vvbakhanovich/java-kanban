@@ -19,12 +19,6 @@ public class Subtask extends Task {
         taskType = TaskTypes.SUBTASK;
     }
 
-    private Subtask(long taskId, String taskName, String description, Status status, long epicId) {
-        super(taskId, taskName, description, status);
-        this.epicId = epicId;
-        taskType = TaskTypes.SUBTASK;
-    }
-
     private Subtask(long taskId, String taskName, String description, String startTime, long duration, Status status,
                     long epicId) {
         super(taskId, taskName, description, startTime, duration, status);
@@ -38,16 +32,12 @@ public class Subtask extends Task {
     }
 
     public static Subtask createWithStartTime(String taskName, String description, String startTime, long duration,
-                                                Status status, long epicId) {
+                                              Status status, long epicId) {
         return new Subtask(taskName, description, startTime, duration, status, epicId);
     }
 
-    public static Subtask createFromFile(long taskId, String taskName, String description, Status status, long epicId) {
-        return new Subtask(taskId, taskName, description, status, epicId);
-    }
-
     public static Subtask createFromFileWithStartTime(long taskId, String taskName, String description,
-                                                        String startTime, long duration, Status status, long epicId) {
+                                                      String startTime, long duration, Status status, long epicId) {
         return new Subtask(taskId, taskName, description, startTime, duration, status, epicId);
     }
 

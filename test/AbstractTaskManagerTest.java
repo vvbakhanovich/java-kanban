@@ -1,5 +1,3 @@
-package tests;
-
 import exceptions.InvalidTimeException;
 import manager.InMemoryTaskManager;
 import manager.TaskManager;

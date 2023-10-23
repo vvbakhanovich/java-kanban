@@ -8,11 +8,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static utility.Constants.FORMATTER;
+
 /**
  * Вспомогательный класс для преобразования задач в строки и обратно.
  */
 public final class TasksSaveRestore {
-    private static final DateTimeFormatter formatter = Task.FORMATTER;
+    private static final DateTimeFormatter formatter = FORMATTER;
 
     private TasksSaveRestore() {
     }

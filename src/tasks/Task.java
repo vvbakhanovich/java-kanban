@@ -111,7 +111,7 @@ public abstract class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return taskId == task.taskId && duration == task.duration && Objects.equals(taskName, task.taskName) && Objects.equals(description, task.description) && status == task.status && taskType == task.taskType && Objects.equals(startTime, task.startTime) && Objects.equals(dateTimePattern, task.dateTimePattern);
+        return taskId == task.taskId && Objects.equals(startTime, task.startTime);
     }
 
     @Override

@@ -17,6 +17,8 @@ public class Epic extends Task {
         taskType = TaskTypes.EPIC;
     }
 
+    // Конструктор с id и статусом для эпика нужен при восстановлении FileBackedTaskManager из файла. Там при парсинге
+    // строки создается готовый объект типа Epic, который кладется в мапу, хранящие все эпики.
     private Epic(long taskId, String taskName, String description, String startTime, long duration, Status status) {
         super(taskId, taskName, description, startTime, duration, status);
         subtaskList = new ArrayList<>();
@@ -28,11 +30,11 @@ public class Epic extends Task {
     }
 
     public static Epic createFromFileWithStartTime(long taskId,
-                                                        String taskName,
-                                                        String description,
-                                                        String startTime,
-                                                        long duration,
-                                                        Status status) {
+                                                   String taskName,
+                                                   String description,
+                                                   String startTime,
+                                                   long duration,
+                                                   Status status) {
         return new Epic(taskId, taskName, description, startTime, duration, status);
     }
 
@@ -56,12 +58,12 @@ public class Epic extends Task {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Epic epic = (Epic) o;
-        return Objects.equals(subtaskList, epic.subtaskList);
+        return Objects.equals(subtaskList, epic.subtaskList) && Objects.equals(endTime, epic.endTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), subtaskList);
+        return Objects.hash(super.hashCode(), subtaskList, endTime);
     }
 
     @Override

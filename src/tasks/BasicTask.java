@@ -21,10 +21,6 @@ public class BasicTask extends Task {
         super(taskName, description, startTime, duration, status);
     }
 
-    private BasicTask(long taskId, String taskName, String description, Status status) {
-        super(taskId, taskName, description, status);
-    }
-
     private BasicTask(long taskId, String taskName, String description, String startTime, long duration, Status status) {
         super(taskId, taskName, description, startTime, duration, status);
     }

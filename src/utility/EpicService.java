@@ -101,7 +101,7 @@ public class EpicService {
     public static void getEpicTimes(Epic epic, Map<Long, Subtask> subtasks) {
         getEpicStartTime(epic, subtasks);
         getEpicEndTime(epic, subtasks);
-        getEpicDuration(epic);
+        getEpicDuration(epic, subtasks);
     }
 
     /**

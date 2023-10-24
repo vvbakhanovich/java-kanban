@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class FBTMTest extends AbstractTaskManagerTest {
+
     @Override
     @BeforeEach
     void setManager() {

@@ -32,7 +32,7 @@ public class InMemoryTaskManager implements TaskManager {
         epicList = new HashMap<>();
         taskId = 1;
         historyManager = Managers.getDefaultHistory();
-        sortedTasks = new TreeSet<>(new TaskComparator());
+        sortedTasks = new TreeSet<>();
     }
 
     /**

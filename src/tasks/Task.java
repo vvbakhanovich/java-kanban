@@ -1,12 +1,13 @@
 package tasks;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static utility.Constants.FORMATTER;
 
-public abstract class Task {
+public abstract class Task implements Comparable<Task>{
     protected String taskName;
     protected long taskId;
     protected String description;
@@ -129,5 +130,17 @@ public abstract class Task {
                 ", duration=" + duration +
                 ", status=" + status +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Task o) {
+        if (this == null && o == null) return 0;
+        if (this == null) return -1;
+        if (o == null) return 1;
+
+        return Comparator
+                .comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(Task::getTaskId)
+                .compare(this, o);
     }
 }

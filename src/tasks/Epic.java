@@ -44,6 +44,15 @@ public class Epic extends Task {
         return new Epic(taskId, taskName, description, startTime, duration, status);
     }
 
+    public static Epic createFromFileWithStartTime2(long taskId,
+                                                   String taskName,
+                                                   String description,
+                                                   LocalDateTime startTime,
+                                                   long duration,
+                                                   Status status) {
+        return new Epic(taskId, taskName, description, startTime, duration, status);
+    }
+
     // возвращает копию списка подзадач
     public List<Long> getSubtaskList() {
         return subtaskList;

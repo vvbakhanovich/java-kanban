@@ -8,6 +8,7 @@ import tasks.Epic;
 import tasks.Status;
 import tasks.Subtask;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -49,18 +50,21 @@ abstract class AbstractTaskManagerTest {
                 Status.NEW, 1);
         subtask3 = Subtask.create("Подзадача 3", "Описание подзадачи 3",
                 Status.DONE, 1);
-        taskWithDate1 = BasicTask.createWithStartTime("Задача со временем 1",
-                "Описание задачи со временем 1", "22.10.2023 09:09", 23, Status.IN_PROGRESS);
-        taskWithDate2 = BasicTask.createWithStartTime("Задача со временем 2",
-                "Описание задачи со временем 2", "22.10.2023 08:00", 15, Status.NEW);
-        taskWithDate3 = BasicTask.createWithStartTime("Задача со временем 2",
-                "Описание задачи со временем 2", "22.10.2023 09:00", 15, Status.NEW);
-        subtaskWithDate1 = Subtask.createWithStartTime("Subtask 1", "Description 1",
-                "20.09.2023 09:00", 50, Status.NEW, 1);
-        subtaskWithDate2 = Subtask.createWithStartTime("Subtask 2", "Description 3",
-                "21.09.2020 10:00", 20, Status.NEW, 1);
-        subtaskWithDate3 = Subtask.createWithStartTime("Subtask 3", "Description 3",
-                "10.12.2023 10:00", 13, Status.NEW, 1);
+        taskWithDate1 = BasicTask.createWithStartTime2("Задача со временем 1",
+                "Описание задачи со временем 1",
+                LocalDateTime.of(2023, 10, 22, 9,9), 23, Status.IN_PROGRESS);
+        taskWithDate2 = BasicTask.createWithStartTime2("Задача со временем 2",
+                "Описание задачи со временем 2",
+                LocalDateTime.of(2023, 10, 22, 8,0), 15, Status.NEW);
+        taskWithDate3 = BasicTask.createWithStartTime2("Задача со временем 2",
+                "Описание задачи со временем 2",
+                LocalDateTime.of(2023, 10, 22, 9,0), 15, Status.NEW);
+        subtaskWithDate1 = Subtask.createWithStartTime2("Subtask 1", "Description 1",
+                LocalDateTime.of(2023, 9, 20, 9,0), 50, Status.NEW, 1);
+        subtaskWithDate2 = Subtask.createWithStartTime2("Subtask 2", "Description 3",
+                LocalDateTime.of(2020, 9, 21, 10,9), 20, Status.NEW, 1);
+        subtaskWithDate3 = Subtask.createWithStartTime2("Subtask 3", "Description 3",
+                LocalDateTime.of(2023, 12, 10, 10,0), 13, Status.NEW, 1);
     }
 
     @Test

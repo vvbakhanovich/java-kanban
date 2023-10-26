@@ -25,6 +25,12 @@ public class Epic extends Task {
         taskType = TaskTypes.EPIC;
     }
 
+    private Epic(long taskId, String taskName, String description, LocalDateTime startTime, long duration, Status status) {
+        super(taskId, taskName, description, startTime, duration, status);
+        subtaskList = new ArrayList<>();
+        taskType = TaskTypes.EPIC;
+    }
+
     public static Epic create(String taskName, String description) {
         return new Epic(taskName, description);
     }

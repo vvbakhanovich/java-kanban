@@ -1,5 +1,7 @@
 package tasks;
 
+import java.time.LocalDateTime;
+
 public class BasicTask extends Task {
 
     private final TaskTypes taskType = TaskTypes.BASIC_TASK;
@@ -21,7 +23,15 @@ public class BasicTask extends Task {
         super(taskName, description, startTime, duration, status);
     }
 
+    private BasicTask(String taskName, String description, LocalDateTime startTime, long duration, Status status) {
+        super(taskName, description, startTime, duration, status);
+    }
+
     private BasicTask(long taskId, String taskName, String description, String startTime, long duration, Status status) {
+        super(taskId, taskName, description, startTime, duration, status);
+    }
+
+    private BasicTask(long taskId, String taskName, String description, LocalDateTime startTime, long duration, Status status) {
         super(taskId, taskName, description, startTime, duration, status);
     }
 

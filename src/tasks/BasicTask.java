@@ -44,7 +44,7 @@ public class BasicTask extends Task {
         return new BasicTask(taskName, description, startTime, duration, status);
     }
 
-    public static BasicTask createWithStartTime(String taskName, String description, LocalDateTime startTime, long duration,
+    public static BasicTask createWithStartTime2(String taskName, String description, LocalDateTime startTime, long duration,
                                                 Status status) {
         return new BasicTask(taskName, description, startTime, duration, status);
     }
@@ -54,7 +54,7 @@ public class BasicTask extends Task {
         return new BasicTask(taskId, taskName, description, startTime, duration, status);
     }
 
-    public static BasicTask createFromFileWithStartTime(long taskId, String taskName, String description,
+    public static BasicTask createFromFileWithStartTime2(long taskId, String taskName, String description,
                                                         LocalDateTime startTime, long duration, Status status) {
         return new BasicTask(taskId, taskName, description, startTime, duration, status);
     }

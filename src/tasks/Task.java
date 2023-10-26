@@ -33,6 +33,14 @@ public abstract class Task implements Comparable<Task>{
         this.duration = duration;
     }
 
+    protected Task(String taskName, String description, LocalDateTime startTime, long duration, Status status) {
+        this.taskName = taskName;
+        this.description = description;
+        this.status = status;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
     protected Task(long taskId, String taskName, String description, Status status) {
         this.taskId = taskId;
         this.taskName = taskName;
@@ -48,6 +56,15 @@ public abstract class Task implements Comparable<Task>{
         if(dateTimePattern.matcher(startTime).matches()) {
             this.startTime = LocalDateTime.parse(startTime, FORMATTER);
         }
+        this.duration = duration;
+    }
+
+    protected Task(long taskId, String taskName, String description, LocalDateTime startTime, long duration, Status status) {
+        this.taskId = taskId;
+        this.taskName = taskName;
+        this.description = description;
+        this.status = status;
+        this.startTime = startTime;
         this.duration = duration;
     }
 

@@ -151,8 +151,6 @@ public abstract class Task implements Comparable<Task>{
 
     @Override
     public int compareTo(Task o) {
-        if (this == null && o == null) return 0;
-        if (this == null) return -1;
         if (o == null) return 1;
 
         return Comparator

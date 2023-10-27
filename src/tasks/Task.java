@@ -112,7 +112,7 @@ public abstract class Task implements Comparable<Task>{
 
     @Override
     public int hashCode() {
-        return Objects.hash(taskName, taskId, description, status, taskType, startTime, duration, dateTimePattern);
+        return Objects.hash(taskName, taskId, description, status, taskType, startTime, duration);
     }
 
     @Override

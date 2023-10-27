@@ -15,22 +15,11 @@ public abstract class Task implements Comparable<Task>{
     protected TaskTypes taskType;
     protected LocalDateTime startTime;
     protected long duration;
-    private final Pattern dateTimePattern = Pattern.compile("\\d{2}.\\d{2}.\\d{4} \\d{2}:\\d{2}");
 
     protected Task(String taskName, String description, Status status) {
         this.taskName = taskName;
         this.description = description;
         this.status = status;
-    }
-
-    protected Task(String taskName, String description, String startTime, long duration, Status status) {
-        this.taskName = taskName;
-        this.description = description;
-        this.status = status;
-        if(dateTimePattern.matcher(startTime).matches()) {
-            this.startTime = LocalDateTime.parse(startTime, FORMATTER);
-        }
-        this.duration = duration;
     }
 
     protected Task(String taskName, String description, LocalDateTime startTime, long duration, Status status) {
@@ -46,17 +35,6 @@ public abstract class Task implements Comparable<Task>{
         this.taskName = taskName;
         this.description = description;
         this.status = status;
-    }
-
-    protected Task(long taskId, String taskName, String description, String startTime, long duration, Status status) {
-        this.taskId = taskId;
-        this.taskName = taskName;
-        this.description = description;
-        this.status = status;
-        if(dateTimePattern.matcher(startTime).matches()) {
-            this.startTime = LocalDateTime.parse(startTime, FORMATTER);
-        }
-        this.duration = duration;
     }
 
     protected Task(long taskId, String taskName, String description, LocalDateTime startTime, long duration, Status status) {

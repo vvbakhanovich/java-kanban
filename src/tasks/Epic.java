@@ -19,12 +19,6 @@ public class Epic extends Task {
 
     // Конструктор с id и статусом для эпика нужен при восстановлении FileBackedTaskManager из файла. Там при парсинге
     // строки создается готовый объект типа Epic, который кладется в мапу, хранящие все эпики.
-    private Epic(long taskId, String taskName, String description, String startTime, long duration, Status status) {
-        super(taskId, taskName, description, startTime, duration, status);
-        subtaskList = new ArrayList<>();
-        taskType = TaskTypes.EPIC;
-    }
-
     private Epic(long taskId, String taskName, String description, LocalDateTime startTime, long duration, Status status) {
         super(taskId, taskName, description, startTime, duration, status);
         subtaskList = new ArrayList<>();
@@ -36,15 +30,6 @@ public class Epic extends Task {
     }
 
     public static Epic createFromFileWithStartTime(long taskId,
-                                                   String taskName,
-                                                   String description,
-                                                   String startTime,
-                                                   long duration,
-                                                   Status status) {
-        return new Epic(taskId, taskName, description, startTime, duration, status);
-    }
-
-    public static Epic createFromFileWithStartTime2(long taskId,
                                                    String taskName,
                                                    String description,
                                                    LocalDateTime startTime,

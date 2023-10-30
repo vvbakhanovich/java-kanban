@@ -24,7 +24,7 @@ public final class Managers {
     }
 
     public static TaskManager getFileManager() {
-        return new FileBackedTasksManager("src/resources/test2.csv");
+        return new FileBackedTasksManager("resources/FBTM.csv");
     }
 
     /**

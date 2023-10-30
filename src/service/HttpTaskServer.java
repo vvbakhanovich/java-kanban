@@ -24,16 +24,9 @@ public class HttpTaskServer {
     private HttpServer server;
     private Gson gson;
     private TaskManager manager;
-
     public HttpTaskServer() throws IOException {
-        this(Managers.getFileManager());
-    }
-
-    public HttpTaskServer(TaskManager taskManager) throws IOException {
-        this.manager = taskManager;
-        gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .create();
+        this.manager = Managers.getFileManager();
+        gson = new Gson();
         server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
         server.createContext("/tasks", this::handleTasks);
     }
@@ -53,9 +46,17 @@ public class HttpTaskServer {
                         exchange.getResponseBody().write(response.getBytes(StandardCharsets.UTF_8));
                         break;
                     }
-
                     break;
                 case "POST":
+                    if (Pattern.matches("^/tasks/task$", path)) {
+                        logger.info("Получен запрос на добавление задачи по пути: " + path);
+                        String taskInRequest = new String(exchange.getRequestBody().readAllBytes());
+                        logger.info("Задача в формате JSON " + taskInRequest);
+                        BasicTask restoredTask = gson.fromJson(taskInRequest, BasicTask.class);
+                        manager.addBasicTask(restoredTask);
+                        logger.info("Добавлена восстановленная задача: " + restoredTask);
+                        exchange.sendResponseHeaders(200, 0);
+                }
 
                     break;
                 case "DELETE":
@@ -92,5 +93,21 @@ public class HttpTaskServer {
         } catch (NumberFormatException e) {
             return -1;
         }
+    }
+
+    public void start() {
+        logger.info("Запускаем HttpTaskServer на порту " + PORT);
+        server.start();
+    }
+
+    public void stop() {
+        server.stop(0);
+        logger.info("HttpTaskServer остановлен на порту " + PORT);
+
+    }
+
+    public static void main(String[] args) throws IOException {
+        HttpTaskServer server1 = new HttpTaskServer();
+        server1.start();
     }
 }

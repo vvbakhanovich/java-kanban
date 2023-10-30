@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class BasicTask extends Task {
 
-    private final TaskTypes taskType = TaskTypes.BASIC_TASK;
+//    private final TaskTypes taskType = TaskTypes.BASIC_TASK;
 
     /*
      если Вы советуете убрать фабрики и сделать конструкторы public, то поменять несложно. Я читал, что когда в классе
@@ -17,6 +17,7 @@ public class BasicTask extends Task {
      */
     private BasicTask(String taskName, String description, Status status) {
         super(taskName, description, status);
+        taskType = TaskTypes.BASIC_TASK;
     }
 
     private BasicTask(String taskName, String description, LocalDateTime startTime, long duration, Status status) {

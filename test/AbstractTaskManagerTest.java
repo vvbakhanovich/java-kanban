@@ -50,20 +50,20 @@ abstract class AbstractTaskManagerTest {
                 Status.NEW, 1);
         subtask3 = Subtask.create("Подзадача 3", "Описание подзадачи 3",
                 Status.DONE, 1);
-        taskWithDate1 = BasicTask.createWithStartTime2("Задача со временем 1",
+        taskWithDate1 = BasicTask.createWithStartTime("Задача со временем 1",
                 "Описание задачи со временем 1",
                 LocalDateTime.of(2023, 10, 22, 9,9), 23, Status.IN_PROGRESS);
-        taskWithDate2 = BasicTask.createWithStartTime2("Задача со временем 2",
+        taskWithDate2 = BasicTask.createWithStartTime("Задача со временем 2",
                 "Описание задачи со временем 2",
                 LocalDateTime.of(2023, 10, 22, 8,0), 15, Status.NEW);
-        taskWithDate3 = BasicTask.createWithStartTime2("Задача со временем 2",
+        taskWithDate3 = BasicTask.createWithStartTime("Задача со временем 2",
                 "Описание задачи со временем 2",
                 LocalDateTime.of(2023, 10, 22, 9,0), 15, Status.NEW);
-        subtaskWithDate1 = Subtask.createWithStartTime2("Subtask 1", "Description 1",
+        subtaskWithDate1 = Subtask.createWithStartTime("Subtask 1", "Description 1",
                 LocalDateTime.of(2023, 9, 20, 9,0), 50, Status.NEW, 1);
-        subtaskWithDate2 = Subtask.createWithStartTime2("Subtask 2", "Description 3",
+        subtaskWithDate2 = Subtask.createWithStartTime("Subtask 2", "Description 3",
                 LocalDateTime.of(2020, 9, 21, 10,9), 20, Status.NEW, 1);
-        subtaskWithDate3 = Subtask.createWithStartTime2("Subtask 3", "Description 3",
+        subtaskWithDate3 = Subtask.createWithStartTime("Subtask 3", "Description 3",
                 LocalDateTime.of(2023, 12, 10, 10,0), 13, Status.NEW, 1);
     }
 
@@ -232,19 +232,19 @@ abstract class AbstractTaskManagerTest {
         long id1 = manager.addSubtask(subtask1);
         long id2 = manager.addSubtask(subtask2);
         long id3 = manager.addSubtask(subtask3);
-        assertEquals(List.of(id1, id2, id3), manager.getEpicSubtaskList(epic1));
+        assertEquals(List.of(id1, id2, id3), manager.getEpicSubtaskList(epic1.getTaskId()));
     }
 
     @Test
     void gettingListOfEpicWithNoSubtasksShouldReturnEmptyList() {
         manager.addEpic(epic1);
-        assertEquals(Collections.emptyList(), manager.getEpicSubtaskList(epic1));
+        assertEquals(Collections.emptyList(), manager.getEpicSubtaskList(epic1.getTaskId()));
     }
 
     @Test
     void gettingListOfSubtasksOnNullShouldThrowException() {
         NullPointerException e1 = assertThrows(NullPointerException.class,
-                () -> manager.getEpicSubtaskList(null));
+                () -> manager.getEpicSubtaskList(0));
         assertEquals("Попытка найти список подзадач несуществующего эпика", e1.getMessage());
     }
 

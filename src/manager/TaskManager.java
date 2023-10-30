@@ -11,7 +11,7 @@ public interface TaskManager {
     List<BasicTask> getBasicTaskList();
     List<Epic> getEpicList();
     List<Subtask> getSubtaskList();
-    List<Long> getEpicSubtaskList(Epic epic);
+    List<Long> getEpicSubtaskList(long epicId);
 
     void removeAllBasicTasks();
     void removeAllEpics();

@@ -62,11 +62,12 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     /**
-     * @param epic в качестве параметра используется объект класса Epic
+     * @param epicId id эпика, список подзадач которого необходимо получить
      * @return возвращает список идентификаторов подзадач для переданного эпика
      */
     @Override
-    public List<Long> getEpicSubtaskList(Epic epic) {
+    public List<Long> getEpicSubtaskList(long epicId) {
+        Epic epic = epicList.get(epicId);
         Objects.requireNonNull(epic, "Попытка найти список подзадач несуществующего эпика");
         return new ArrayList<>(epic.getSubtaskList());
     }

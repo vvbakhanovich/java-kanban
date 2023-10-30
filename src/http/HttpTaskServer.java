@@ -31,7 +31,8 @@ public class HttpTaskServer {
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .create();
         server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
-        server.createContext("/tasks", this::handleTaskLists);
+        server.createContext("/tasks/", this::handlePrioritizedTaskList);
+        server.createContext("/tasks/history/", this::handleHistoryList);
         server.createContext("/tasks/task/", this::handleTasks);
         server.createContext("/tasks/epic/", this::handleEpics);
         server.createContext("/tasks/subtask/", this::handleSubtasks);
@@ -39,7 +40,6 @@ public class HttpTaskServer {
 
     private void handleTasks(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
-        String path = exchange.getRequestURI().getPath();
         String rawQuery = exchange.getRequestURI().getRawQuery();
         try {
             if ("GET".equals(method)) {
@@ -283,32 +283,49 @@ public class HttpTaskServer {
     }
 
 
-    private void handleTaskLists(HttpExchange exchange) {
+    private void handlePrioritizedTaskList(HttpExchange exchange) {
         try {
             String method = exchange.getRequestMethod();
             String path = exchange.getRequestURI().getPath();
-            String rawQuery = exchange.getRequestURI().getRawQuery();
 
-            switch (method) {
-                case "GET":
-                    if (Pattern.matches("^/tasks/$", path)) {
-                        System.out.println("Получен запрос на получение списка отсортированных задач");
-                        String response = gson.toJson(manager.getPrioritizedTasks());
-                        System.out.println("Отортированные задачи в JSON: " + response);
-                        sendJsonResponse(exchange, response);
-                        break;
-                    } else if (Pattern.matches("^/tasks/history$", path)) {
-                        System.out.println("Получен запрос на получение списка просмотренных задач");
-                        String response = gson.toJson(manager.getHistory());
-                        System.out.println("Список просмотренных задач в JSON: " + response);
-                        sendJsonResponse(exchange, response);
-                        break;
-                    }
-                default:
-                    System.out.println("Использован недоступный метод: " + method + "по пути: " + path);
-                    exchange.sendResponseHeaders(405, 0);
+            if ("GET".equals(method)) {
+                if (Pattern.matches("^/tasks/$", path)) {
+                    System.out.println("Получен запрос на получение списка отсортированных задач");
+                    String response = gson.toJson(manager.getPrioritizedTasks());
+                    System.out.println("Отортированные задачи в JSON: " + response);
+                    sendJsonResponse(exchange, response);
+                } else if (Pattern.matches("^/tasks/history$", path)) {
+                    System.out.println("Получен запрос на получение списка просмотренных задач");
+                    String response = gson.toJson(manager.getHistory());
+                    System.out.println("Список просмотренных задач в JSON: " + response);
+                    sendJsonResponse(exchange, response);
+                }
+            } else {
+                System.out.println("Использован недоступный метод: " + method + "по пути: " + path);
+                exchange.sendResponseHeaders(405, 0);
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            exchange.close();
+        }
+    }
+
+    private void handleHistoryList(HttpExchange exchange) {
+        try {
+            String method = exchange.getRequestMethod();
+            String path = exchange.getRequestURI().getPath();
+
+            if ("GET".equals(method)) {
+                System.out.println("Получен запрос на получение списка просмотренных задач");
+                String response = gson.toJson(manager.getHistory());
+                System.out.println("Список просмотренных задач в JSON: " + response);
+                sendJsonResponse(exchange, response);
+            } else {
+                System.out.println("Использован недоступный метод: " + method + "по пути: " + path);
+                exchange.sendResponseHeaders(405, 0);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

@@ -8,7 +8,7 @@ import java.net.http.HttpResponse;
 
 public class KVTaskClient {
     private String API_TOKEN;
-    private URI serverUri;
+    private final URI serverUri;
     private final HttpClient httpClient;
 
     public KVTaskClient(String uri) {
@@ -52,25 +52,28 @@ public class KVTaskClient {
     }
 
     //GET /load/<key>?API_TOKEN_
-    public String load(String key) throws IOException, InterruptedException {
-        URI loadUri = URI.create(serverUri + "/load/" + key + "?API_TOKEN=" + API_TOKEN);
+    public String load(String key) {
+        URI loadUri = URI.create(serverUri + "load/" + key + "?API_TOKEN=" + API_TOKEN);
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(loadUri)
                 .version(HttpClient.Version.HTTP_1_1)
                 .build();
-        HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
-        HttpResponse<String> response = httpClient.send(request, handler);
-        if (response.statusCode() == 200) {
-            return response.body();
-        } else {
-
+        HttpResponse<String> response = null;
+        try {
+            HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
+            response = httpClient.send(request, handler);
+            System.out.println("\nПолучен ответ от сервера с кодом: " + response.statusCode());
+            System.out.println("Тело ответа: " + response.body());
+        } catch (IOException | InterruptedException e1) {
+            System.out.println("Во время выполнения запроса возникла ошибка. Проверьте URL-адрес и повторите запрос.");
+        } catch (IllegalArgumentException e2) {
+            System.out.println("Введеный адрес не соответсвует формату URL.");
         }
-
-        return "";
+        return response != null ? response.body() : null;
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) {
         KVTaskClient client = new KVTaskClient("http://localhost:8078/");
         client.put("test", "json");
     }

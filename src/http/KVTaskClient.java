@@ -11,19 +11,25 @@ public class KVTaskClient {
     private URI serverUri;
     private final HttpClient httpClient;
 
-    public KVTaskClient(String uri) throws IOException, InterruptedException {
+    public KVTaskClient(String uri) {
         serverUri = URI.create(uri);
-        URI registerUri = URI.create(uri + "register");
+        URI registerUri = URI.create(uri + "register/");
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(registerUri)
                 .version(HttpClient.Version.HTTP_1_1)
                 .build();
         httpClient = HttpClient.newHttpClient();
-        HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
-        HttpResponse<String> response = httpClient.send(request, handler);
-        API_TOKEN = response.body();
-        System.out.println("После запроса на регистрацию получен API_TOKEN: " + API_TOKEN);
+        try {
+            HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
+            HttpResponse<String> response = httpClient.send(request, handler);
+            API_TOKEN = response.body();
+            System.out.println("После запроса на регистрацию получен API_TOKEN: " + API_TOKEN);
+        } catch (IOException | InterruptedException e1) {
+            System.out.println("Во время выполнения запроса возникла ошибка. Проверьте URL-адрес и повторите запрос.");
+        } catch (IllegalArgumentException e2) {
+            System.out.println("Введеный адрес не соответсвует формату URL.");
+        }
     }
 
     //POST /save/<key>?API_TOKEN_

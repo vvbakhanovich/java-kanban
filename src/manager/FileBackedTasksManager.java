@@ -196,7 +196,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     /**
      * Сохранение текущего состояния менеджера в файл. Сохраняются все созданные задачи и история просмотров.
      */
-    private void save() {
+    protected void save() {
         try (BufferedWriter bw = Files.newBufferedWriter(path)) {
             String header = "id,type,name,description,startTime,duration,status,epic\n";
             bw.write(header);

@@ -40,69 +40,84 @@ public class HttpTaskServer {
 
     private void handleTasks(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
+        String path = exchange.getRequestURI().getPath();
         String rawQuery = exchange.getRequestURI().getRawQuery();
         try {
-            if ("GET".equals(method)) {
-                if (rawQuery != null) {
-                    String pathId = rawQuery.replaceFirst("id=", "");
-                    System.out.println("Получен запрос на получение задачи c id " + pathId);
-                    long taskId = parsePathId(pathId);
-                    if (taskId != -1) {
-                        String response = gson.toJson(manager.getBasicTaskById(taskId));
-                        System.out.println("Задача в JSON: " + response);
+            if (Pattern.matches("^/tasks/task/$", path)) {
+                if ("GET".equals(method)) {
+                    if (rawQuery != null) {
+                        String pathId = rawQuery.replaceFirst("id=", "");
+                        System.out.println("Получен запрос на получение задачи c id " + pathId);
+                        long taskId = parsePathId(pathId);
+                        if (taskId != -1) {
+                            try {
+                                BasicTask task = manager.getBasicTaskById(taskId);
+                                String response = gson.toJson(task);
+                                System.out.println("Задача в JSON: " + response);
+                                sendJsonResponse(exchange, response);
+                            } catch (NoSuchElementException e) {
+                                System.out.println(e.getMessage());
+                                exchange.sendResponseHeaders(403, 0);
+                            }
+                        } else {
+                            System.out.println("Некорректный id задачи: " + pathId);
+                            exchange.sendResponseHeaders(405, 0);
+                        }
+                    } else {
+                        System.out.println("Получен запрос на получение всех задач");
+                        String response = gson.toJson(manager.getBasicTaskList());
+                        System.out.println("Задачи в JSON: " + response);
                         sendJsonResponse(exchange, response);
-                    } else {
-                        System.out.println("Некорректный id задачи: " + pathId);
-                        exchange.sendResponseHeaders(405, 0);
                     }
-                } else {
-                    System.out.println("Получен запрос на получение всех задач");
-                    String response = gson.toJson(manager.getBasicTaskList());
-                    System.out.println("Задачи в JSON: " + response);
-                    sendJsonResponse(exchange, response);
-                }
-            } else if ("POST".equals(method)) {
-                System.out.println("Получен запрос на добавление/обновление задачи");
-                String taskInRequest = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
-                if (taskInRequest.isEmpty()) {
-                    System.out.println("Тело запроса пустое! В теле запроса не была передана задача!");
-                    exchange.sendResponseHeaders(400, 0);
-                    return;
-                }
-                System.out.println("Задача в формате JSON " + taskInRequest);
-                BasicTask restoredTask = gson.fromJson(taskInRequest, BasicTask.class);
-                try {
-                    if (restoredTask.getTaskId() == 0) {
-                        System.out.println("Получен запрос на добавление задачи");
-                        manager.addBasicTask(restoredTask);
-                        System.out.println("Добавлена задача: " + restoredTask);
-                    } else {
-                        System.out.println("Получен запрос на обновление задачи с id " + restoredTask.getTaskId());
-                        manager.updateBasicTask(restoredTask);
-                        System.out.println("Обновлена задача: " + restoredTask);
+
+                } else if ("POST".equals(method)) {
+                    System.out.println("Получен запрос на добавление/обновление задачи");
+                    String taskInRequest = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
+                    if (taskInRequest.isEmpty()) {
+                        System.out.println("Тело запроса пустое! В теле запроса не была передана задача!");
+                        exchange.sendResponseHeaders(400, 0);
+                        return;
                     }
-                    exchange.sendResponseHeaders(200, 0);
-                } catch (InvalidTimeException | NoSuchElementException e) {
-                    System.out.println(e.getMessage());
-                }
-            } else if ("DELETE".equals(method)) {
-                if (rawQuery != null) {
-                    String pathId = rawQuery.replaceFirst("id=", "");
-                    System.out.println("Получен запрос на удаление задачи c id " + pathId);
-                    long taskId = parsePathId(pathId);
-                    if (taskId != -1) {
-                        manager.removeBasicTaskById(taskId);
-                        System.out.println("Удалена задача с id " + taskId);
+                    System.out.println("Задача в формате JSON " + taskInRequest);
+                    BasicTask restoredTask = gson.fromJson(taskInRequest, BasicTask.class);
+                    try {
+                        if (restoredTask.getTaskId() == 0) {
+                            System.out.println("Получен запрос на добавление задачи");
+                            manager.addBasicTask(restoredTask);
+                            System.out.println("Добавлена задача: " + restoredTask);
+                        } else {
+                            System.out.println("Получен запрос на обновление задачи с id " + restoredTask.getTaskId());
+                            manager.updateBasicTask(restoredTask);
+                            System.out.println("Обновлена задача: " + restoredTask);
+                        }
                         exchange.sendResponseHeaders(200, 0);
-                    } else {
-                        System.out.println("Некорректный id задачи: " + pathId);
-                        exchange.sendResponseHeaders(405, 0);
+                    } catch (InvalidTimeException | NoSuchElementException e) {
+                        System.out.println(e.getMessage());
                     }
-                } else {
-                    System.out.println("Получен запрос на удаление всех задач");
-                    manager.removeAllBasicTasks();
-                    System.out.println("Все задачи удалены");
-                    exchange.sendResponseHeaders(200, 0);
+                } else if ("DELETE".equals(method)) {
+                    if (rawQuery != null) {
+                        String pathId = rawQuery.replaceFirst("id=", "");
+                        System.out.println("Получен запрос на удаление задачи c id " + pathId);
+                        long taskId = parsePathId(pathId);
+                        if (taskId != -1) {
+                            try {
+                                manager.removeBasicTaskById(taskId);
+                                System.out.println("Удалена задача с id " + taskId);
+                                exchange.sendResponseHeaders(200, 0);
+                            } catch (NoSuchElementException e) {
+                                System.out.println(e.getMessage());
+                                exchange.sendResponseHeaders(405, 0);
+                            }
+                        } else {
+                            System.out.println("Некорректный id задачи: " + pathId);
+                            exchange.sendResponseHeaders(405, 0);
+                        }
+                    } else {
+                        System.out.println("Получен запрос на удаление всех задач");
+                        manager.removeAllBasicTasks();
+                        System.out.println("Все задачи удалены");
+                        exchange.sendResponseHeaders(200, 0);
+                    }
                 }
             }
         } finally {
@@ -115,71 +130,85 @@ public class HttpTaskServer {
         String path = exchange.getRequestURI().getPath();
         String rawQuery = exchange.getRequestURI().getRawQuery();
         try {
-            if ("GET".equals(method)) {
-                if (rawQuery != null) {
-                    String pathId = rawQuery.replaceFirst("id=", "");
-                    System.out.println("Получен запрос на получение эпика c id " + pathId);
-                    long taskId = parsePathId(pathId);
-                    if (taskId != -1) {
-                        String response = gson.toJson(manager.getEpicById(taskId));
-                        System.out.println("Эпик в JSON: " + response);
-                        sendJsonResponse(exchange, response);
-                    } else {
-                        System.out.println("Некорректный id эпика: " + pathId);
-                        exchange.sendResponseHeaders(405, 0);
-                    }
-                } else {
-                    System.out.println("Получен запрос на получение всех эпиков");
-                    String response = gson.toJson(manager.getEpicList());
-                    System.out.println("Задачи в JSON: " + response);
-                    sendJsonResponse(exchange, response);
-                }
-            } else if ("POST".equals(method)) {
-                if (Pattern.matches("^/tasks/epic/$", path)) {
-                    System.out.println("Получен запрос на добавление/обновление эпика");
-                    String taskInRequest = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
-                    if (taskInRequest.isEmpty()) {
-                        System.out.println("Тело запроса пустое! В теле запроса не был передан эпик!");
-                        exchange.sendResponseHeaders(400, 0);
-                        return;
-                    }
-                    System.out.println("Эпик в формате JSON " + taskInRequest);
-                    Epic restoredEpic = gson.fromJson(taskInRequest, Epic.class);
-                    try {
-                        if (restoredEpic.getTaskId() == 0) {
-                            System.out.println("Получен запрос на добавление эпика");
-                            manager.addEpic(restoredEpic);
-                            System.out.println("Добавлен эпик: " + restoredEpic);
+            if (Pattern.matches("^/tasks/epic/$", path)) {
+                if ("GET".equals(method)) {
+                    if (rawQuery != null) {
+                        String pathId = rawQuery.replaceFirst("id=", "");
+                        System.out.println("Получен запрос на получение эпика c id " + pathId);
+                        long taskId = parsePathId(pathId);
+                        if (taskId != -1) {
+                            try {
+                                Epic epic = manager.getEpicById(taskId);
+                                String response = gson.toJson(epic);
+                                System.out.println("Эпик в JSON: " + response);
+                                sendJsonResponse(exchange, response);
+                            } catch (NoSuchElementException e) {
+                                System.out.println(e.getMessage());
+                                exchange.sendResponseHeaders(405, 0);
+                            }
                         } else {
-                            System.out.println("Получен запрос на обновление эпика с id " + restoredEpic.getTaskId());
-                            manager.updateEpic(restoredEpic);
-                            System.out.println("Обновлен эпик: " + restoredEpic);
+                            System.out.println("Некорректный id эпика: " + pathId);
+                            exchange.sendResponseHeaders(405, 0);
                         }
-                        exchange.sendResponseHeaders(200, 0);
-                    } catch (InvalidTimeException | NoSuchElementException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-            } else if ("DELETE".equals(method)) {
-                System.out.println("Получен запрос на удаление эпика");
-
-                if (rawQuery != null) {
-                    String pathId = rawQuery.replaceFirst("id=", "");
-                    System.out.println("Получен запрос на удаление эпика c id " + pathId);
-                    long taskId = parsePathId(pathId);
-                    if (taskId != -1) {
-                        manager.removeEpicById(taskId);
-                        System.out.println("Удален эпик с id " + taskId);
-                        exchange.sendResponseHeaders(200, 0);
                     } else {
-                        System.out.println("Некорректный id эпика: " + pathId);
-                        exchange.sendResponseHeaders(405, 0);
+                        System.out.println("Получен запрос на получение всех эпиков");
+                        String response = gson.toJson(manager.getEpicList());
+                        System.out.println("Задачи в JSON: " + response);
+                        sendJsonResponse(exchange, response);
                     }
-                } else {
-                    System.out.println("Получен запрос на удаление всех эпиков");
-                    manager.removeAllEpics();
-                    System.out.println("Все эпики удалены");
-                    exchange.sendResponseHeaders(200, 0);
+                } else if ("POST".equals(method)) {
+                    if (Pattern.matches("^/tasks/epic/$", path)) {
+                        System.out.println("Получен запрос на добавление/обновление эпика");
+                        String taskInRequest = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
+                        if (taskInRequest.isEmpty()) {
+                            System.out.println("Тело запроса пустое! В теле запроса не был передан эпик!");
+                            exchange.sendResponseHeaders(400, 0);
+                            return;
+                        }
+                        System.out.println("Эпик в формате JSON " + taskInRequest);
+                        Epic restoredEpic = gson.fromJson(taskInRequest, Epic.class);
+                        try {
+                            if (restoredEpic.getTaskId() == 0) {
+                                System.out.println("Получен запрос на добавление эпика");
+                                manager.addEpic(restoredEpic);
+                                System.out.println("Добавлен эпик: " + restoredEpic);
+                            } else {
+                                System.out.println("Получен запрос на обновление эпика с id " + restoredEpic.getTaskId());
+                                manager.updateEpic(restoredEpic);
+                                System.out.println("Обновлен эпик: " + restoredEpic);
+                            }
+                            exchange.sendResponseHeaders(200, 0);
+                        } catch (InvalidTimeException | NoSuchElementException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
+                } else if ("DELETE".equals(method)) {
+                    System.out.println("Получен запрос на удаление эпика");
+
+                    if (rawQuery != null) {
+                        String pathId = rawQuery.replaceFirst("id=", "");
+                        System.out.println("Получен запрос на удаление эпика c id " + pathId);
+                        long taskId = parsePathId(pathId);
+                        if (taskId != -1) {
+                            try {
+                                manager.removeEpicById(taskId);
+                                System.out.println("Удален эпик с id " + taskId);
+                                exchange.sendResponseHeaders(200, 0);
+                            } catch (NoSuchElementException e) {
+                                System.out.println(e.getMessage());
+                                exchange.sendResponseHeaders(405, 0);
+                            }
+
+                        } else {
+                            System.out.println("Некорректный id эпика: " + pathId);
+                            exchange.sendResponseHeaders(405, 0);
+                        }
+                    } else {
+                        System.out.println("Получен запрос на удаление всех эпиков");
+                        manager.removeAllEpics();
+                        System.out.println("Все эпики удалены");
+                        exchange.sendResponseHeaders(200, 0);
+                    }
                 }
             }
         } finally {
@@ -199,9 +228,15 @@ public class HttpTaskServer {
                         System.out.println("Получен запрос на получение подзадачи c id " + pathId);
                         long taskId = parsePathId(pathId);
                         if (taskId != -1) {
-                            String response = gson.toJson(manager.getSubtaskById(taskId));
-                            System.out.println("Подзадача в JSON: " + response);
-                            sendJsonResponse(exchange, response);
+                            try {
+                                Subtask subtask = manager.getSubtaskById(taskId);
+                                String response = gson.toJson(subtask);
+                                System.out.println("Подзадача в JSON: " + response);
+                                sendJsonResponse(exchange, response);
+                            } catch (NoSuchElementException e) {
+                                System.out.println(e.getMessage());
+                                exchange.sendResponseHeaders(405, 0);
+                            }
                         } else {
                             System.out.println("Некорректный id подзадачи: " + pathId);
                             exchange.sendResponseHeaders(405, 0);
@@ -263,9 +298,14 @@ public class HttpTaskServer {
                     System.out.println("Получен запрос на удаление подзадачи c id " + pathId);
                     long taskId = parsePathId(pathId);
                     if (taskId != -1) {
-                        manager.removeSubtaskById(taskId);
-                        System.out.println("Удалена подзадача с id " + taskId);
-                        exchange.sendResponseHeaders(200, 0);
+                        try {
+                            manager.removeSubtaskById(taskId);
+                            System.out.println("Удалена подзадача с id " + taskId);
+                            exchange.sendResponseHeaders(200, 0);
+                        } catch (NoSuchElementException e) {
+                            System.out.println(e.getMessage());
+                            exchange.sendResponseHeaders(405, 0);
+                        }
                     } else {
                         System.out.println("Некорректный id подзадачи: " + pathId);
                         exchange.sendResponseHeaders(405, 0);

@@ -33,16 +33,22 @@ public class KVTaskClient {
     }
 
     //POST /save/<key>?API_TOKEN_
-    public void put(String key, String json) throws IOException, InterruptedException {
+    public void put(String key, String json) {
         URI saveUri = URI.create(serverUri + "save/" + key + "?API_TOKEN=" + API_TOKEN);
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .uri(saveUri)
                 .version(HttpClient.Version.HTTP_1_1)
                 .build();
-        HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
-        HttpResponse<String> response = httpClient.send(request, handler);
-        System.out.println("Код ответа после отправки элемента на сервер: " + response.statusCode());
+        try {
+            HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
+            HttpResponse<String> response = httpClient.send(request, handler);
+            System.out.println("Код ответа после отправки элемента на сервер: " + response.statusCode());
+        } catch (IOException | InterruptedException e1) {
+            System.out.println("Во время выполнения запроса возникла ошибка. Проверьте URL-адрес и повторите запрос.");
+        } catch (IllegalArgumentException e2) {
+            System.out.println("Введеный адрес не соответсвует формату URL.");
+        }
     }
 
     //GET /load/<key>?API_TOKEN_

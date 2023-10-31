@@ -17,13 +17,15 @@ import java.util.*;
  * получает путь файла для автосохранения.
  */
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private final Path path;
+    private Path path;
 
     public FileBackedTasksManager(String path) {
         super();
-        this.path = Paths.get(path);
-        if (!Files.exists(this.path)) {
-            save();
+        if (path != null) {
+            this.path = Paths.get(path);
+            if (!Files.exists(this.path)) {
+                save();
+            }
         }
     }
 

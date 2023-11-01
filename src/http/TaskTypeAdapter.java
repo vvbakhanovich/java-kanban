@@ -5,6 +5,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import tasks.BasicTask;
+import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
@@ -23,6 +24,8 @@ public class TaskTypeAdapter implements JsonDeserializer<Task> {
                 return jsonDeserializationContext.deserialize(jsonElement, BasicTask.class);
             case "SUBTASK":
                 return jsonDeserializationContext.deserialize(jsonElement, Subtask.class);
+            case "EPIC":
+                return jsonDeserializationContext.deserialize(jsonElement, Epic.class);
             default:
                 throw new IllegalArgumentException("Недопустимый тип задачи!");
         }

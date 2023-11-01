@@ -1,9 +1,7 @@
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import http.HttpTaskServer;
-import manager.InMemoryTaskManager;
 import manager.Managers;
-import manager.TaskManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +15,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,7 +28,6 @@ class HttpTaskServerTest {
     private Subtask subtask1;
     private Subtask subtask2;
     private Type taskListType;
-    private Type historyListType;
 
     @BeforeEach
     void init() throws IOException {
@@ -53,15 +49,13 @@ class HttpTaskServerTest {
         taskListType = new TypeToken<ArrayList<BasicTask>>() {
         }.getType();
 
-        historyListType = new TypeToken<ArrayList<Task>>() {
-        }.getType();
         server.start();
     }
 
-//    @AfterEach
-//    void stop() {
-//        server.stop();
-//    }
+    @AfterEach
+    void stop() {
+        server.stop();
+    }
 
     @Test
     void addingTaskShouldReturn200CodeAndGettingTaskWithId1ShouldReturnAddedTask()
@@ -278,11 +272,10 @@ class HttpTaskServerTest {
 
         HttpRequest getRequest = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create(uri + "tasks/task"))
+                .uri(URI.create(uri + "tasks/task/"))
                 .build();
         HttpResponse<String> getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, getResponse.statusCode());
-        assertNotNull(gson.fromJson(getResponse.body(), BasicTask.class));
         assertIterableEquals(List.of(basicTask1, basicTask2), gson.fromJson(getResponse.body(), taskListType));
     }
 
@@ -372,8 +365,12 @@ class HttpTaskServerTest {
                 .build();
         HttpResponse<String> getResponse4 = client.send(getRequest4, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, getResponse4.statusCode());
-        ArrayList<Task> history = gson.fromJson(getResponse4.body(), historyListType);
-//        assertIterableEquals(List.of(basicTask2, basicTask1, epic1), gson.fromJson(getResponse4.body(), historyListType));
+        assertEquals("[{\"taskName\":\"Задача со временем 2\",\"taskId\":2,\"description\":" +
+                "\"Описание задачи со временем 2\",\"status\":\"NEW\",\"startTime\":\"2023-10-22T08:00:00\"," +
+                "\"duration\":15},{\"taskName\":\"Задача со временем 1\",\"taskId\":1,\"description\":" +
+                "\"Описание задачи со временем 1\",\"status\":\"IN_PROGRESS\",\"startTime\":\"2023-10-22T09:09:00\"," +
+                "\"duration\":23},{\"subtaskList\":[],\"taskName\":\"Эпик 1\",\"taskId\":3,\"description\":" +
+                "\"Описание эпика 1\",\"status\":\"NEW\",\"taskType\":\"EPIC\",\"duration\":0}]", getResponse4.body());
     }
 
 }

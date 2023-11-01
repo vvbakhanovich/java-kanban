@@ -21,7 +21,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Long, Subtask> subtaskList;
     protected final Map<Long, Epic> epicList;
     protected final HistoryManager historyManager;
-    private final TreeSet<Task> sortedTasks;
+    protected final TreeSet<Task> sortedTasks;
 
     /**
      * Конструктор класса Manager. Принимает в качестве параметра объект, реализующий интерфейс HistoryManager.

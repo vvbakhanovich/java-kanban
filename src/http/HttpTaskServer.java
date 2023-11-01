@@ -57,11 +57,11 @@ public class HttpTaskServer {
                                 sendJsonResponse(exchange, response);
                             } catch (NoSuchElementException e) {
                                 System.out.println(e.getMessage());
-                                exchange.sendResponseHeaders(403, 0);
+                                exchange.sendResponseHeaders(400, 0);
                             }
                         } else {
                             System.out.println("Некорректный id задачи: " + pathId);
-                            exchange.sendResponseHeaders(405, 0);
+                            sendErrorResponse(exchange, "Некорректный id задачи: " + pathId);
                         }
                     } else {
                         System.out.println("Получен запрос на получение всех задач");
@@ -75,7 +75,8 @@ public class HttpTaskServer {
                     String taskInRequest = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
                     if (taskInRequest.isEmpty()) {
                         System.out.println("Тело запроса пустое! В теле запроса не была передана задача!");
-                        exchange.sendResponseHeaders(400, 0);
+                        sendErrorResponse(exchange,
+                                "Тело запроса пустое! В теле запроса не была передана задача!");
                         return;
                     }
                     System.out.println("Задача в формате JSON " + taskInRequest);
@@ -93,6 +94,7 @@ public class HttpTaskServer {
                         exchange.sendResponseHeaders(200, 0);
                     } catch (InvalidTimeException | NoSuchElementException e) {
                         System.out.println(e.getMessage());
+                        sendErrorResponse(exchange, e.getMessage());
                     }
                 } else if ("DELETE".equals(method)) {
                     if (rawQuery != null) {
@@ -106,11 +108,11 @@ public class HttpTaskServer {
                                 exchange.sendResponseHeaders(200, 0);
                             } catch (NoSuchElementException e) {
                                 System.out.println(e.getMessage());
-                                exchange.sendResponseHeaders(405, 0);
+                                exchange.sendResponseHeaders(400, 0);
                             }
                         } else {
                             System.out.println("Некорректный id задачи: " + pathId);
-                            exchange.sendResponseHeaders(405, 0);
+                            sendErrorResponse(exchange, "Некорректный id задачи: " + pathId);
                         }
                     } else {
                         System.out.println("Получен запрос на удаление всех задач");
@@ -118,6 +120,9 @@ public class HttpTaskServer {
                         System.out.println("Все задачи удалены");
                         exchange.sendResponseHeaders(200, 0);
                     }
+                } else {
+                    System.out.println("Метод не поддерживается");
+                    exchange.sendResponseHeaders(405,0);
                 }
             }
         } finally {
@@ -144,11 +149,11 @@ public class HttpTaskServer {
                                 sendJsonResponse(exchange, response);
                             } catch (NoSuchElementException e) {
                                 System.out.println(e.getMessage());
-                                exchange.sendResponseHeaders(405, 0);
+                                sendErrorResponse(exchange, e.getMessage());
                             }
                         } else {
                             System.out.println("Некорректный id эпика: " + pathId);
-                            exchange.sendResponseHeaders(405, 0);
+                            sendErrorResponse(exchange, "Некорректный id эпика: " + pathId);
                         }
                     } else {
                         System.out.println("Получен запрос на получение всех эпиков");
@@ -162,7 +167,8 @@ public class HttpTaskServer {
                         String taskInRequest = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
                         if (taskInRequest.isEmpty()) {
                             System.out.println("Тело запроса пустое! В теле запроса не был передан эпик!");
-                            exchange.sendResponseHeaders(400, 0);
+                            sendErrorResponse(exchange,
+                                    "Тело запроса пустое! В теле запроса не был передан эпик!");
                             return;
                         }
                         System.out.println("Эпик в формате JSON " + taskInRequest);
@@ -173,13 +179,15 @@ public class HttpTaskServer {
                                 manager.addEpic(restoredEpic);
                                 System.out.println("Добавлен эпик: " + restoredEpic);
                             } else {
-                                System.out.println("Получен запрос на обновление эпика с id " + restoredEpic.getTaskId());
+                                System.out.println("Получен запрос на обновление эпика с id " +
+                                        restoredEpic.getTaskId());
                                 manager.updateEpic(restoredEpic);
                                 System.out.println("Обновлен эпик: " + restoredEpic);
                             }
                             exchange.sendResponseHeaders(200, 0);
                         } catch (InvalidTimeException | NoSuchElementException e) {
                             System.out.println(e.getMessage());
+                            sendErrorResponse(exchange, e.getMessage());
                         }
                     }
                 } else if ("DELETE".equals(method)) {
@@ -201,7 +209,7 @@ public class HttpTaskServer {
 
                         } else {
                             System.out.println("Некорректный id эпика: " + pathId);
-                            exchange.sendResponseHeaders(405, 0);
+                            sendErrorResponse(exchange, "Некорректный id эпика: " + pathId);
                         }
                     } else {
                         System.out.println("Получен запрос на удаление всех эпиков");
@@ -209,6 +217,9 @@ public class HttpTaskServer {
                         System.out.println("Все эпики удалены");
                         exchange.sendResponseHeaders(200, 0);
                     }
+                } else {
+                    System.out.println("Метод не поддерживается");
+                    exchange.sendResponseHeaders(405, 0);
                 }
             }
         } finally {
@@ -235,11 +246,11 @@ public class HttpTaskServer {
                                 sendJsonResponse(exchange, response);
                             } catch (NoSuchElementException e) {
                                 System.out.println(e.getMessage());
-                                exchange.sendResponseHeaders(405, 0);
+                                sendErrorResponse(exchange, e.getMessage());
                             }
                         } else {
                             System.out.println("Некорректный id подзадачи: " + pathId);
-                            exchange.sendResponseHeaders(405, 0);
+                            sendErrorResponse(exchange, "Некорректный id подзадачи: " + pathId);
                         }
                     } else {
                         System.out.println("Получен запрос на получение всех подзадач");
@@ -258,12 +269,13 @@ public class HttpTaskServer {
                             sendJsonResponse(exchange, response);
                         } else {
                             System.out.println("Некорректный id эпика: " + pathId);
-                            exchange.sendResponseHeaders(405, 0);
+                            sendErrorResponse(exchange, "Некорректный id эпика: " + pathId);
                         }
                     } else {
                         System.out.println("Получен некорректный запрос на получение всех задач эпика. " +
                                 "Не предоставлен идентификатор");
-                        exchange.sendResponseHeaders(405, 0);
+                        sendErrorResponse(exchange, "Получен некорректный запрос на получение всех задач " +
+                                "эпика. Не предоставлен идентификатор");
                     }
                 }
             } else if ("POST".equals(method)) {
@@ -271,7 +283,8 @@ public class HttpTaskServer {
                 String taskInRequest = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
                 if (taskInRequest.isEmpty()) {
                     System.out.println("Тело запроса пустое! В теле запроса не была передана подзадача!");
-                    exchange.sendResponseHeaders(400, 0);
+                    sendErrorResponse(exchange, "Тело запроса пустое! В теле запроса не была " +
+                            "передана подзадача!");
                     return;
                 }
                 System.out.println("Подзадача в формате JSON " + taskInRequest);
@@ -289,6 +302,7 @@ public class HttpTaskServer {
                     exchange.sendResponseHeaders(200, 0);
                 } catch (InvalidTimeException | NoSuchElementException e) {
                     System.out.println(e.getMessage());
+                    sendErrorResponse(exchange, e.getMessage());
                 }
             } else if ("DELETE".equals(method)) {
                 System.out.println("Получен запрос на удаление подзадачи");
@@ -308,7 +322,7 @@ public class HttpTaskServer {
                         }
                     } else {
                         System.out.println("Некорректный id подзадачи: " + pathId);
-                        exchange.sendResponseHeaders(405, 0);
+                        sendErrorResponse(exchange, "Некорректный id подзадачи: " + pathId);
                     }
                 } else {
                     System.out.println("Получен запрос на удаление всех подзадач");
@@ -316,12 +330,14 @@ public class HttpTaskServer {
                     System.out.println("Все подзадачи удалены");
                     exchange.sendResponseHeaders(200, 0);
                 }
+            } else {
+                System.out.println("Метод не поддерживается");
+                exchange.sendResponseHeaders(405, 0);
             }
         } finally {
             exchange.close();
         }
     }
-
 
     private void handlePrioritizedTaskList(HttpExchange exchange) {
         try {
@@ -401,6 +417,12 @@ public class HttpTaskServer {
         exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
         exchange.sendResponseHeaders(200, 0);
         exchange.getResponseBody().write(response.getBytes(UTF_8));
+    }
+
+    private void sendErrorResponse(HttpExchange exchange, String errorMessage) throws IOException {
+        exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
+        exchange.sendResponseHeaders(400, 0);
+        exchange.getResponseBody().write(errorMessage.getBytes(UTF_8));
     }
 }
 

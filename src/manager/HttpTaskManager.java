@@ -119,11 +119,4 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
     }
 
-
-    public static void main(String[] args) {
-        HttpTaskManager manager = load("http://localhost:8078/");
-        System.out.println(manager.getHistory());
-    }
-
-
 }

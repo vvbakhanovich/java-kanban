@@ -26,10 +26,8 @@ public class HttpTaskServer {
     private final TaskManager manager;
 
     public HttpTaskServer() throws IOException {
-        this.manager = Managers.getFileManager();
-        gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .create();
+        this.manager = Managers.getDefault();
+        gson = Managers.getGson();
         server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
         server.createContext("/tasks/", this::handlePrioritizedTaskList);
         server.createContext("/tasks/history/", this::handleHistoryList);

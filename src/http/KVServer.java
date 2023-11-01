@@ -111,6 +111,11 @@ public class KVServer {
         server.start();
     }
 
+    public void stop() {
+        System.out.println("Останавливаем сервер на порту " + PORT);
+        server.stop(0);
+    }
+
     private String generateApiToken() {
         return "" + System.currentTimeMillis();
     }

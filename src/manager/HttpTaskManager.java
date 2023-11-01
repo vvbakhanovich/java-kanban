@@ -44,7 +44,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
         taskClient.put(historyKey, gson.toJson(getHistory().stream()
                 .map(Task::getTaskId)
                 .collect(Collectors.toList())));
-        taskClient.put(sortedKey, gson.toJson(getPrioritizedTasks()));
+        taskClient.put(sortedKey, gson.toJson(getPrioritizedTasks().stream()
+                .map(Task::getTaskId)
+                .collect(Collectors.toList())));
     }
 
     /**
@@ -76,10 +78,10 @@ public class HttpTaskManager extends FileBackedTasksManager {
             manager.subtaskList.put(subtask.getTaskId(), subtask);
         }
 
-        Type sortedSetType = new TypeToken<TreeSet<Task>>() {
+        Type sortedSetType = new TypeToken<ArrayList<Long>>() {
         }.getType();
-        TreeSet<Task> sortedTaskSet = gson.fromJson(taskClient.load(sortedKey), sortedSetType);
-        manager.sortedTasks.addAll(sortedTaskSet);
+        ArrayList<Long> sortedTaskSet = gson.fromJson(taskClient.load(sortedKey), sortedSetType);
+        restorePrioritizedList(sortedTaskSet, manager);
 
 
         Type historyIdType = new TypeToken<ArrayList<Long>>() {
@@ -103,6 +105,20 @@ public class HttpTaskManager extends FileBackedTasksManager {
             }
         }
     }
+
+    private static void restorePrioritizedList(List<Long> historyIds, HttpTaskManager manager) {
+        for (Long taskId : historyIds) {
+
+            if (manager.basicTaskList.containsKey(taskId)) {
+                manager.sortedTasks.add(manager.basicTaskList.get(taskId));
+            } else if (manager.epicList.containsKey(taskId)) {
+                manager.sortedTasks.add(manager.epicList.get(taskId));
+            } else {
+                manager.sortedTasks.add(manager.subtaskList.get(taskId));
+            }
+        }
+    }
+
 
     public static void main(String[] args) {
         HttpTaskManager manager = load("http://localhost:8078/");

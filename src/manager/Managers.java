@@ -1,6 +1,14 @@
 package manager;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import http.LocalDateTimeAdapter;
+import http.TaskTypeAdapter;
+import tasks.Task;
+
+import java.time.LocalDateTime;
+
 /**
  * Со временем в приложении трекера появится несколько реализаций интерфейса TaskManager. На данном классе будет лежать
  * вся ответственность за создание менеджера задач. Класс не предназначен для наследования
@@ -33,6 +41,17 @@ public final class Managers {
      */
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
+    }
+
+    /**
+     * Получение объекта gson с требуемой конфигурацией
+     * @return объект класса Gson
+     */
+    public static Gson getGson() {
+        return new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Task.class, new TaskTypeAdapter())
+                .create();
     }
 
 

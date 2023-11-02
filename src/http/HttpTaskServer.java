@@ -1,9 +1,9 @@
 package http;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import exceptions.BadRequestException;
 import exceptions.InvalidTimeException;
 import manager.Managers;
 import manager.TaskManager;
@@ -13,11 +13,10 @@ import tasks.Subtask;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
-import static java.nio.charset.StandardCharsets.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class HttpTaskServer {
     private static final int PORT = 8080;
@@ -70,13 +69,7 @@ public class HttpTaskServer {
 
                 } else if ("POST".equals(method)) {
                     System.out.println("Получен запрос на добавление/обновление задачи");
-                    String taskInRequest = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
-                    if (taskInRequest.isEmpty()) {
-                        System.out.println("Тело запроса пустое! В теле запроса не была передана задача!");
-                        sendErrorResponse(exchange,
-                                "Тело запроса пустое! В теле запроса не была передана задача!");
-                        return;
-                    }
+                    String taskInRequest = getTaskFromRequest(exchange);
                     System.out.println("Задача в формате JSON " + taskInRequest);
                     BasicTask restoredTask = gson.fromJson(taskInRequest, BasicTask.class);
                     try {
@@ -162,13 +155,7 @@ public class HttpTaskServer {
                 } else if ("POST".equals(method)) {
                     if (Pattern.matches("^/tasks/epic/$", path)) {
                         System.out.println("Получен запрос на добавление/обновление эпика");
-                        String taskInRequest = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
-                        if (taskInRequest.isEmpty()) {
-                            System.out.println("Тело запроса пустое! В теле запроса не был передан эпик!");
-                            sendErrorResponse(exchange,
-                                    "Тело запроса пустое! В теле запроса не был передан эпик!");
-                            return;
-                        }
+                        String taskInRequest = getTaskFromRequest(exchange);
                         System.out.println("Эпик в формате JSON " + taskInRequest);
                         Epic restoredEpic = gson.fromJson(taskInRequest, Epic.class);
                         try {
@@ -278,13 +265,7 @@ public class HttpTaskServer {
                 }
             } else if ("POST".equals(method)) {
                 System.out.println("Получен запрос на добавление/обновление подзадачи");
-                String taskInRequest = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
-                if (taskInRequest.isEmpty()) {
-                    System.out.println("Тело запроса пустое! В теле запроса не была передана подзадача!");
-                    sendErrorResponse(exchange, "Тело запроса пустое! В теле запроса не была " +
-                            "передана подзадача!");
-                    return;
-                }
+                String taskInRequest = getTaskFromRequest(exchange);
                 System.out.println("Подзадача в формате JSON " + taskInRequest);
                 Subtask restoredSubtask = gson.fromJson(taskInRequest, Subtask.class);
                 try {
@@ -346,7 +327,7 @@ public class HttpTaskServer {
                 if (Pattern.matches("^/tasks/$", path)) {
                     System.out.println("Получен запрос на получение списка отсортированных задач");
                     String response = gson.toJson(manager.getPrioritizedTasks());
-                    System.out.println("Отортированные задачи в JSON: " + response);
+                    System.out.println("Отсортированные задачи в JSON: " + response);
                     sendJsonResponse(exchange, response);
                 } else if (Pattern.matches("^/tasks/history$", path)) {
                     System.out.println("Получен запрос на получение списка просмотренных задач");
@@ -417,11 +398,24 @@ public class HttpTaskServer {
         exchange.getResponseBody().write(response.getBytes(UTF_8));
     }
 
+    private String getTaskFromRequest(HttpExchange exchange) throws IOException {
+        String taskInRequest = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
+        if (taskInRequest.isEmpty()) {
+            System.out.println("Тело запроса пустое! В теле запроса не была передана задача!");
+            sendErrorResponse(exchange,
+                    "Тело запроса пустое! В теле запроса не была передана задача!");
+            throw new BadRequestException("Тело запроса пустое! В теле запроса не была передана задача!");
+        } else {
+            return taskInRequest;
+        }
+    }
     private void sendErrorResponse(HttpExchange exchange, String errorMessage) throws IOException {
         exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
         exchange.sendResponseHeaders(400, 0);
         exchange.getResponseBody().write(errorMessage.getBytes(UTF_8));
     }
+
+
 }
 
 

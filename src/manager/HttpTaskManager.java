@@ -11,7 +11,6 @@ import tasks.Task;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class HttpTaskManager extends FileBackedTasksManager {
@@ -27,9 +26,16 @@ public class HttpTaskManager extends FileBackedTasksManager {
     public HttpTaskManager(String uri) {
         //Так как происходит наследование от FBTM, то необходимо вызвать конструктор родительского класса. Чтобы не
         //создавать FBTM в его конструктор передается null
+       this(uri, false);
+    }
+
+    public HttpTaskManager(String uri, boolean isRestored) {
         super(null);
         taskClient = new KVTaskClient(uri);
         gson = Managers.getGson();
+        if (isRestored) {
+            load(this);
+        }
     }
 
     /**
@@ -51,11 +57,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     /**
      * Создание нового менеджера из базы данных, хранящейся на сервере
-     * @param uri сервера, с которого считываются данные для восстановления менеджера
-     * @return HttpTaskManager с базой данных, скопированной из сервера
+     * @param manager который требуется восстановить
      */
-    public static HttpTaskManager load(String uri) {
-        HttpTaskManager manager = new HttpTaskManager(uri);
+    public static void load(HttpTaskManager manager) {
 
         Type taskListType = new TypeToken<ArrayList<BasicTask>>() {
         }.getType();
@@ -89,7 +93,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         ArrayList<Long> historyIdList = gson.fromJson(taskClient.load(historyKey), historyIdType);
         restoreHistory(historyIdList, manager);
 
-        return manager;
+//        return manager;
     }
 
 

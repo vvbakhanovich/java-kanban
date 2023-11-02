@@ -40,8 +40,8 @@ public class KVServer {
                     h.sendResponseHeaders(400, 0);
                     return;
                 }
-                if (data.containsKey(key)) {
                     String response = data.get(key);
+                if (response != null) {
                     System.out.println("По ключу '" + key + "' загружен объект: " + response);
                     sendText(h, response);
                 } else {

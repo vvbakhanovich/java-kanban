@@ -1,6 +1,4 @@
-import http.HttpTaskServer;
 import http.KVServer;
-import manager.FileBackedTasksManager;
 import manager.HttpTaskManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,9 +6,10 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
-class HttpTaskManagerTest extends AbstractTaskManagerTest{
+class HttpTaskManagerTest extends AbstractTaskManagerTest {
 
     private KVServer server;
 
@@ -39,8 +38,7 @@ class HttpTaskManagerTest extends AbstractTaskManagerTest{
         manager.addSubtask(subtask1);
         manager.addSubtask(subtask2);
 
-        HttpTaskManager restoredManager = HttpTaskManager
-                .load("http://localhost:8078/");
+        HttpTaskManager restoredManager = new HttpTaskManager("http://localhost:8078/", true);
         assertIterableEquals(manager.getBasicTaskList(), restoredManager.getBasicTaskList());
         assertIterableEquals(manager.getEpicList(), restoredManager.getEpicList());
         assertIterableEquals(manager.getSubtaskList(), restoredManager.getSubtaskList());
@@ -57,8 +55,7 @@ class HttpTaskManagerTest extends AbstractTaskManagerTest{
         manager.getEpicById(epic1.getTaskId());
         manager.getBasicTaskById(task1.getTaskId());
 
-        HttpTaskManager restoredManager = HttpTaskManager
-                .load("http://localhost:8078/");
+        HttpTaskManager restoredManager = new HttpTaskManager("http://localhost:8078/", true);
         assertIterableEquals(manager.getBasicTaskList(), restoredManager.getBasicTaskList());
         assertIterableEquals(manager.getEpicList(), restoredManager.getEpicList());
         assertIterableEquals(manager.getSubtaskList(), restoredManager.getSubtaskList());
@@ -73,8 +70,7 @@ class HttpTaskManagerTest extends AbstractTaskManagerTest{
         manager.addSubtask(subtaskWithDate1);
         manager.addSubtask(subtaskWithDate2);
 
-        HttpTaskManager restoredManager = HttpTaskManager
-                .load("http://localhost:8078/");
+        HttpTaskManager restoredManager = new HttpTaskManager("http://localhost:8078/", true);
         assertIterableEquals(manager.getBasicTaskList(), restoredManager.getBasicTaskList());
         assertIterableEquals(manager.getEpicList(), restoredManager.getEpicList());
         assertIterableEquals(manager.getSubtaskList(), restoredManager.getSubtaskList());
@@ -91,8 +87,7 @@ class HttpTaskManagerTest extends AbstractTaskManagerTest{
         manager.getEpicById(epic1.getTaskId());
         manager.getBasicTaskById(taskWithDate1.getTaskId());
 
-        HttpTaskManager restoredManager = HttpTaskManager
-                .load("http://localhost:8078/");
+        HttpTaskManager restoredManager = new HttpTaskManager("http://localhost:8078/", true);
         assertIterableEquals(manager.getBasicTaskList(), restoredManager.getBasicTaskList());
         assertIterableEquals(manager.getEpicList(), restoredManager.getEpicList());
         assertIterableEquals(manager.getSubtaskList(), restoredManager.getSubtaskList());

@@ -28,12 +28,15 @@ public final class Managers {
      * @return объект-менеджер
      */
     public static TaskManager getDefault() {
-//        return new InMemoryTaskManager();
-        return new HttpTaskManager("http://localhost:8078/");
+        return new InMemoryTaskManager();
     }
 
     public static TaskManager getFileManager() {
         return new FileBackedTasksManager("resources/FBTM.csv");
+    }
+
+    public static TaskManager getHttpTaskManager() {
+        return new HttpTaskManager("http://localhost:8078/");
     }
 
     /**

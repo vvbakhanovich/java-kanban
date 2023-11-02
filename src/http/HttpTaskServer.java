@@ -26,7 +26,7 @@ public class HttpTaskServer {
     private final TaskManager manager;
 
     public HttpTaskServer() throws IOException {
-        this.manager = Managers.getDefault();
+        this.manager = Managers.getHttpTaskManager();
         gson = Managers.getGson();
         server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
         server.createContext("/tasks/", this::handlePrioritizedTaskList);

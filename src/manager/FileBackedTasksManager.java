@@ -17,13 +17,15 @@ import java.util.*;
  * получает путь файла для автосохранения.
  */
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private final Path path;
+    private Path path;
 
     public FileBackedTasksManager(String path) {
         super();
-        this.path = Paths.get(path);
-        if (!Files.exists(this.path)) {
-            save();
+        if (path != null) {
+            this.path = Paths.get(path);
+            if (!Files.exists(this.path)) {
+                save();
+            }
         }
     }
 
@@ -196,7 +198,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     /**
      * Сохранение текущего состояния менеджера в файл. Сохраняются все созданные задачи и история просмотров.
      */
-    private void save() {
+    protected void save() {
         try (BufferedWriter bw = Files.newBufferedWriter(path)) {
             String header = "id,type,name,description,startTime,duration,status,epic\n";
             bw.write(header);

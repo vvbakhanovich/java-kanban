@@ -1,12 +1,13 @@
 package tasks;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static utility.Constants.FORMATTER;
 
-public abstract class Task {
+public abstract class Task implements Comparable<Task>{
     protected String taskName;
     protected long taskId;
     protected String description;
@@ -14,7 +15,6 @@ public abstract class Task {
     protected TaskTypes taskType;
     protected LocalDateTime startTime;
     protected long duration;
-    private final Pattern dateTimePattern = Pattern.compile("\\d{2}.\\d{2}.\\d{4} \\d{2}:\\d{2}");
 
     protected Task(String taskName, String description, Status status) {
         this.taskName = taskName;
@@ -22,13 +22,11 @@ public abstract class Task {
         this.status = status;
     }
 
-    protected Task(String taskName, String description, String startTime, long duration, Status status) {
+    protected Task(String taskName, String description, LocalDateTime startTime, long duration, Status status) {
         this.taskName = taskName;
         this.description = description;
         this.status = status;
-        if(dateTimePattern.matcher(startTime).matches()) {
-            this.startTime = LocalDateTime.parse(startTime, FORMATTER);
-        }
+        this.startTime = startTime;
         this.duration = duration;
     }
 
@@ -39,14 +37,12 @@ public abstract class Task {
         this.status = status;
     }
 
-    protected Task(long taskId, String taskName, String description, String startTime, long duration, Status status) {
+    protected Task(long taskId, String taskName, String description, LocalDateTime startTime, long duration, Status status) {
         this.taskId = taskId;
         this.taskName = taskName;
         this.description = description;
         this.status = status;
-        if(dateTimePattern.matcher(startTime).matches()) {
-            this.startTime = LocalDateTime.parse(startTime, FORMATTER);
-        }
+        this.startTime = startTime;
         this.duration = duration;
     }
 
@@ -116,7 +112,7 @@ public abstract class Task {
 
     @Override
     public int hashCode() {
-        return Objects.hash(taskName, taskId, description, status, taskType, startTime, duration, dateTimePattern);
+        return Objects.hash(taskName, taskId, description, status, taskType, startTime, duration);
     }
 
     @Override
@@ -129,5 +125,15 @@ public abstract class Task {
                 ", duration=" + duration +
                 ", status=" + status +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Task o) {
+        if (o == null) return 1;
+
+        return Comparator
+                .comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(Task::getTaskId)
+                .compare(this, o);
     }
 }

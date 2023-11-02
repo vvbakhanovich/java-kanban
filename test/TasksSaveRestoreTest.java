@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import tasks.*;
 import utility.TasksSaveRestore;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,7 +23,7 @@ class TasksSaveRestoreTest {
         task = BasicTask.create("Задача 1", "Описание 1", Status.NEW);
         task.setTaskId(1);
         taskWithDate = BasicTask.createWithStartTime("Задача 1", "Описание 1",
-                "12.02.2030 20:00", 12, Status.NEW);
+                LocalDateTime.of(2030, 2, 12, 20, 0), 12, Status.NEW);
         taskWithDate.setTaskId(1);
         epic = Epic.create("Эпик 1", "Описание эпика 1");
         epic.setTaskId(2);
@@ -30,7 +31,7 @@ class TasksSaveRestoreTest {
                 Status.DONE, 2);
         subtask.setTaskId(3);
         subtaskWithDate = Subtask.createWithStartTime("Подзадача 1", "Описание подзадачи 1",
-                "12.02.2030 20:00", 25, Status.DONE, 2);
+                LocalDateTime.of(2030, 2, 12, 20, 0), 25, Status.DONE, 2);
         subtaskWithDate.setTaskId(3);
         historyManager = Managers.getDefaultHistory();
     }
@@ -66,7 +67,7 @@ class TasksSaveRestoreTest {
 
     @Test
     void shouldReturnEpicFromString() {
-        String epicInString = "1,EPIC,Эпик 1,Описание эпика 1,null,0,NEW";
+        String epicInString = "2,EPIC,Эпик 1,Описание эпика 1,null,0,NEW";
         Task restoredTask = TasksSaveRestore.stringToTask(epicInString);
         assertEquals(epic, restoredTask);
     }
@@ -97,26 +98,26 @@ class TasksSaveRestoreTest {
 
     @Test
     void shouldReturnStringFromTaskWithDate() {
-        String result = "1,BASIC_TASK,Задача 1,Описание 1,12.02.2030 20:00,12,NEW";
+        String result = "1,BASIC_TASK,Задача 1,Описание 1,2030-02-12T20:00,12,NEW";
         assertEquals(result, TasksSaveRestore.taskToString(taskWithDate).trim());
     }
 
     @Test
     void shouldReturnStringFromSubtaskWithDate() {
-        String result = "3,SUBTASK,Подзадача 1,Описание подзадачи 1,12.02.2030 20:00,25,DONE,2";
+        String result = "3,SUBTASK,Подзадача 1,Описание подзадачи 1,2030-02-12T20:00,25,DONE,2";
         assertEquals(result, TasksSaveRestore.taskToString(subtaskWithDate).trim());
     }
 
     @Test
     void shouldReturnTaskWithDateFromString() {
-        String taskInString = "1,BASIC_TASK,Задача 1,Описание 1,12.02.2030 20:00,12,NEW";
+        String taskInString = "1,BASIC_TASK,Задача 1,Описание 1,2030-02-12T20:00,12,NEW";
         Task restoredTask = TasksSaveRestore.stringToTask(taskInString);
         assertEquals(taskWithDate, restoredTask);
     }
 
     @Test
     void shouldReturnSubtaskWithDateFromString() {
-        String taskInString = "3,SUBTASK,Подзадача 1,Описание подзадачи 1,12.02.2030 20:00,25,DONE,2";
+        String taskInString = "3,SUBTASK,Подзадача 1,Описание подзадачи 1,2030-02-12T20:00,25,DONE,2";
         Task restoredTask = TasksSaveRestore.stringToTask(taskInString);
         assertEquals(subtaskWithDate, restoredTask);
     }

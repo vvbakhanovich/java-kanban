@@ -152,13 +152,13 @@ class EpicServiceTest {
         subtask3 = Subtask.create("Subtask 3", "Description 3", Status.NEW, 1);
         subtask3.setTaskId(4L);
         subtaskWithDate1 = Subtask.createWithStartTime("Subtask 1", "Description 1",
-                "20.09.2023 09:00", 50, Status.NEW, 2);
+                LocalDateTime.of(2023, 9, 20, 9,0), 50, Status.NEW, 2);
         subtaskWithDate1.setTaskId(5L);
         subtaskWithDate2 = Subtask.createWithStartTime("Subtask 2", "Description 3",
-                "21.09.2020 10:00", 20, Status.NEW, 2);
+                LocalDateTime.of(2020, 9, 21, 10,9), 20, Status.NEW, 2);
         subtaskWithDate2.setTaskId(6L);
         subtaskWithDate3 = Subtask.createWithStartTime("Subtask 3", "Description 3",
-                "10.12.2023 10:00", 13, Status.NEW, 2);
+                LocalDateTime.of(2023, 12, 10, 10,0), 13, Status.NEW, 2);
         subtaskWithDate3.setTaskId(7L);
 
 

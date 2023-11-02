@@ -14,7 +14,6 @@ import static utility.Constants.FORMATTER;
  * Вспомогательный класс для преобразования задач в строки и обратно.
  */
 public final class TasksSaveRestore {
-    private static final DateTimeFormatter formatter = FORMATTER;
 
     private TasksSaveRestore() {
     }
@@ -72,13 +71,13 @@ public final class TasksSaveRestore {
         switch (type) {
             case BASIC_TASK:
                 return BasicTask.createFromFileWithStartTime(Long.parseLong(task[0]), task[2], task[3],
-                        task[4], Long.parseLong(task[5]), Status.valueOf(task[6]));
+                        parseStartTime(task[4]), Long.parseLong(task[5]), Status.valueOf(task[6]));
             case EPIC:
                 return Epic.createFromFileWithStartTime(Long.parseLong(task[0]), task[2], task[3],
-                        task[4], Long.parseLong(task[5]), Status.valueOf(task[6]));
+                        parseStartTime(task[4]), Long.parseLong(task[5]), Status.valueOf(task[6]));
             case SUBTASK:
                 return Subtask.createFromFileWithStartTime(Long.parseLong(task[0]), task[2], task[3],
-                        task[4], Long.parseLong(task[5]), Status.valueOf(task[6]), Long.parseLong(task[7]));
+                        parseStartTime(task[4]), Long.parseLong(task[5]), Status.valueOf(task[6]), Long.parseLong(task[7]));
             default:
                 return null;
         }
@@ -119,8 +118,16 @@ public final class TasksSaveRestore {
 
     private static String printStartTime(LocalDateTime startTime) {
         if(startTime != null) {
-            return startTime.format(formatter);
+            return startTime.toString();
         }
         return "null";
+    }
+
+    private static LocalDateTime parseStartTime(String startTime) {
+        if (!"null".equals(startTime)) {
+            return LocalDateTime.parse(startTime);
+        } else {
+            return null;
+        }
     }
 }

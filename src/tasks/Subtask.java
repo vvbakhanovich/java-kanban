@@ -1,5 +1,6 @@
 package tasks;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Subtask extends Task {
@@ -13,13 +14,13 @@ public class Subtask extends Task {
         taskType = TaskTypes.SUBTASK;
     }
 
-    private Subtask(String taskName, String description, String startTime, long duration, Status status, long epicId) {
+    private Subtask(String taskName, String description, LocalDateTime startTime, long duration, Status status, long epicId) {
         super(taskName, description, startTime, duration, status);
         this.epicId = epicId;
         taskType = TaskTypes.SUBTASK;
     }
 
-    private Subtask(long taskId, String taskName, String description, String startTime, long duration, Status status,
+    private Subtask(long taskId, String taskName, String description, LocalDateTime startTime, long duration, Status status,
                     long epicId) {
         super(taskId, taskName, description, startTime, duration, status);
         this.epicId = epicId;
@@ -31,13 +32,13 @@ public class Subtask extends Task {
         return new Subtask(taskName, description, status, epicId);
     }
 
-    public static Subtask createWithStartTime(String taskName, String description, String startTime, long duration,
+    public static Subtask createWithStartTime(String taskName, String description, LocalDateTime startTime, long duration,
                                               Status status, long epicId) {
         return new Subtask(taskName, description, startTime, duration, status, epicId);
     }
 
     public static Subtask createFromFileWithStartTime(long taskId, String taskName, String description,
-                                                      String startTime, long duration, Status status, long epicId) {
+                                                      LocalDateTime startTime, long duration, Status status, long epicId) {
         return new Subtask(taskId, taskName, description, startTime, duration, status, epicId);
     }
 

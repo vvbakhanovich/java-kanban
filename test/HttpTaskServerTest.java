@@ -4,6 +4,7 @@ import http.HttpTaskServer;
 import manager.Managers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tasks.*;
 
@@ -58,6 +59,7 @@ class HttpTaskServerTest {
     }
 
     @Test
+    @DisplayName("Тест на добавление и получение задачи")
     void addingTaskShouldReturn200CodeAndGettingTaskWithId1ShouldReturnAddedTask()
             throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
@@ -80,6 +82,7 @@ class HttpTaskServerTest {
     }
 
     @Test
+    @DisplayName("Тест на добавление и получение эпика")
     void addingEpicShouldReturn200CodeAndGettingEpicWithId1ShouldReturnAddedEpic()
             throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
@@ -102,6 +105,7 @@ class HttpTaskServerTest {
     }
 
     @Test
+    @DisplayName("Тест на добавление и получение подзадачи. Предварительно добавляется эпик")
     void addingEpicAndSubtaskShouldReturn200CodeAndGettingEpicAndSubtaskWithId1ShouldReturnAddedEpicAndSubtask()
             throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
@@ -142,6 +146,7 @@ class HttpTaskServerTest {
     }
 
     @Test
+    @DisplayName("Добавление пустой задачи должно вернуть 400 статус")
     void ifTaskInPostIsEmptyResponseShouldReturn400Code() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI uri = URI.create("http://localhost:8080/");
@@ -154,6 +159,7 @@ class HttpTaskServerTest {
     }
 
     @Test
+    @DisplayName("Добавление пустого эпика должно вернуть 400 статус")
     void ifEpicInPostIsEmptyResponseShouldReturn400Code() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI uri = URI.create("http://localhost:8080/");
@@ -166,6 +172,7 @@ class HttpTaskServerTest {
     }
 
     @Test
+    @DisplayName("Тест на удаление задачи по id")
     void deletingTaskShouldReturn200CodeAndGettingTaskWithId1ShouldReturnEmpty()
             throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
@@ -194,6 +201,7 @@ class HttpTaskServerTest {
     }
 
     @Test
+    @DisplayName("Тест на удаление эпика по id")
     void deletingEpicShouldReturn200CodeAndGettingEpicWithId1ShouldReturn400Status()
             throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
@@ -222,6 +230,7 @@ class HttpTaskServerTest {
     }
 
     @Test
+    @DisplayName("Тест на удаление подзадачи по id")
     void deletingSubtaskShouldReturn200CodeAndGettingSubtaskWithId2ShouldReturnEmpty()
             throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
@@ -251,6 +260,7 @@ class HttpTaskServerTest {
     }
 
     @Test
+    @DisplayName("Тест получение списка всех задач")
     void addingTwoTaskShouldReturn200CodeAndGettingThemListShouldReturnThemAsList() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI uri = URI.create("http://localhost:8080/");
@@ -280,6 +290,7 @@ class HttpTaskServerTest {
     }
 
     @Test
+    @DisplayName("Тест на получение списка отсортированных задач")
     void addingTwoTaskShouldReturn200CodeAndGettingPrioritizedTaskListShouldReturnThemInOrder()
             throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
@@ -310,6 +321,7 @@ class HttpTaskServerTest {
     }
 
     @Test
+    @DisplayName("Тест на получение истории просмотров")
     void addingTwoTaskShouldReturn200CodeAndGettingThemShouldShowThemInHistory()
             throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();

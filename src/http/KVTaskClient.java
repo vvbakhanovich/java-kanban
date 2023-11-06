@@ -2,6 +2,8 @@ package http;
 
 import exceptions.BadRequestException;
 import exceptions.RegistrationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -19,6 +21,7 @@ public class KVTaskClient {
     //адрес KVServer'а
     private final URI serverUri;
     private final HttpClient httpClient;
+    private final Logger logger = LoggerFactory.getLogger(KVTaskClient.class);
 
     /**
      * При создании объекта класса отправляется запрос на регистрацию в KVServer. В теле ответа содержится API_TOKEN,
@@ -40,18 +43,18 @@ public class KVTaskClient {
             HttpResponse<String> response = httpClient.send(request, handler);
             if (response.statusCode() == 200) {
                 API_TOKEN = response.body();
-                System.out.println("После запроса на регистрацию получен API_TOKEN: " + API_TOKEN);
+                logger.info("После запроса на регистрацию получен API_TOKEN: " + API_TOKEN);
             } else {
                 throw new RegistrationException("Не был получен API_TOKEN. Код ответа сервера: "
                         + response.statusCode());
             }
         } catch (IOException | InterruptedException e1) {
-            System.out.println("Во время выполнения запроса возникла ошибка. Проверьте URL-адрес и повторите запрос.");
+            logger.error("Во время выполнения запроса возникла ошибка. Проверьте URL-адрес и повторите запрос.");
             throw new BadRequestException("Во время выполнения запроса возникла ошибка. " +
                     "Проверьте URL-адрес и повторите запрос.");
         } catch (IllegalArgumentException e2) {
-            System.out.println("Введеный адрес не соответствует формату URL.");
-            throw new BadRequestException("Введеный адрес не соответствует формату URL.");
+            logger.error("Введенный адрес не соответствует формату URL.");
+            throw new BadRequestException("Введенный адрес не соответствует формату URL.");
         }
     }
 
@@ -72,16 +75,16 @@ public class KVTaskClient {
             HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
             HttpResponse<String> response = httpClient.send(request, handler);
             if (response.statusCode() != 200) {
-                System.out.println("Код ответа после отправки элемента на сервер: " + response.statusCode());
+                logger.info("Код ответа после отправки элемента на сервер: " + response.statusCode());
                 throw new BadRequestException("Код ответа после отправки элемента на сервер: " + response.statusCode());
             }
         } catch (IOException | InterruptedException e1) {
-            System.out.println("Во время выполнения запроса возникла ошибка. Проверьте URL-адрес и повторите запрос.");
+            logger.error("Во время выполнения запроса возникла ошибка. Проверьте URL-адрес и повторите запрос.");
             throw new BadRequestException("Во время выполнения запроса возникла ошибка. " +
                     "Проверьте URL-адрес и повторите запрос.");
         } catch (IllegalArgumentException e2) {
-            System.out.println("Введеный адрес не соответствует формату URL.");
-            throw new BadRequestException("Введеный адрес не соответствует формату URL.");
+            logger.error("Введенный адрес не соответствует формату URL.");
+            throw new BadRequestException("Введенный адрес не соответствует формату URL.");
         }
     }
 
@@ -103,18 +106,18 @@ public class KVTaskClient {
             HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
             response = httpClient.send(request, handler);
             if (response.statusCode() != 200) {
-                System.out.println("Код ответа после отправки элемента на сервер: " + response.statusCode());
+                logger.info("Код ответа после отправки элемента на сервер: " + response.statusCode());
                 throw new BadRequestException("Код ответа после отправки элемента на сервер: " + response.statusCode());
             }
-            System.out.println("\nПолучен ответ от сервера с кодом: " + response.statusCode());
-            System.out.println("Тело ответа: " + response.body());
+            logger.info("\nПолучен ответ от сервера с кодом: " + response.statusCode());
+            logger.debug("Тело ответа: " + response.body());
         } catch (IOException | InterruptedException e1) {
-            System.out.println("Во время выполнения запроса возникла ошибка. Проверьте URL-адрес и повторите запрос.");
+            logger.error("Во время выполнения запроса возникла ошибка. Проверьте URL-адрес и повторите запрос.");
             throw new BadRequestException("Во время выполнения запроса возникла ошибка. " +
                     "Проверьте URL-адрес и повторите запрос.");
         } catch (IllegalArgumentException e2) {
-            System.out.println("Введеный адрес не соответствует формату URL.");
-            throw new BadRequestException("Введеный адрес не соответствует формату URL.");
+            logger.error("Введенный адрес не соответствует формату URL.");
+            throw new BadRequestException("Введенный адрес не соответствует формату URL.");
         }
         return response.body();
     }

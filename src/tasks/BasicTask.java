@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 
 public class BasicTask extends Task {
 
-//    private final TaskTypes taskType = TaskTypes.BASIC_TASK;
-
     /*
      если Вы советуете убрать фабрики и сделать конструкторы public, то поменять несложно. Я читал, что когда в классе
      несколько конструкторов, то для читаемости, наоборот, лучше фабрики использовать, так как порядок параметров и их
@@ -22,10 +20,12 @@ public class BasicTask extends Task {
 
     private BasicTask(String taskName, String description, LocalDateTime startTime, long duration, Status status) {
         super(taskName, description, startTime, duration, status);
+        taskType = TaskTypes.BASIC_TASK;
     }
 
     private BasicTask(long taskId, String taskName, String description, LocalDateTime startTime, long duration, Status status) {
         super(taskId, taskName, description, startTime, duration, status);
+        taskType = TaskTypes.BASIC_TASK;
     }
 
     public static BasicTask create(String taskName, String description, Status status) {

@@ -20,6 +20,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     private static final String subtaskKey = "SUBTASK";
     private static final String historyKey = "HISTORY";
     private static final String sortedKey = "PRIORITY";
+    private static final String idKey = "ID";
     private static KVTaskClient taskClient;
     private static Gson gson;
 
@@ -53,6 +54,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         taskClient.put(sortedKey, gson.toJson(getPrioritizedTasks().stream()
                 .map(Task::getTaskId)
                 .collect(Collectors.toList())));
+        taskClient.put(idKey, gson.toJson(taskId));
     }
 
     /**
@@ -60,6 +62,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
      * @param manager который требуется восстановить
      */
     public static void load(HttpTaskManager manager) {
+
+        manager.taskId = gson.fromJson(taskClient.load(idKey), Long.class);
 
         Type taskListType = new TypeToken<ArrayList<BasicTask>>() {
         }.getType();
@@ -92,8 +96,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }.getType();
         ArrayList<Long> historyIdList = gson.fromJson(taskClient.load(historyKey), historyIdType);
         restoreHistory(historyIdList, manager);
-
-//        return manager;
     }
 
 

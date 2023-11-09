@@ -87,9 +87,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
         restorePrioritizedList(sortedTaskSet, manager);
     }
 
-
-
-
     private static void restoreHistory(List<Task> historyIds, HttpTaskManager manager) {
         for (Task task : historyIds) {
             manager.historyManager.add(task);
